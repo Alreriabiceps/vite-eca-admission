@@ -5,7 +5,7 @@ const Hero = () => {
     <div className="min-h-screen">
       {/* Available Programs Section */}
       <div
-        className="py-20 relative"
+        className="py-8 sm:py-12 md:py-16 lg:py-20 relative"
         style={{
           backgroundImage: `url("/bg.jpg")`,
           backgroundSize: "cover",
@@ -16,27 +16,27 @@ const Hero = () => {
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-3 text-white">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 text-white">
               Available Programs
             </h2>
-            <div className="w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-3"></div>
-            <p className="text-xl text-white max-w-3xl mx-auto">
+            <div className="w-16 sm:w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-2 sm:mb-3"></div>
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white max-w-3xl mx-auto px-2">
               Choose from our comprehensive range of undergraduate programs
               designed for professional success.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8">
             {/* College of Maritime Education */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-8">
-                <div className="flex items-center mb-6">
-                  <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
                     <svg
-                      className="h-8 w-8 text-white"
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -49,20 +49,20 @@ const Hero = () => {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] mb-1 truncate">
                       Maritime Education
                     </h3>
-                    <p className="text-sm text-[#1B9AAA] font-medium">
+                    <p className="text-xs sm:text-sm text-[#1B9AAA] font-medium truncate">
                       College of Maritime
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Marine Transportation
                   </div>
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Marine Engineering
                   </div>
                 </div>
@@ -72,11 +72,11 @@ const Hero = () => {
             {/* College of Nursing */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-8">
-                <div className="flex items-center mb-6">
-                  <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
                     <svg
-                      className="h-8 w-8 text-white"
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -89,17 +89,17 @@ const Hero = () => {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] mb-1 truncate">
                       Nursing
                     </h3>
-                    <p className="text-sm text-[#1B9AAA] font-medium">
+                    <p className="text-xs sm:text-sm text-[#1B9AAA] font-medium truncate">
                       College of Nursing
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Bachelor of Science in Nursing
                   </div>
                 </div>
@@ -109,11 +109,11 @@ const Hero = () => {
             {/* College of Education */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-8">
-                <div className="flex items-center mb-6">
-                  <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
                     <svg
-                      className="h-8 w-8 text-white"
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -126,20 +126,20 @@ const Hero = () => {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] mb-1 truncate">
                       Education
                     </h3>
-                    <p className="text-sm text-[#1B9AAA] font-medium">
+                    <p className="text-xs sm:text-sm text-[#1B9AAA] font-medium truncate">
                       College of Education
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Early Childhood Education
                   </div>
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Technical-Vocational Teacher Education
                   </div>
                 </div>
@@ -149,11 +149,11 @@ const Hero = () => {
             {/* College of Business Administration */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-8">
-                <div className="flex items-center mb-6">
-                  <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
                     <svg
-                      className="h-8 w-8 text-white"
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -166,20 +166,20 @@ const Hero = () => {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] mb-1 truncate">
                       Business Administration
                     </h3>
-                    <p className="text-sm text-[#1B9AAA] font-medium">
+                    <p className="text-xs sm:text-sm text-[#1B9AAA] font-medium truncate">
                       College of Business
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Entrepreneurship
                   </div>
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Management Accounting
                   </div>
                 </div>
@@ -189,11 +189,11 @@ const Hero = () => {
             {/* College of Information System */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-8">
-                <div className="flex items-center mb-6">
-                  <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
                     <svg
-                      className="h-8 w-8 text-white"
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -206,17 +206,17 @@ const Hero = () => {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] mb-1 truncate">
                       Information System
                     </h3>
-                    <p className="text-sm text-[#1B9AAA] font-medium">
+                    <p className="text-xs sm:text-sm text-[#1B9AAA] font-medium truncate">
                       College of IT
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Bachelor of Science in Information System
                   </div>
                 </div>
@@ -226,11 +226,11 @@ const Hero = () => {
             {/* College of Tourism Management */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-8">
-                <div className="flex items-center mb-6">
-                  <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
                     <svg
-                      className="h-8 w-8 text-white"
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -249,17 +249,17 @@ const Hero = () => {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] mb-1 truncate">
                       Tourism Management
                     </h3>
-                    <p className="text-sm text-[#1B9AAA] font-medium">
+                    <p className="text-xs sm:text-sm text-[#1B9AAA] font-medium truncate">
                       College of Tourism
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Bachelor of Science in Tourism Management
                   </div>
                 </div>
@@ -267,13 +267,13 @@ const Hero = () => {
             </div>
 
             {/* College of Criminal Justice Education */}
-            <div className="group relative bg-gradient-to-br from-white to-[#F5F7FA] rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden md:col-span-2 lg:col-span-1">
+            <div className="group relative bg-gradient-to-br from-white to-[#F5F7FA] rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden sm:col-span-2 lg:col-span-1">
               <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative p-8">
-                <div className="flex items-center mb-6">
-                  <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <div className="flex items-center mb-4 sm:mb-6">
+                  <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-xl sm:rounded-2xl flex items-center justify-center mr-3 sm:mr-4 shadow-lg">
                     <svg
-                      className="h-8 w-8 text-white"
+                      className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -286,17 +286,17 @@ const Hero = () => {
                       />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] mb-1 truncate">
                       Criminal Justice Education
                     </h3>
-                    <p className="text-sm text-[#1B9AAA] font-medium">
+                    <p className="text-xs sm:text-sm text-[#1B9AAA] font-medium truncate">
                       College of Criminology
                     </p>
                   </div>
                 </div>
-                <div className="space-y-3">
-                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-3 px-4 rounded-xl text-sm font-medium border-l-4 border-[#1B9AAA]">
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="bg-[#1B9AAA]/10 text-[#0D1B2A] py-2 sm:py-3 px-3 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium border-l-4 border-[#1B9AAA]">
                     Bachelor of Science in Criminology
                   </div>
                 </div>
@@ -307,14 +307,14 @@ const Hero = () => {
       </div>
 
       {/* Logo Carousel Section */}
-      <div className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">
+      <div className="bg-white py-8 sm:py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-3 sm:mb-4">
               Our Departments
             </h2>
-            <div className="w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-6"></div>
-            <p className="text-lg text-[#343A40] max-w-2xl mx-auto">
+            <div className="w-16 sm:w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-4 sm:mb-6"></div>
+            <p className="text-sm sm:text-base md:text-lg text-[#343A40] max-w-2xl mx-auto px-2">
               Explore the diverse colleges and departments that make up our
               educational institution
             </p>
