@@ -134,12 +134,30 @@ const ApplicationForm = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        timeout: 30000, // 30 second timeout
       });
 
       navigate("/confirmation");
     } catch (error) {
       console.error("Submission error:", error);
-      setErrors({ submit: "Failed to submit application. Please try again." });
+      console.error("Error details:", {
+        message: error.message,
+        code: error.code,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+
+      let errorMessage = "Failed to submit application. Please try again.";
+      if (error.code === "ECONNABORTED") {
+        errorMessage =
+          "Request timed out. Please check your connection and try again.";
+      } else if (error.response?.status === 500) {
+        errorMessage = "Server error. Please try again later.";
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
+      setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
     }
