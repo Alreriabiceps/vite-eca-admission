@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SignaturePad from "react-signature-canvas";
+import { useEffect } from "react";
 
 const ApplicationForm = () => {
   const navigate = useNavigate();
@@ -32,6 +33,14 @@ const ApplicationForm = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  // Debug: Monitor modal state changes
+  useEffect(() => {
+    console.log("🔄 Modal state changed:", showConfirmModal);
+    if (showConfirmModal) {
+      console.log("✅ Modal should be visible now!");
+    }
+  }, [showConfirmModal]);
 
   const courses = [
     // College of Maritime Education
@@ -174,6 +183,7 @@ const ApplicationForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("🚀 Submit button clicked - starting validation");
+    alert("Submit button clicked! Check console for logs.");
 
     if (!validateForm()) {
       console.log("❌ Form validation failed");
@@ -952,8 +962,15 @@ const ApplicationForm = () => {
             }
           }}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+            style={{ border: "5px solid red" }}
+          >
             <div className="text-center">
+              {/* Debug Alert */}
+              <div className="bg-red-100 text-red-800 p-2 rounded mb-4 text-sm">
+                🚨 MODAL IS WORKING! 🚨
+              </div>
               {/* Icon */}
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
                 <svg
