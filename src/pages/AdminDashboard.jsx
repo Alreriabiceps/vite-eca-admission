@@ -376,71 +376,31 @@ const AdminDashboard = () => {
       <AdminHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
-                Total Applications
-              </h3>
-              <p className="text-3xl font-bold text-[#1B9AAA]">
-                {stats.totalApplications}
-              </p>
-            </div>
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#22c55e]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
-                This Week
-              </h3>
-              <p className="text-3xl font-bold text-[#22c55e]">
-                {stats.recentApplications}
-              </p>
-            </div>
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#FFC300]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
-                Pending
-              </h3>
-              <p className="text-3xl font-bold text-[#FFC300]">
-                {stats.statusBreakdown.find((s) => s._id === "pending")
-                  ?.count || 0}
-              </p>
-            </div>
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#22c55e]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
-                Admitted
-              </h3>
-              <p className="text-3xl font-bold text-[#22c55e]">
-                {stats.statusBreakdown.find((s) => s._id === "admitted")
-                  ?.count || 0}
-              </p>
-            </div>
-          </div>
-        )}
-
         {/* Course Tabs */}
-        <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20 mb-6">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-[#0D1B2A] mb-2">
+        <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-[#1B9AAA]/20 mb-4">
+          <div className="mb-3">
+            <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
               Filter by Course
             </h3>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2">
               {courseTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => handleCourseTabChange(tab.id)}
-                  className={`flex items-center space-x-3 px-5 py-3 rounded-xl transition-all duration-300 border-2 ${
+                  className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-200 border ${
                     selectedCourseTab === tab.id
-                      ? "bg-[#1B9AAA] text-white shadow-xl transform scale-105 border-[#1B9AAA]"
-                      : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-lg border-gray-200 hover:border-[#1B9AAA]/30"
+                      ? "bg-[#1B9AAA] text-white shadow-md border-[#1B9AAA]"
+                      : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200 hover:border-[#1B9AAA]/30"
                   }`}
                 >
                   <img
                     src={tab.logo}
                     alt={tab.name}
-                    className="w-7 h-7 object-contain"
+                    className="w-5 h-5 object-contain"
                   />
-                  <span className="font-semibold text-sm">{tab.name}</span>
+                  <span className="font-medium text-xs">{tab.name}</span>
                   <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${
+                    className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                       selectedCourseTab === tab.id
                         ? "bg-white/20 text-white"
                         : "bg-[#1B9AAA]/10 text-[#1B9AAA]"
@@ -454,15 +414,15 @@ const AdminDashboard = () => {
           </div>
 
           {/* Additional Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-[#0D1B2A] mb-2">
+              <label className="block text-xs font-medium text-[#0D1B2A] mb-1">
                 Status Filter
               </label>
               <select
                 value={filters.status}
                 onChange={(e) => handleFilterChange("status", e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white shadow-sm transition-all duration-200 hover:border-[#1B9AAA]/50"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white shadow-sm transition-all duration-200 hover:border-[#1B9AAA]/50"
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -472,13 +432,13 @@ const AdminDashboard = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[#0D1B2A] mb-2">
+              <label className="block text-xs font-medium text-[#0D1B2A] mb-1">
                 Search Applications
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
-                    className="h-5 w-5 text-gray-400"
+                    className="h-4 w-4 text-gray-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -495,7 +455,7 @@ const AdminDashboard = () => {
                   type="text"
                   value={filters.search}
                   onChange={(e) => handleFilterChange("search", e.target.value)}
-                  className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white shadow-sm transition-all duration-200 hover:border-[#1B9AAA]/50"
+                  className="w-full pl-9 pr-9 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white shadow-sm transition-all duration-200 hover:border-[#1B9AAA]/50"
                   placeholder="Search by name or email"
                 />
                 {filters.search && (
@@ -505,7 +465,7 @@ const AdminDashboard = () => {
                     title="Clear search"
                   >
                     <svg
-                      className="h-5 w-5"
+                      className="h-4 w-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -526,8 +486,38 @@ const AdminDashboard = () => {
 
         {/* Applications Table */}
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#1B9AAA]/20">
+          <div className="px-6 py-4 border-b border-[#1B9AAA]/20 flex items-center justify-between">
             <h3 className="text-lg font-medium text-[#0D1B2A]">Applications</h3>
+            {stats && (
+              <div className="flex items-center space-x-4 text-xs">
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-600">Total:</span>
+                  <span className="font-semibold text-[#1B9AAA] bg-[#1B9AAA]/10 px-2 py-1 rounded">
+                    {stats.totalApplications}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-600">This Week:</span>
+                  <span className="font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
+                    {stats.recentApplications}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-600">Pending:</span>
+                  <span className="font-semibold text-yellow-600 bg-yellow-50 px-2 py-1 rounded">
+                    {stats.statusBreakdown.find((s) => s._id === "pending")
+                      ?.count || 0}
+                  </span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-600">Admitted:</span>
+                  <span className="font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
+                    {stats.statusBreakdown.find((s) => s._id === "admitted")
+                      ?.count || 0}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {loading ? (
@@ -541,25 +531,31 @@ const AdminDashboard = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-[#1B9AAA]/20">
+              <table className="min-w-full divide-y divide-[#1B9AAA]/20 text-sm">
                 <thead className="bg-[#F5F7FA]">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
-                      Name
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                      Applicant
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
-                      Email
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                      Contact Info
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                      School
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
                       Course
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                      Info
+                    </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
                       Submitted
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider w-48">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider w-40">
                       Actions
                     </th>
                   </tr>
@@ -567,45 +563,145 @@ const AdminDashboard = () => {
                 <tbody className="bg-white/50 divide-y divide-[#1B9AAA]/20">
                   {applications.map((application) => (
                     <tr key={application._id} className="hover:bg-[#F5F7FA]/50">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-3">
                         <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0">
+                          <div className="h-8 w-8 flex-shrink-0">
                             <img
-                              className="h-10 w-10 rounded-full object-cover"
+                              className="h-8 w-8 rounded-full object-cover"
                               src={application.photoUrl}
                               alt={application.name}
                             />
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
+                          <div className="ml-2 max-w-[150px]">
+                            <div
+                              className="text-xs font-medium text-gray-900 truncate"
+                              title={application.name}
+                            >
                               {application.name}
                             </div>
-                            <div className="text-sm text-gray-500">
-                              {application.contact}
-                            </div>
+                            {application.age && application.sex && (
+                              <div className="text-xs text-gray-500">
+                                {application.age}yo, {application.sex}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {application.email}
+                      <td className="px-3 py-3">
+                        <div className="max-w-[180px]">
+                          <div
+                            className="text-xs text-gray-900 truncate"
+                            title={application.email}
+                          >
+                            {application.email}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {application.contact}
+                          </div>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {application.courseApplied}
+                      <td className="px-3 py-3">
+                        <div className="max-w-[150px]">
+                          {application.schoolLastAttended ? (
+                            <div
+                              className="text-xs text-gray-900 truncate"
+                              title={application.schoolLastAttended}
+                            >
+                              {application.schoolLastAttended}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-400 italic">
+                              N/A
+                            </span>
+                          )}
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 py-3">
+                        <div className="max-w-[200px]">
+                          <div
+                            className="text-xs text-gray-900 truncate"
+                            title={application.courseApplied}
+                          >
+                            {application.courseApplied}
+                          </div>
+                          {(application.courseApplied ===
+                            "Bachelor of Science in Marine Transportation" ||
+                            application.courseApplied ===
+                              "Bachelor of Science in Marine Engineering") &&
+                            application.examDateTime && (
+                              <div className="text-xs text-blue-600 font-medium flex items-center gap-1">
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M3 6l8-4 8 4v6.7c0 3.3-2.2 6.4-5.3 7.3L10 17l-3.7-1c-3.1-.9-5.3-4-5.3-7.3V6zm4.5 7.5L5 11l1.4-1.4 1.1 1.1 3.1-3.1L12 9l-4.5 4.5z" />
+                                </svg>
+                                Exam:{" "}
+                                {new Date(
+                                  application.examDateTime
+                                ).toLocaleDateString()}
+                              </div>
+                            )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="max-w-[120px]">
+                          {application.presentAddress && (
+                            <div
+                              className="text-xs text-gray-900 truncate flex items-center gap-1"
+                              title={application.presentAddress}
+                            >
+                              <svg
+                                className="w-3 h-3 flex-shrink-0"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <span className="truncate">
+                                {application.presentAddress}
+                              </span>
+                            </div>
+                          )}
+                          {application.dateOfBirth && (
+                            <div className="text-xs text-gray-500 flex items-center gap-1">
+                              <svg
+                                className="w-3 h-3 flex-shrink-0"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              {new Date(
+                                application.dateOfBirth
+                              ).toLocaleDateString()}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-3">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full whitespace-nowrap ${
                             statusColors[application.status]
                           }`}
                         >
                           {application.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-3 py-3 text-xs text-gray-500">
                         {formatDate(application.submittedAt)}
                       </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center space-x-2">
+                      <td className="px-3 py-3">
+                        <div className="flex flex-col space-y-1">
                           <select
                             value={application.status}
                             onChange={(e) =>
@@ -614,7 +710,7 @@ const AdminDashboard = () => {
                                 e.target.value
                               )
                             }
-                            className="text-xs border border-gray-300 rounded-md px-3 py-2 min-w-[90px] max-w-[120px] bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-[#1B9AAA] focus:border-[#1B9AAA] transition-all duration-200 hover:border-[#1B9AAA]/50"
+                            className="text-xs border border-gray-300 rounded px-2 py-1 bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-[#1B9AAA] focus:border-[#1B9AAA] w-full"
                           >
                             {statusOptions.slice(1).map((option) => (
                               <option key={option.value} value={option.value}>
@@ -622,7 +718,7 @@ const AdminDashboard = () => {
                               </option>
                             ))}
                           </select>
-                          <div className="flex space-x-1">
+                          <div className="flex space-x-1 justify-center">
                             <button
                               onClick={() =>
                                 setSelectedApplication(application)
@@ -631,7 +727,7 @@ const AdminDashboard = () => {
                               title="View Details"
                             >
                               <svg
-                                className="w-4 h-4"
+                                className="w-3.5 h-3.5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -653,10 +749,10 @@ const AdminDashboard = () => {
                             <button
                               onClick={() => handleEditApplication(application)}
                               className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
-                              title="Edit Application"
+                              title="Edit"
                             >
                               <svg
-                                className="w-4 h-4"
+                                className="w-3.5 h-3.5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -674,10 +770,10 @@ const AdminDashboard = () => {
                                 handleArchiveApplication(application)
                               }
                               className="text-yellow-600 hover:text-yellow-900 p-1 rounded hover:bg-yellow-50"
-                              title="Archive Application"
+                              title="Archive"
                             >
                               <svg
-                                className="w-4 h-4"
+                                className="w-3.5 h-3.5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -695,10 +791,10 @@ const AdminDashboard = () => {
                                 handleDeleteApplication(application)
                               }
                               className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
-                              title="Delete Application"
+                              title="Delete"
                             >
                               <svg
-                                className="w-4 h-4"
+                                className="w-3.5 h-3.5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -753,9 +849,9 @@ const AdminDashboard = () => {
       {/* Application Detail Modal */}
       {selectedApplication && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pb-3 border-b">
+              <h3 className="text-xl font-bold text-gray-900">
                 Application Details
               </h3>
               <button
@@ -778,56 +874,265 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
+            <div className="space-y-6">
+              {/* Header with Photo and Basic Info */}
+              <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-lg">
                 <img
-                  className="h-20 w-20 rounded-full object-cover"
+                  className="h-24 w-24 rounded-lg object-cover border-2 border-gray-200"
                   src={selectedApplication.photoUrl}
                   alt={selectedApplication.name}
                 />
-                <div>
-                  <h4 className="text-xl font-semibold text-gray-900">
+                <div className="flex-1">
+                  <h4 className="text-2xl font-bold text-gray-900 mb-2">
                     {selectedApplication.name}
                   </h4>
-                  <p className="text-gray-600">{selectedApplication.email}</p>
-                  <p className="text-gray-600">{selectedApplication.contact}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <span className="font-medium text-gray-700">Email:</span>
+                      <p className="text-gray-600">
+                        {selectedApplication.email}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Contact:
+                      </span>
+                      <p className="text-gray-600">
+                        {selectedApplication.contact}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <span
+                      className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                        statusColors[selectedApplication.status]
+                      }`}
+                    >
+                      {selectedApplication.status}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <h5 className="font-medium text-gray-900">
-                  Course Applied For:
+              {/* Personal Information Section */}
+              <div className="border-t pt-4">
+                <h5 className="text-lg font-bold text-gray-900 mb-3">
+                  Personal Information
                 </h5>
-                <p className="text-gray-600">
-                  {selectedApplication.courseApplied}
-                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedApplication.lastName && (
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Last Name:
+                      </span>
+                      <p className="text-gray-600">
+                        {selectedApplication.lastName}
+                      </p>
+                    </div>
+                  )}
+                  {selectedApplication.givenName && (
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Given Name:
+                      </span>
+                      <p className="text-gray-600">
+                        {selectedApplication.givenName}
+                      </p>
+                    </div>
+                  )}
+                  {selectedApplication.middleName && (
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Middle Name:
+                      </span>
+                      <p className="text-gray-600">
+                        {selectedApplication.middleName}
+                      </p>
+                    </div>
+                  )}
+                  {selectedApplication.dateOfBirth && (
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Date of Birth:
+                      </span>
+                      <p className="text-gray-600">
+                        {formatDate(selectedApplication.dateOfBirth)}
+                      </p>
+                    </div>
+                  )}
+                  {selectedApplication.age && (
+                    <div>
+                      <span className="font-medium text-gray-700">Age:</span>
+                      <p className="text-gray-600">
+                        {selectedApplication.age} years old
+                      </p>
+                    </div>
+                  )}
+                  {selectedApplication.sex && (
+                    <div>
+                      <span className="font-medium text-gray-700">Sex:</span>
+                      <p className="text-gray-600">{selectedApplication.sex}</p>
+                    </div>
+                  )}
+                </div>
+                {selectedApplication.presentAddress && (
+                  <div className="mt-3">
+                    <span className="font-medium text-gray-700">
+                      Present Address:
+                    </span>
+                    <p className="text-gray-600">
+                      {selectedApplication.presentAddress}
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div>
-                <h5 className="font-medium text-gray-900">
-                  Digital Signature:
+              {/* Educational Background */}
+              <div className="border-t pt-4">
+                <h5 className="text-lg font-bold text-gray-900 mb-3">
+                  Educational Background
                 </h5>
-                <img
-                  src={selectedApplication.signatureUrl}
-                  alt="Signature"
-                  className="border border-gray-300 rounded"
-                />
+                {selectedApplication.schoolLastAttended && (
+                  <div className="mb-3">
+                    <span className="font-medium text-gray-700">
+                      School Last Attended:
+                    </span>
+                    <p className="text-gray-600">
+                      {selectedApplication.schoolLastAttended}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <span className="font-medium text-gray-700">
+                    Course Applied For:
+                  </span>
+                  <p className="text-gray-600 font-medium">
+                    {selectedApplication.courseApplied}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex justify-between items-center pt-4 border-t">
-                <span className="text-sm text-gray-500">
-                  Submitted: {formatDate(selectedApplication.submittedAt)}
-                </span>
-                <span
-                  className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                    statusColors[selectedApplication.status]
-                  }`}
-                >
-                  {selectedApplication.status}
-                </span>
+              {/* Signatures Section */}
+              <div className="border-t pt-4">
+                <h5 className="text-lg font-bold text-gray-900 mb-3">
+                  Signatures
+                </h5>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span className="font-medium text-gray-700">
+                      Applicant's Signature:
+                    </span>
+                    <img
+                      src={selectedApplication.signatureUrl}
+                      alt="Applicant Signature"
+                      className="border border-gray-300 rounded mt-2 bg-white p-2"
+                    />
+                    {selectedApplication.dateSigned && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        Signed: {selectedApplication.dateSigned}
+                      </p>
+                    )}
+                  </div>
+                  {selectedApplication.examinerSignatureUrl && (
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Examiner's Signature:
+                      </span>
+                      <img
+                        src={selectedApplication.examinerSignatureUrl}
+                        alt="Examiner Signature"
+                        className="border border-gray-300 rounded mt-2 bg-white p-2"
+                      />
+                      {selectedApplication.examinerDateSigned && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          Signed:{" "}
+                          {formatDate(selectedApplication.examinerDateSigned)}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              <div className="flex justify-center space-x-4 pt-4">
+              {/* Examination Permit Section (for maritime courses) */}
+              {(selectedApplication.courseApplied ===
+                "Bachelor of Science in Marine Transportation" ||
+                selectedApplication.courseApplied ===
+                  "Bachelor of Science in Marine Engineering") && (
+                <div className="border-t pt-4 bg-blue-50 p-4 rounded-lg">
+                  <h5 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                    <svg
+                      className="w-5 h-5 mr-2 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    Examination Permit
+                  </h5>
+                  {selectedApplication.examDateTime ? (
+                    <div className="space-y-3">
+                      <div>
+                        <span className="font-medium text-gray-700">
+                          Examination Date/Time:
+                        </span>
+                        <p className="text-gray-600">
+                          {new Date(
+                            selectedApplication.examDateTime
+                          ).toLocaleString("en-US", {
+                            dateStyle: "full",
+                            timeStyle: "short",
+                          })}
+                        </p>
+                      </div>
+                      {selectedApplication.examinerSignatureUrl && (
+                        <div>
+                          <span className="font-medium text-gray-700">
+                            Examiner Approved:
+                          </span>
+                          <p className="text-green-600 font-medium flex items-center gap-1">
+                            <svg
+                              className="w-4 h-4"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            Yes
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic">
+                      Examination details not yet scheduled
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Submission Info */}
+              <div className="border-t pt-4">
+                <div className="flex justify-between items-center text-sm text-gray-500">
+                  <span>Application ID: {selectedApplication._id}</span>
+                  <span>
+                    Submitted: {formatDate(selectedApplication.submittedAt)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-center space-x-4 pt-4 border-t">
                 <button
                   onClick={() => setShowMissingRequirementsModal(true)}
                   className="bg-[#FFC300] hover:bg-[#E6AC00] text-[#0D1B2A] font-semibold py-2 px-4 rounded-lg transition-colors duration-200"

@@ -116,12 +116,6 @@ const Footer = () => {
                 Admission
               </a>
               <a
-                href="/admin/login"
-                className="block text-sm text-[#F5F7FA] hover:text-[#1B9AAA] transition-colors"
-              >
-                Admin Portal
-              </a>
-              <a
                 href="#"
                 className="block text-sm text-[#F5F7FA] hover:text-[#1B9AAA] transition-colors"
               >

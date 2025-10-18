@@ -66,7 +66,7 @@ const AdminHeader = () => {
                       d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"
                     />
                   </svg>
-                  <span className="font-medium">Dashboard</span>
+                  <span className="font-medium">Admission</span>
                 </span>
                 <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1B9AAA] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
               </Link>

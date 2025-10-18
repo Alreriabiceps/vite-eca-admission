@@ -12,8 +12,8 @@ const Analytics = () => {
   const [comparisonData, setComparisonData] = useState(null);
   const [showTargetModal, setShowTargetModal] = useState(false);
   const [courseTargets, setCourseTargets] = useState([]);
-  const [editingTarget, setEditingTarget] = useState(null);
-  const [editValue, setEditValue] = useState("");
+  const [isEditingAll, setIsEditingAll] = useState(false);
+  const [editValues, setEditValues] = useState({});
   const [saving, setSaving] = useState(false);
 
   const terms = [
@@ -66,53 +66,79 @@ const Analytics = () => {
     }
   };
 
-  const handleEditTarget = (courseName) => {
-    const target = courseTargets.find((t) => t.courseName === courseName);
-    setEditingTarget(courseName);
-    setEditValue((target?.target ?? 50).toString());
+  const handleStartEditing = () => {
+    // Initialize edit values with current targets
+    const initialValues = {};
+    analyticsData?.courseData?.forEach((course) => {
+      const target = courseTargets.find(
+        (t) => t.courseName === course.courseName
+      );
+      initialValues[course.courseName] = (target?.target ?? 50).toString();
+    });
+    setEditValues(initialValues);
+    setIsEditingAll(true);
   };
 
-  const handleSaveTarget = async () => {
+  const handleEditValueChange = (courseName, value) => {
+    setEditValues((prev) => ({
+      ...prev,
+      [courseName]: value,
+    }));
+  };
+
+  const handleSaveAllTargets = async () => {
     try {
       setSaving(true);
-      const numeric = parseInt(editValue);
-      if (Number.isNaN(numeric) || numeric < 0) {
-        alert("Please enter a valid non-negative number");
-        return;
+
+      // Validate all values
+      for (const [courseName, value] of Object.entries(editValues)) {
+        const numeric = parseInt(value);
+        if (Number.isNaN(numeric) || numeric < 0) {
+          alert(`Please enter a valid non-negative number for ${courseName}`);
+          return;
+        }
       }
 
-      const target = courseTargets.find((t) => t.courseName === editingTarget);
+      // Save all targets
+      const savePromises = Object.entries(editValues).map(
+        async ([courseName, value]) => {
+          const numeric = parseInt(value);
+          const target = courseTargets.find((t) => t.courseName === courseName);
 
-      if (target) {
-        // Update existing
-        await axios.put(`/api/course-targets/${target._id}`, {
-          target: numeric,
-        });
-      } else {
-        // Create new
-        await axios.post(`/api/course-targets`, {
-          courseName: editingTarget,
-          target: numeric,
-          academicYear: selectedYear.toString(),
-          term: selectedTerm,
-        });
-      }
+          if (target) {
+            // Update existing
+            return axios.put(`/api/course-targets/${target._id}`, {
+              target: numeric,
+            });
+          } else {
+            // Create new
+            return axios.post(`/api/course-targets`, {
+              courseName: courseName,
+              target: numeric,
+              academicYear: selectedYear.toString(),
+              term: selectedTerm,
+            });
+          }
+        }
+      );
 
+      await Promise.all(savePromises);
       await fetchCourseTargets();
       await fetchAnalyticsData(); // Refresh analytics data
-      setEditingTarget(null);
-      setEditValue("");
+      setIsEditingAll(false);
+      setEditValues({});
+      alert("All targets updated successfully!");
     } catch (error) {
-      console.error("Error saving target:", error);
-      alert("Failed to save target. Please try again.");
+      console.error("Error saving targets:", error);
+      alert("Failed to save targets. Please try again.");
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancelEdit = () => {
-    setEditingTarget(null);
-    setEditValue("");
+    setIsEditingAll(false);
+    setEditValues({});
   };
 
   useEffect(() => {
@@ -590,60 +616,55 @@ const Analytics = () => {
               </div>
 
               <div className="p-6 overflow-y-auto max-h-[60vh]">
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {analyticsData?.courseData?.map((course, index) => {
                     const target = courseTargets.find(
                       (t) => t.courseName === course.courseName
                     );
-                    const isEditing = editingTarget === course.courseName;
+                    const currentValue = isEditingAll
+                      ? editValues[course.courseName]
+                      : target?.target ?? 50;
 
                     return (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                        className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
                       >
                         <div className="flex-1">
                           <h4 className="font-medium text-gray-900">
                             {course.courseName}
                           </h4>
                           <p className="text-sm text-gray-500">
-                            Current: {course.actual} | Target: {course.target}
+                            Current: {course.actual} | Target:{" "}
+                            {isEditingAll ? (
+                              <span className="font-medium text-blue-600">
+                                Editing...
+                              </span>
+                            ) : (
+                              course.target
+                            )}
                           </p>
                         </div>
                         <div className="flex items-center space-x-3">
-                          {isEditing ? (
-                            <>
-                              <input
-                                type="number"
-                                value={editValue}
-                                onChange={(e) => setEditValue(e.target.value)}
-                                className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
-                                min="0"
-                                max="1000"
-                              />
-                              <button
-                                onClick={handleSaveTarget}
-                                disabled={saving}
-                                className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50"
-                              >
-                                {saving ? "Saving..." : "Save"}
-                              </button>
-                              <button
-                                onClick={handleCancelEdit}
-                                className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600"
-                              >
-                                Cancel
-                              </button>
-                            </>
-                          ) : (
-                            <button
-                              onClick={() =>
-                                handleEditTarget(course.courseName)
+                          {isEditingAll ? (
+                            <input
+                              type="number"
+                              value={currentValue}
+                              onChange={(e) =>
+                                handleEditValueChange(
+                                  course.courseName,
+                                  e.target.value
+                                )
                               }
-                              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                            >
-                              Edit
-                            </button>
+                              className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              min="0"
+                              max="1000"
+                              placeholder="Target"
+                            />
+                          ) : (
+                            <div className="w-24 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-center font-medium text-gray-700">
+                              {currentValue}
+                            </div>
                           )}
                         </div>
                       </div>
@@ -652,13 +673,65 @@ const Analytics = () => {
                 </div>
               </div>
 
-              <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowTargetModal(false)}
-                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
-                >
-                  Close
-                </button>
+              <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
+                {isEditingAll ? (
+                  <>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveAllTargets}
+                      disabled={saving}
+                      className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
+                    >
+                      {saving ? (
+                        <>
+                          <svg
+                            className="animate-spin h-4 w-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                          <span>Saving...</span>
+                        </>
+                      ) : (
+                        <span>Save All Changes</span>
+                      )}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setShowTargetModal(false)}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                    >
+                      Close
+                    </button>
+                    <button
+                      onClick={handleStartEditing}
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Edit All Targets
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

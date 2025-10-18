@@ -12,8 +12,6 @@ const BackupManagement = () => {
   const [selectedBackup, setSelectedBackup] = useState(null);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
-  const [autoRefresh, setAutoRefresh] = useState(false);
-  const [refreshInterval, setRefreshInterval] = useState(null);
   const [notification, setNotification] = useState({
     show: false,
     message: "",
@@ -24,28 +22,6 @@ const BackupManagement = () => {
     fetchBackups();
     fetchStats();
   }, []);
-
-  // Auto-refresh functionality
-  useEffect(() => {
-    if (autoRefresh) {
-      const interval = setInterval(() => {
-        fetchBackups();
-        fetchStats();
-      }, 30000); // Refresh every 30 seconds
-      setRefreshInterval(interval);
-    } else {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-        setRefreshInterval(null);
-      }
-    }
-
-    return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-      }
-    };
-  }, [autoRefresh]);
 
   const showNotification = (message, type = "success") => {
     setNotification({ show: true, message, type });
@@ -326,73 +302,49 @@ const BackupManagement = () => {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
-                Backup Management
-              </h1>
-              <p className="text-[#F5F7FA]">
-                Manage system backups and data recovery
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => {
-                  fetchBackups();
-                  fetchStats();
-                }}
-                className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg hover:bg-[#158A9A] transition-colors"
-              >
-                🔄 Refresh
-              </button>
-              <label className="flex items-center space-x-2 text-white">
-                <input
-                  type="checkbox"
-                  checked={autoRefresh}
-                  onChange={(e) => setAutoRefresh(e.target.checked)}
-                  className="w-4 h-4 text-[#1B9AAA] bg-gray-100 border-gray-300 rounded focus:ring-[#1B9AAA] focus:ring-2"
-                />
-                <span className="text-sm">Auto-refresh (30s)</span>
-              </label>
-            </div>
-          </div>
+        <div className="mb-4">
+          <h1 className="text-2xl font-bold text-white mb-1">
+            Backup Management
+          </h1>
+          <p className="text-sm text-gray-300">
+            Manage system backups and data recovery
+          </p>
         </div>
 
         {/* Stats Cards */}
         {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div className="bg-white/90 p-3 rounded-lg border border-gray-200">
+              <h3 className="text-xs font-medium text-gray-600 mb-1">
                 Total Backups
               </h3>
-              <p className="text-3xl font-bold text-[#1B9AAA]">
+              <p className="text-2xl font-bold text-gray-900">
                 {stats.totalBackups}
               </p>
             </div>
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#22c55e]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
+            <div className="bg-white/90 p-3 rounded-lg border border-gray-200">
+              <h3 className="text-xs font-medium text-gray-600 mb-1">
                 Total Size
               </h3>
-              <p className="text-3xl font-bold text-[#22c55e]">
+              <p className="text-2xl font-bold text-gray-900">
                 {formatFileSize(stats.totalSize)}
               </p>
             </div>
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#FFC300]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
+            <div className="bg-white/90 p-3 rounded-lg border border-gray-200">
+              <h3 className="text-xs font-medium text-gray-600 mb-1">
                 Last Backup
               </h3>
-              <p className="text-sm font-bold text-[#FFC300]">
+              <p className="text-xs font-semibold text-gray-900">
                 {stats.lastBackup ? formatDate(stats.lastBackup) : "Never"}
               </p>
             </div>
-            <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#E63946]/20">
-              <h3 className="text-lg font-medium text-[#0D1B2A] mb-2">
+            <div className="bg-white/90 p-3 rounded-lg border border-gray-200">
+              <h3 className="text-xs font-medium text-gray-600 mb-1">
                 Full Backups
               </h3>
-              <p className="text-3xl font-bold text-[#E63946]">
+              <p className="text-2xl font-bold text-gray-900">
                 {stats.fullBackups}
               </p>
             </div>
@@ -400,24 +352,24 @@ const BackupManagement = () => {
         )}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
           {/* Backup Actions */}
-          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20">
-            <h3 className="text-lg font-medium text-[#0D1B2A] mb-4">
+          <div className="bg-white/90 p-4 rounded-lg border border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">
               Backup Actions
             </h3>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={handleCreateFullBackup}
                 disabled={actionLoading}
-                className="bg-[#1B9AAA] hover:bg-[#158A9A] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                className="bg-gray-700 hover:bg-gray-800 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
               >
                 {actionLoading ? "Creating..." : "Create Full Backup"}
               </button>
               <button
                 onClick={handleCreateIncrementalBackup}
                 disabled={actionLoading}
-                className="bg-[#22c55e] hover:bg-[#16a34a] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                className="bg-gray-600 hover:bg-gray-700 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
               >
                 {actionLoading ? "Creating..." : "Create Incremental Backup"}
               </button>
@@ -426,7 +378,7 @@ const BackupManagement = () => {
                   fetchBackups();
                   fetchStats();
                 }}
-                className="bg-[#FFC300] hover:bg-[#E6AC00] text-[#0D1B2A] font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+                className="bg-gray-500 hover:bg-gray-600 text-white text-sm py-1.5 px-3 rounded transition-colors"
               >
                 Refresh
               </button>
@@ -434,29 +386,29 @@ const BackupManagement = () => {
           </div>
 
           {/* Export Actions */}
-          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#22c55e]/20">
-            <h3 className="text-lg font-medium text-[#0D1B2A] mb-4">
+          <div className="bg-white/90 p-4 rounded-lg border border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">
               Export Data
             </h3>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={handleExportCSV}
                 disabled={exportLoading}
-                className="bg-[#22c55e] hover:bg-[#16a34a] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                className="bg-gray-600 hover:bg-gray-700 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
               >
                 {exportLoading ? "Exporting..." : "Export CSV"}
               </button>
               <button
                 onClick={handleExportExcel}
                 disabled={exportLoading}
-                className="bg-[#1B9AAA] hover:bg-[#158A9A] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                className="bg-gray-700 hover:bg-gray-800 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
               >
                 {exportLoading ? "Exporting..." : "Export Excel"}
               </button>
               <button
                 onClick={handleExportPackage}
                 disabled={exportLoading}
-                className="bg-[#FFC300] hover:bg-[#E6AC00] text-[#0D1B2A] font-semibold py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50"
+                className="bg-gray-500 hover:bg-gray-600 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
               >
                 {exportLoading ? "Exporting..." : "Export Package"}
               </button>
@@ -465,74 +417,74 @@ const BackupManagement = () => {
         </div>
 
         {/* Backups List */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#1B9AAA]/20">
-            <h3 className="text-lg font-medium text-[#0D1B2A]">
+        <div className="bg-white/90 rounded-lg border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900">
               Available Backups
             </h3>
           </div>
 
           {backups.length === 0 ? (
-            <div className="p-8 text-center text-[#0D1B2A]">
+            <div className="p-8 text-center text-gray-500 text-sm">
               No backups available. Create your first backup to get started.
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-[#1B9AAA]/20">
-                <thead className="bg-[#F5F7FA]">
+              <table className="min-w-full divide-y divide-gray-200 text-sm">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase">
                       Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase">
                       Type
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase">
                       Size
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase">
                       Created
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase">
                       Records
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white/50 divide-y divide-[#1B9AAA]/20">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {backups.map((backup, index) => (
-                    <tr key={index} className="hover:bg-[#F5F7FA]/50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#0D1B2A]">
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
                         {backup.name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0D1B2A]">
+                      <td className="px-4 py-3 text-sm text-gray-900">
                         <span
-                          className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          className={`px-2 py-0.5 text-xs font-medium rounded ${
                             backup.type === "full"
-                              ? "bg-[#1B9AAA] text-white"
-                              : "bg-[#22c55e] text-white"
+                              ? "bg-gray-700 text-white"
+                              : "bg-gray-500 text-white"
                           }`}
                         >
                           {backup.type}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0D1B2A]">
+                      <td className="px-4 py-3 text-sm text-gray-600">
                         {formatFileSize(backup.size)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0D1B2A]">
+                      <td className="px-4 py-3 text-sm text-gray-600">
                         {formatDate(backup.timestamp)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-[#0D1B2A]">
+                      <td className="px-4 py-3 text-sm text-gray-600">
                         {backup.records.applications + backup.records.admins}{" "}
                         total
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <td className="px-4 py-3 text-sm font-medium">
                         <div className="flex space-x-2">
                           <button
                             onClick={() => handleDownloadBackup(backup.name)}
-                            className="text-[#1B9AAA] hover:text-[#158A9A]"
+                            className="text-blue-600 hover:text-blue-800"
                           >
                             Download
                           </button>
@@ -541,13 +493,13 @@ const BackupManagement = () => {
                               setSelectedBackup(backup);
                               setShowRestoreModal(true);
                             }}
-                            className="text-[#22c55e] hover:text-[#16a34a]"
+                            className="text-green-600 hover:text-green-800"
                           >
                             Restore
                           </button>
                           <button
                             onClick={() => handleDeleteBackup(backup.name)}
-                            className="text-[#E63946] hover:text-[#DC2626]"
+                            className="text-red-600 hover:text-red-800"
                           >
                             Delete
                           </button>
