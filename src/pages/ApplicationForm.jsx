@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SignaturePad from "react-signature-canvas";
-import { useEffect } from "react";
 
 const ApplicationForm = () => {
   const navigate = useNavigate();
@@ -33,14 +32,6 @@ const ApplicationForm = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-  // Debug: Monitor modal state changes
-  useEffect(() => {
-    console.log("🔄 Modal state changed:", showConfirmModal);
-    if (showConfirmModal) {
-      console.log("✅ Modal should be visible now!");
-    }
-  }, [showConfirmModal]);
 
   const courses = [
     // College of Maritime Education
@@ -182,18 +173,11 @@ const ApplicationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("🚀 Submit button clicked - starting validation");
-    alert("Submit button clicked! Check console for logs.");
 
-    if (!validateForm()) {
-      console.log("❌ Form validation failed");
-      return;
-    }
+    if (!validateForm()) return;
 
-    console.log("✅ Form validation passed - showing confirmation modal");
     // Show confirmation modal instead of submitting directly
     setShowConfirmModal(true);
-    console.log("📱 Modal state set to true:", showConfirmModal);
   };
 
   const handleConfirmSubmit = async () => {
@@ -943,13 +927,6 @@ const ApplicationForm = () => {
         </div>
       </div>
 
-      {/* Debug Info - Remove in production */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="fixed top-4 right-4 bg-black text-white p-2 rounded text-xs z-50">
-          Modal State: {showConfirmModal ? "TRUE" : "FALSE"}
-        </div>
-      )}
-
       {/* Confirmation Modal */}
       {showConfirmModal && (
         <div
@@ -962,15 +939,8 @@ const ApplicationForm = () => {
             }
           }}
         >
-          <div
-            className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
-            style={{ border: "5px solid red" }}
-          >
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="text-center">
-              {/* Debug Alert */}
-              <div className="bg-red-100 text-red-800 p-2 rounded mb-4 text-sm">
-                🚨 MODAL IS WORKING! 🚨
-              </div>
               {/* Icon */}
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
                 <svg
@@ -1004,24 +974,14 @@ const ApplicationForm = () => {
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => {
-                    console.log(
-                      "🔄 'I'll Check Again' clicked - closing modal"
-                    );
-                    setShowConfirmModal(false);
-                  }}
+                  onClick={() => setShowConfirmModal(false)}
                   className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
                 >
                   I'll Check Again
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    console.log(
-                      "✅ 'I'm Sure, Submit' clicked - proceeding with submission"
-                    );
-                    handleConfirmSubmit();
-                  }}
+                  onClick={handleConfirmSubmit}
                   className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                 >
                   I'm Sure, Submit
