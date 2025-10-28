@@ -28,7 +28,6 @@ const ApplicationForm = () => {
   });
   const [photo, setPhoto] = useState(null);
   const [signaturePad, setSignaturePad] = useState(null);
-  const [examinerSignaturePad, setExaminerSignaturePad] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -135,12 +134,6 @@ const ApplicationForm = () => {
     signaturePad.clear();
   };
 
-  const clearExaminerSignature = () => {
-    if (examinerSignaturePad) {
-      examinerSignaturePad.clear();
-    }
-  };
-
   const validateForm = () => {
     const newErrors = {};
 
@@ -218,19 +211,6 @@ const ApplicationForm = () => {
       const signatureDataURL = signaturePad.toDataURL();
       const signatureBlob = await fetch(signatureDataURL).then((r) => r.blob());
       formDataToSend.append("signature", signatureBlob, "signature.png");
-
-      // Convert examiner signature to blob if it exists
-      if (examinerSignaturePad && !examinerSignaturePad.isEmpty()) {
-        const examinerSignatureDataURL = examinerSignaturePad.toDataURL();
-        const examinerSignatureBlob = await fetch(
-          examinerSignatureDataURL
-        ).then((r) => r.blob());
-        formDataToSend.append(
-          "examinerSignature",
-          examinerSignatureBlob,
-          "examiner-signature.png"
-        );
-      }
 
       await axios.post("/api/applications/submit", formDataToSend, {
         headers: {
@@ -794,33 +774,6 @@ const ApplicationForm = () => {
                       <p className="text-xs text-[#6B7280] italic">
                         Select date and time for the examination
                       </p>
-                    </div>
-
-                    {/* Examiner's Signature */}
-                    <div className="space-y-2">
-                      <label className="block text-sm font-bold text-[#343A40] text-center uppercase">
-                        Examiner's Signature *
-                      </label>
-                      <div className="border-2 border-[#343A40] rounded-md p-4 bg-white">
-                        <SignaturePad
-                          ref={setExaminerSignaturePad}
-                          canvasProps={{
-                            className: "w-full h-32 border-0 bg-white",
-                          }}
-                        />
-                        <div className="mt-3 flex justify-between items-center">
-                          <p className="text-xs text-[#6B7280]">
-                            Examiner: Sign above using your mouse or touch
-                          </p>
-                          <button
-                            type="button"
-                            onClick={clearExaminerSignature}
-                            className="px-3 py-1 bg-[#F5F7FA] text-[#0D1B2A] border border-[#343A40] rounded hover:bg-[#E5E7EB] transition-all text-xs font-medium"
-                          >
-                            Clear
-                          </button>
-                        </div>
-                      </div>
                     </div>
 
                     {/* Date Signed */}

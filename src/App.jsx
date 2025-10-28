@@ -12,6 +12,7 @@ import BackupManagement from "./pages/BackupManagement";
 import Archives from "./pages/Archives";
 import Analytics from "./pages/Analytics";
 import CourseDetails from "./pages/CourseDetails";
+import NewsPost from "./pages/NewsPost";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/course/:courseSlug" element={<CourseDetails />} />
+            <Route path="/news/:slug" element={<NewsPost />} />
 
             {/* Protected Admin Routes */}
             <Route

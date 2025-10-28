@@ -12,6 +12,7 @@ const BackupManagement = () => {
   const [selectedBackup, setSelectedBackup] = useState(null);
   const [showRestoreModal, setShowRestoreModal] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [notification, setNotification] = useState({
     show: false,
     message: "",
@@ -125,25 +126,7 @@ const BackupManagement = () => {
     }
   };
 
-  const handleDownloadBackup = async (backupName) => {
-    try {
-      const response = await axios.get(`/api/backup/download/${backupName}`, {
-        responseType: "blob",
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `${backupName}.zip`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading backup:", error);
-      alert("Failed to download backup. Please try again.");
-    }
-  };
+  // Download removed per request
 
   const handleDeleteBackup = async (backupName) => {
     if (
@@ -226,28 +209,7 @@ const BackupManagement = () => {
     }
   };
 
-  const handleExportPackage = async () => {
-    setExportLoading(true);
-    try {
-      const response = await axios.get("/api/export/package", {
-        responseType: "blob",
-      });
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "sam-export-package.zip");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting package:", error);
-      alert("Failed to export package. Please try again.");
-    } finally {
-      setExportLoading(false);
-    }
-  };
+  // Export package removed per request
 
   const formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
@@ -392,25 +354,11 @@ const BackupManagement = () => {
             </h3>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={handleExportCSV}
-                disabled={exportLoading}
-                className="bg-gray-600 hover:bg-gray-700 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
-              >
-                {exportLoading ? "Exporting..." : "Export CSV"}
-              </button>
-              <button
-                onClick={handleExportExcel}
+                onClick={() => setShowExportModal(true)}
                 disabled={exportLoading}
                 className="bg-gray-700 hover:bg-gray-800 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
               >
-                {exportLoading ? "Exporting..." : "Export Excel"}
-              </button>
-              <button
-                onClick={handleExportPackage}
-                disabled={exportLoading}
-                className="bg-gray-500 hover:bg-gray-600 text-white text-sm py-1.5 px-3 rounded transition-colors disabled:opacity-50"
-              >
-                {exportLoading ? "Exporting..." : "Export Package"}
+                Export
               </button>
             </div>
           </div>
@@ -482,12 +430,6 @@ const BackupManagement = () => {
                       </td>
                       <td className="px-4 py-3 text-sm font-medium">
                         <div className="flex space-x-2">
-                          <button
-                            onClick={() => handleDownloadBackup(backup.name)}
-                            className="text-blue-600 hover:text-blue-800"
-                          >
-                            Download
-                          </button>
                           <button
                             onClick={() => {
                               setSelectedBackup(backup);
@@ -570,6 +512,61 @@ const BackupManagement = () => {
                     {actionLoading ? "Restoring..." : "Restore Backup"}
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Export Choice Modal */}
+        {showExportModal && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Export Applications
+                </h3>
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-4">
+                Choose your export format:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  onClick={async () => {
+                    setShowExportModal(false);
+                    await handleExportCSV();
+                  }}
+                  className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800"
+                >
+                  Export CSV
+                </button>
+                <button
+                  onClick={async () => {
+                    setShowExportModal(false);
+                    await handleExportExcel();
+                  }}
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                >
+                  Export Excel
+                </button>
               </div>
             </div>
           </div>

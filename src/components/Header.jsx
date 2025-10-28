@@ -28,15 +28,7 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Right Side - Admission Button */}
-          <div className="flex-shrink-0">
-            <Link
-              to="/application"
-              className="block bg-[#1B9AAA] hover:bg-[#158A9A] text-white font-semibold py-2 px-6 rounded-lg text-base transition-colors duration-200 shadow-lg hover:shadow-xl text-center min-w-[120px]"
-            >
-              Admission
-            </Link>
-          </div>
+          {/* Right Side - CTA removed per request */}
         </div>
       </div>
     </div>

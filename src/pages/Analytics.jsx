@@ -15,6 +15,7 @@ const Analytics = () => {
   const [isEditingAll, setIsEditingAll] = useState(false);
   const [editValues, setEditValues] = useState({});
   const [saving, setSaving] = useState(false);
+  const [printing, setPrinting] = useState(false);
 
   const terms = [
     { value: "all", label: "All Terms" },
@@ -175,6 +176,166 @@ const Analytics = () => {
     return "Below Target";
   };
 
+  const handleCustomPrint = () => {
+    const today = new Date().toLocaleString();
+    const data = analyticsData;
+    const compare = comparisonData;
+
+    const safe = (v) => (v === undefined || v === null ? "-" : v);
+
+    const coursesRows = (data?.courseData || [])
+      .map(
+        (c, idx) => `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${c.courseName}</td>
+            <td>${safe(c.target)}</td>
+            <td>${safe(c.actual)}</td>
+            <td>${safe(c.achievement)}%</td>
+            <td>${getStatusText(c.actual, c.target)}</td>
+            <td>${c.variance >= 0 ? "+" : ""}${safe(c.variance)}</td>
+          </tr>
+        `
+      )
+      .join("");
+
+    const yearlyRows = (compare?.yearlyData || [])
+      .map(
+        (y) => `
+          <tr>
+            <td>${y.year}</td>
+            <td>${safe(y.enrollment)}</td>
+            <td>${y.growth > 0 ? "+" : ""}${safe(y.growth)}%</td>
+          </tr>
+        `
+      )
+      .join("");
+
+    const topCourseRows = (compare?.topCourses || [])
+      .map(
+        (c, i) => `
+          <tr>
+            <td>#${i + 1}</td>
+            <td>${c.name}</td>
+            <td>${safe(c.enrollment)}</td>
+            <td>${c.growth > 0 ? "+" : ""}${safe(c.growth)}%</td>
+          </tr>
+        `
+      )
+      .join("");
+
+    const html = `<!doctype html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Admission Analytics Report</title>
+          <style>
+            * { box-sizing: border-box; }
+            body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color:#0D1B2A; margin:0; }
+            .container { padding: 24px; }
+            .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; }
+            .title { font-size:20px; font-weight:800; }
+            .meta { font-size:12px; color:#475569; }
+            .cards { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin:16px 0 24px; }
+            .card { border:1px solid #e2e8f0; border-radius:10px; padding:12px; background:#fff; }
+            .card h4 { margin:0 0 6px; font-size:11px; color:#475569; font-weight:600; }
+            .card p { margin:0; font-size:20px; font-weight:800; }
+            h3 { font-size:15px; margin:18px 0 8px; }
+            table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; }
+            thead { background:#F5F7FA; }
+            th, td { padding:8px 10px; font-size:12px; border-bottom:1px solid #e2e8f0; text-align:left; }
+            th { font-weight:700; color:#0D1B2A; }
+            tr:last-child td { border-bottom:none; }
+            .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+            @media print {
+              .container { padding: 12mm; }
+              .cards { grid-template-columns: repeat(4, 1fr); }
+              .grid-2 { grid-template-columns: 1fr 1fr; }
+              .no-print { display:none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div>
+                <div class="title">Admission Analytics Report</div>
+                <div class="meta">Academic Year: ${selectedYear} ${
+      selectedTerm !== "all"
+        ? `(${terms.find((t) => t.value === selectedTerm)?.label})`
+        : "(All Terms)"
+    }</div>
+              </div>
+              <div class="meta">Generated: ${today}</div>
+            </div>
+
+            <div class="cards">
+              <div class="card"><h4>Total Enrolled</h4><p>${safe(
+                data?.totalEnrolled
+              )}</p></div>
+              <div class="card"><h4>Target Met</h4><p>${safe(
+                data?.coursesMeetingTarget
+              )}</p></div>
+              <div class="card"><h4>Average Achievement</h4><p>${safe(
+                data?.averageAchievement
+              )}%</p></div>
+              <div class="card"><h4>Below Target</h4><p>${safe(
+                data?.coursesBelowTarget
+              )}</p></div>
+            </div>
+
+            <h3>Course Enrollment Analysis - ${selectedYear}</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Course</th>
+                  <th>Target</th>
+                  <th>Actual</th>
+                  <th>Achievement</th>
+                  <th>Status</th>
+                  <th>Variance</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${coursesRows}
+              </tbody>
+            </table>
+
+            <div class="grid-2">
+              <div>
+                <h3>Year-to-Year Trend</h3>
+                <table>
+                  <thead><tr><th>Year</th><th>Enrollment</th><th>Growth</th></tr></thead>
+                  <tbody>${yearlyRows}</tbody>
+                </table>
+              </div>
+              <div>
+                <h3>Top Performing Courses</h3>
+                <table>
+                  <thead><tr><th>Rank</th><th>Course</th><th>Enrollment</th><th>Growth</th></tr></thead>
+                  <tbody>${topCourseRows}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </body>
+      </html>`;
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    printWindow.document.open();
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.focus();
+    // Give time for layout/images
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 300);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
@@ -190,10 +351,13 @@ const Analytics = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] print:bg-white">
       <AdminHeader />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:px-0 print:py-0"
+        id="analytics-print-area"
+      >
         {/* Header */}
         <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20 mb-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
@@ -239,12 +403,18 @@ const Analytics = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex items-end">
+              <div className="flex items-end gap-3">
                 <button
                   onClick={() => setShowTargetModal(true)}
                   className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200"
                 >
                   Edit Targets
+                </button>
+                <button
+                  onClick={handleCustomPrint}
+                  className="px-6 py-2 bg-[#1B9AAA] text-white rounded-lg hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 transition-all duration-200"
+                >
+                  Print
                 </button>
               </div>
             </div>

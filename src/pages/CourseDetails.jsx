@@ -360,6 +360,17 @@ const CourseDetails = () => {
 
   const course = courseData[courseSlug];
 
+  // Determine previous and next courses based on the order of keys
+  const courseSlugs = Object.keys(courseData);
+  const currentIndex = courseSlugs.indexOf(courseSlug);
+  const prevIndex =
+    (currentIndex - 1 + courseSlugs.length) % courseSlugs.length;
+  const nextIndex = (currentIndex + 1) % courseSlugs.length;
+  const prevSlug = courseSlugs[prevIndex];
+  const nextSlug = courseSlugs[nextIndex];
+  const nextCourse = courseData[nextSlug];
+  const prevCourse = courseData[prevSlug];
+
   if (!course) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
@@ -385,6 +396,70 @@ const CourseDetails = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+      {/* Side Navigation Arrows with labels (labels positioned independently) */}
+      {/* Left Arrow */}
+      {currentIndex > 0 && (
+        <>
+          <Link
+            to={`/course/${prevSlug}`}
+            className="fixed left-4 top-1/2 -translate-y-1/2 z-40 bg-white/90 hover:bg-white text-[#0D1B2A] shadow-lg border border-[#1B9AAA]/20 rounded-full p-3 transition-colors"
+            aria-label="Previous course"
+            title={`Previous: ${prevCourse?.shortTitle || ""}`}
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </Link>
+          {/* Left Label (constant offset below screen center) */}
+          <Link
+            to={`/course/${prevSlug}`}
+            className="fixed left-4 z-40 text-white/90 hover:text-white text-xs bg-white/10 hover:bg-white/20 rounded-md px-2 py-1 border border-white/20 max-w-[10rem] text-center"
+            style={{ top: "calc(50% + 44px)" }}
+          >
+            Previous: {prevCourse?.shortTitle}
+          </Link>
+        </>
+      )}
+
+      {/* Right Arrow */}
+      <Link
+        to={`/course/${nextSlug}`}
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-40 bg-white/90 hover:bg-white text-[#0D1B2A] shadow-lg border border-[#1B9AAA]/20 rounded-full p-3 transition-colors"
+        aria-label="Next course"
+        title={`Next: ${nextCourse?.shortTitle || ""}`}
+      >
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </Link>
+      {/* Right Label (constant offset below screen center) */}
+      <Link
+        to={`/course/${nextSlug}`}
+        className="fixed right-4 z-40 text-white/90 hover:text-white text-xs bg-white/10 hover:bg-white/20 rounded-md px-2 py-1 border border-white/20 max-w-[10rem] text-center"
+        style={{ top: "calc(50% + 44px)" }}
+      >
+        Next: {nextCourse?.shortTitle}
+      </Link>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Course Header */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#1B9AAA]/20 p-8 mb-8">

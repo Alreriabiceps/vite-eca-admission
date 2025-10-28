@@ -12,6 +12,13 @@ const Archives = () => {
     pages: 1,
     total: 0,
   });
+  const [filters, setFilters] = useState({
+    search: "",
+    course: "all",
+    status: "all",
+    dateFrom: "",
+    dateTo: "",
+  });
 
   const statusColors = {
     pending: "bg-yellow-100 text-yellow-800",
@@ -25,9 +32,16 @@ const Archives = () => {
     try {
       setLoading(true);
       console.log("Fetching archived applications...");
-      const response = await axios.get(
-        `/api/applications/archived?page=${page}&limit=10`
-      );
+      const params = new URLSearchParams();
+      params.set("page", page.toString());
+      params.set("limit", "10");
+      if (filters.search) params.set("search", filters.search);
+      if (filters.course !== "all") params.set("course", filters.course);
+      if (filters.status !== "all") params.set("status", filters.status);
+      if (filters.dateFrom) params.set("from", filters.dateFrom);
+      if (filters.dateTo) params.set("to", filters.dateTo);
+
+      const response = await axios.get(`/api/applications/archived?${params}`);
       console.log("Archived applications response:", response.data);
       setArchivedApplications(response.data.applications);
       setPagination(response.data.pagination);
@@ -40,8 +54,8 @@ const Archives = () => {
   };
 
   useEffect(() => {
-    fetchArchivedApplications();
-  }, []);
+    fetchArchivedApplications(1);
+  }, [filters]);
 
   const handleUnarchiveApplication = async (application) => {
     if (
@@ -111,6 +125,87 @@ const Archives = () => {
               <div className="text-sm text-gray-500">
                 Total: {pagination.total} archived applications
               </div>
+            </div>
+          </div>
+
+          {/* Filters */}
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+            <input
+              type="text"
+              value={filters.search}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, search: e.target.value }))
+              }
+              placeholder="Search name or email"
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            />
+            <select
+              value={filters.course}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, course: e.target.value }))
+              }
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="all">All Courses</option>
+              <option> Bachelor of Science in Marine Transportation</option>
+              <option> Bachelor of Science in Marine Engineering</option>
+              <option> Bachelor of Science in Nursing</option>
+              <option> Bachelor of Early Childhood Education</option>
+              <option>
+                {" "}
+                Bachelor of Technical-Vocational Teacher Education
+              </option>
+              <option> Bachelor of Science in Entrepreneurship</option>
+              <option> Bachelor of Science in Management Accounting</option>
+              <option> Bachelor of Science in Information System</option>
+              <option> Bachelor of Science in Tourism Management</option>
+              <option> Bachelor of Science in Criminology</option>
+            </select>
+            <select
+              value={filters.status}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, status: e.target.value }))
+              }
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="verified">Verified</option>
+              <option value="incomplete">Incomplete</option>
+              <option value="admitted">Admitted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <input
+              type="date"
+              value={filters.dateFrom}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, dateFrom: e.target.value }))
+              }
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            />
+            <div className="flex gap-2">
+              <input
+                type="date"
+                value={filters.dateTo}
+                onChange={(e) =>
+                  setFilters((f) => ({ ...f, dateTo: e.target.value }))
+                }
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              />
+              <button
+                onClick={() =>
+                  setFilters({
+                    search: "",
+                    course: "all",
+                    status: "all",
+                    dateFrom: "",
+                    dateTo: "",
+                  })
+                }
+                className="px-3 py-2 text-sm border border-gray-300 rounded-lg"
+              >
+                Reset
+              </button>
             </div>
           </div>
         </div>

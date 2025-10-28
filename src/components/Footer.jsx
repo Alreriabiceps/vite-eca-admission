@@ -2,7 +2,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#0D1B2A] text-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
           {/* Left Section - Logo and University Name */}
           <div className="flex items-start space-x-4">
             <img
@@ -94,45 +94,6 @@ const Footer = () => {
                   @ExactCollegesAsia
                 </span>
               </div>
-            </div>
-          </div>
-
-          {/* Right Section - Quick Links */}
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-2">
-              Quick Links
-            </h4>
-            <div className="space-y-1">
-              <a
-                href="/"
-                className="block text-sm text-[#F5F7FA] hover:text-[#1B9AAA] transition-colors"
-              >
-                Home
-              </a>
-              <a
-                href="/application"
-                className="block text-sm text-[#F5F7FA] hover:text-[#1B9AAA] transition-colors"
-              >
-                Admission
-              </a>
-              <a
-                href="#"
-                className="block text-sm text-[#F5F7FA] hover:text-[#1B9AAA] transition-colors"
-              >
-                Programs
-              </a>
-              <a
-                href="#"
-                className="block text-sm text-[#F5F7FA] hover:text-[#1B9AAA] transition-colors"
-              >
-                About Us
-              </a>
-              <a
-                href="#"
-                className="block text-sm text-[#F5F7FA] hover:text-[#1B9AAA] transition-colors"
-              >
-                Contact
-              </a>
             </div>
           </div>
         </div>
