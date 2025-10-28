@@ -1,4 +1,5 @@
 import { createPortal } from "react-dom";
+import { Link } from "react-router-dom";
 
 const CourseModal = ({
   isOpen,
@@ -10,6 +11,12 @@ const CourseModal = ({
   onPrev,
 }) => {
   if (!isOpen || !course) return null;
+
+  const prevIndex =
+    (currentIndex - 1 + (courses?.length || 1)) % (courses?.length || 1);
+  const nextIndex = (currentIndex + 1) % (courses?.length || 1);
+  const prevCourseName = courses?.[prevIndex]?.title || "Previous";
+  const nextCourseName = courses?.[nextIndex]?.title || "Next";
 
   return createPortal(
     <div
@@ -33,24 +40,32 @@ const CourseModal = ({
               <p className="text-xs text-white/90">{course.college}</p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="bg-white/90 hover:bg-white text-[#0D1B2A] rounded-full p-2 shadow-lg transition-colors"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex items-center gap-2">
+            <Link
+              to="/application"
+              className="hidden sm:inline-block px-3 py-1 text-xs bg-white text-[#1B9AAA] font-semibold rounded-lg hover:bg-gray-100 shadow"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              Apply Now
+            </Link>
+            <button
+              onClick={onClose}
+              className="bg-white/90 hover:bg-white text-[#0D1B2A] rounded-full p-2 shadow-lg transition-colors"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Content */}
@@ -165,51 +180,21 @@ const CourseModal = ({
             )}
           </div>
 
-          {/* Navigation Buttons */}
+          {/* Navigation with course names */}
           <div className="flex justify-between items-center gap-4 mt-6">
             <button
               onClick={onPrev}
-              className="flex items-center gap-2 text-[#1B9AAA] hover:text-[#158A9A] font-semibold"
+              className="text-sm text-[#1B9AAA] hover:text-[#158A9A] font-semibold truncate max-w-[40%]"
+              title={prevCourseName}
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Previous
-            </button>
-            <button
-              onClick={onClose}
-              className="bg-[#1B9AAA] hover:bg-[#158A9A] text-white font-semibold px-6 py-3 rounded-lg transition-colors"
-            >
-              Close
+              ← {prevCourseName}
             </button>
             <button
               onClick={onNext}
-              className="flex items-center gap-2 text-[#1B9AAA] hover:text-[#158A9A] font-semibold"
+              className="text-sm text-[#1B9AAA] hover:text-[#158A9A] font-semibold truncate max-w-[40%] text-right ml-auto"
+              title={nextCourseName}
             >
-              Next
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
+              {nextCourseName} →
             </button>
           </div>
         </div>
