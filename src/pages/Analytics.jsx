@@ -16,6 +16,8 @@ const Analytics = () => {
   const [editValues, setEditValues] = useState({});
   const [saving, setSaving] = useState(false);
   const [printing, setPrinting] = useState(false);
+  const [showBatchUploadModal, setShowBatchUploadModal] = useState(false);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   const terms = [
     { value: "all", label: "All Terms" },
@@ -421,6 +423,35 @@ const Analytics = () => {
           </div>
         </div>
 
+        <div className="bg-white text-[#0D1B2A] border border-[#1B9AAA]/30 rounded-2xl p-6 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6 shadow-lg shadow-[#0D1B2A]/5">
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold tracking-tight">
+              Enrollment Sync (Registrar Import) — Preview
+            </h2>
+            <p className="text-base leading-relaxed text-[#0D1B2A]/80">
+              Analytics now track <span className="font-semibold">enrolled</span> students only.
+              Soon you will be able to match registrar lists against admission
+              records and confirm which applicants have officially enrolled.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setShowBatchUploadModal(true)}
+              className="px-5 py-2.5 bg-[#1B9AAA] text-white rounded-lg shadow hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 focus:ring-offset-white transition-colors text-sm font-semibold"
+            >
+              Open Batch Upload Preview
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowTemplateModal(true)}
+              className="px-5 py-2.5 border border-[#1B9AAA] text-[#0D1B2A] rounded-lg hover:bg-[#1B9AAA]/10 focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 focus:ring-offset-white transition-colors text-sm font-semibold"
+            >
+              View Sample Template
+            </button>
+          </div>
+        </div>
+
         {/* Summary Cards */}
         {analyticsData ? (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -750,6 +781,256 @@ const Analytics = () => {
               </div>
               <div className="text-gray-400 text-sm mt-2">
                 Historical data is being loaded or not available
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Batch Upload Preview Modal */}
+        {showBatchUploadModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-semibold text-[#0D1B2A]">
+                    Batch Upload Preview
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Walkthrough of the upcoming registrar import flow.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowBatchUploadModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-6 py-5 space-y-6 max-h-[70vh] overflow-y-auto">
+                <div className="grid md:grid-cols-2 gap-4">
+                  {[
+                    {
+                      title: "Step 1 · Download Template",
+                      description:
+                        "Registrar exports the enrolled list using the standardized CSV/XLSX template to ensure column names line up.",
+                    },
+                    {
+                      title: "Step 2 · Upload Registrar File",
+                      description:
+                        "Upload the file here. The system validates required columns (Full Name, Student ID, Program, Enrollment Date).",
+                    },
+                    {
+                      title: "Step 3 · Match & Review",
+                      description:
+                        "Admissions records are matched by name + birthdate. Any conflicts will be highlighted for manual review.",
+                    },
+                    {
+                      title: "Step 4 · Confirm Updates",
+                      description:
+                        "After reviewing matches, confirm to mark the matched applicants as enrolled and log the import batch.",
+                    },
+                  ].map((step) => (
+                    <div
+                      key={step.title}
+                      className="p-4 border border-[#1B9AAA]/30 rounded-xl bg-[#F8FBFC]"
+                    >
+                      <h4 className="font-semibold text-[#0D1B2A] mb-1 text-base">
+                        {step.title}
+                      </h4>
+                      <p className="text-sm text-[#0D1B2A]/75 leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border border-dashed border-[#1B9AAA]/40 rounded-2xl p-6 bg-[#F1FAFE]">
+                  <h4 className="text-lg font-semibold text-[#0D1B2A] mb-2">
+                    Try a Sample Upload
+                  </h4>
+                  <p className="text-sm text-[#0D1B2A]/70 mb-4">
+                    This preview uploader is for demonstration only—files aren’t
+                    saved yet, but you can see the interaction.
+                  </p>
+                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#1B9AAA] rounded-xl p-6 cursor-pointer bg-white hover:bg-[#F8FBFC] transition-colors">
+                    <svg
+                      className="w-10 h-10 text-[#1B9AAA] mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M4 12l8-8 8 8M12 4v12"
+                      />
+                    </svg>
+                    <span className="text-sm font-semibold text-[#1B9AAA]">
+                      Click to upload registrar CSV / XLSX
+                    </span>
+                    <span className="mt-2 text-xs text-[#0D1B2A]/60">
+                      Supported soon · .csv, .xlsx · Max 5MB
+                    </span>
+                    <input
+                      type="file"
+                      accept=".csv,.xlsx"
+                      className="hidden"
+                      onChange={() => {
+                        alert(
+                          "Thanks for trying the preview! Import processing will be enabled in the live release."
+                        );
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-gray-50">
+                <div className="text-sm text-gray-500">
+                  Status: <span className="font-medium text-[#0D1B2A]">Design Preview</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg cursor-not-allowed"
+                    disabled
+                  >
+                    Match Records (disabled)
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg cursor-not-allowed"
+                    disabled
+                  >
+                    Confirm Enrollment (disabled)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Template Preview Modal */}
+        {showTemplateModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-semibold text-[#0D1B2A]">
+                    Sample Template Preview
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Final column list may adjust before launch.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowTemplateModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                <p className="text-sm text-[#0D1B2A]/75">
+                  Suggested columns for the registrar upload. Ensure values are
+                  clean and free from extra spaces for the best match accuracy.
+                </p>
+                <div className="overflow-x-auto border border-gray-200 rounded-xl">
+                  <table className="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead className="bg-[#F5F7FA] text-[#0D1B2A]">
+                      <tr>
+                        {[
+                          "Student ID",
+                          "Full Name",
+                          "Birthdate (YYYY-MM-DD)",
+                          "Program",
+                          "Enrollment Date",
+                          "Registrar Remarks",
+                        ].map((column) => (
+                          <th key={column} className="px-4 py-3 text-left font-semibold">
+                            {column}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100 text-[#0D1B2A]/80">
+                      {[
+                        [
+                          "ECA-24-001",
+                          "Maria Angelica Santos",
+                          "2007-05-12",
+                          "BS Nursing",
+                          "2025-08-15",
+                          "Section assigned",
+                        ],
+                        [
+                          "ECA-24-002",
+                          "John Michael Reyes",
+                          "2006-11-03",
+                          "BS Information System",
+                          "2025-08-16",
+                          "Requires ID photo",
+                        ],
+                      ].map((row, rowIndex) => (
+                        <tr key={rowIndex} className="hover:bg-[#F8FBFC]">
+                          {row.map((cell, cellIndex) => (
+                            <td key={cellIndex} className="px-4 py-3 whitespace-nowrap">
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button
+                  type="button"
+                  className="px-5 py-2 bg-[#1B9AAA] text-white rounded-lg shadow hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 transition-colors text-sm font-semibold"
+                  onClick={() =>
+                    alert(
+                      "Template download will be available once the batch upload feature goes live."
+                    )
+                  }
+                >
+                  Download Sample (Soon)
+                </button>
+              </div>
+
+              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowTemplateModal(false)}
+                  className="px-5 py-2 bg-[#0D1B2A] text-white rounded-lg hover:bg-[#11253a] transition-colors text-sm font-semibold"
+                >
+                  Close Preview
+                </button>
               </div>
             </div>
           </div>

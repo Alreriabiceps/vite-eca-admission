@@ -73,6 +73,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refreshAdmin = async () => {
+    try {
+      const response = await axios.get("/api/auth/me");
+      setAdmin(response.data.admin);
+      return response.data.admin;
+    } catch (error) {
+      console.error("Refresh admin error:", error);
+      return null;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem("adminToken");
     delete axios.defaults.headers.common["Authorization"];
@@ -84,6 +95,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     loading,
+    refreshAdmin,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

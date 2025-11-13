@@ -13,6 +13,9 @@ import Archives from "./pages/Archives";
 import Analytics from "./pages/Analytics";
 import CourseDetails from "./pages/CourseDetails";
 import NewsPost from "./pages/NewsPost";
+import AdminSettings from "./pages/AdminSettings";
+import AdminForgotPassword from "./pages/AdminForgotPassword";
+import AdminResetPassword from "./pages/AdminResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -36,6 +39,14 @@ function App() {
             <Route path="/application" element={<ApplicationForm />} />
             <Route path="/confirmation" element={<Confirmation />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/forgot-password"
+              element={<AdminForgotPassword />}
+            />
+            <Route
+              path="/admin/reset-password"
+              element={<AdminResetPassword />}
+            />
             <Route path="/course/:courseSlug" element={<CourseDetails />} />
             <Route path="/news/:slug" element={<NewsPost />} />
 
@@ -69,6 +80,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute>
+                  <AdminSettings />
                 </ProtectedRoute>
               }
             />

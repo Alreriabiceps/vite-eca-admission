@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
 const AdminLogin = () => {
@@ -101,6 +101,15 @@ const AdminLogin = () => {
               </div>
             </div>
 
+            <div className="flex justify-end">
+              <Link
+                to="/admin/forgot-password"
+                className="text-sm text-[#1B9AAA] hover:text-[#158A9A] font-medium"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
             <div className="pt-4">
               <button
                 type="submit"
@@ -141,8 +150,8 @@ const AdminLogin = () => {
 
         {/* Navigation */}
         <div className="text-center">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-flex items-center text-[#1B9AAA] hover:text-[#158A9A] text-sm font-medium transition-colors duration-200"
           >
             <svg
@@ -159,7 +168,7 @@ const AdminLogin = () => {
               />
             </svg>
             Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

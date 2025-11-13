@@ -129,83 +129,109 @@ const Archives = () => {
           </div>
 
           {/* Filters */}
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-3">
-            <input
-              type="text"
-              value={filters.search}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, search: e.target.value }))
-              }
-              placeholder="Search name or email"
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-            />
-            <select
-              value={filters.course}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, course: e.target.value }))
-              }
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-            >
-              <option value="all">All Courses</option>
-              <option> Bachelor of Science in Marine Transportation</option>
-              <option> Bachelor of Science in Marine Engineering</option>
-              <option> Bachelor of Science in Nursing</option>
-              <option> Bachelor of Early Childhood Education</option>
-              <option>
-                {" "}
-                Bachelor of Technical-Vocational Teacher Education
-              </option>
-              <option> Bachelor of Science in Entrepreneurship</option>
-              <option> Bachelor of Science in Management Accounting</option>
-              <option> Bachelor of Science in Information System</option>
-              <option> Bachelor of Science in Tourism Management</option>
-              <option> Bachelor of Science in Criminology</option>
-            </select>
-            <select
-              value={filters.status}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, status: e.target.value }))
-              }
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-            >
-              <option value="all">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="verified">Verified</option>
-              <option value="incomplete">Incomplete</option>
-              <option value="admitted">Admitted</option>
-              <option value="rejected">Rejected</option>
-            </select>
-            <input
-              type="date"
-              value={filters.dateFrom}
-              onChange={(e) =>
-                setFilters((f) => ({ ...f, dateFrom: e.target.value }))
-              }
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-            />
-            <div className="flex gap-2">
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-2 text-sm">
+            <div className="flex flex-col">
+              <label className="text-xs font-medium text-gray-600 mb-1">
+                Search
+              </label>
+              <input
+                type="text"
+                value={filters.search}
+                onChange={(e) =>
+                  setFilters((f) => ({ ...f, search: e.target.value }))
+                }
+                placeholder="Name or email"
+                className="px-3 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-medium text-gray-600 mb-1">
+                Course
+              </label>
+              <select
+                value={filters.course}
+                onChange={(e) =>
+                  setFilters((f) => ({ ...f, course: e.target.value.trim() }))
+                }
+                className="px-3 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="all">All Courses</option>
+                <option>Bachelor of Science in Marine Transportation</option>
+                <option>Bachelor of Science in Marine Engineering</option>
+                <option>Bachelor of Science in Nursing</option>
+                <option>Bachelor of Early Childhood Education</option>
+                <option>
+                  Bachelor of Technical-Vocational Teacher Education (Major in
+                  Food and Service Management)
+                </option>
+                <option>Bachelor of Science in Entrepreneurship</option>
+                <option>Bachelor of Science in Management Accounting</option>
+                <option>Bachelor of Science in Information System</option>
+                <option>Bachelor of Science in Tourism Management</option>
+                <option>Bachelor of Science in Criminology</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-medium text-gray-600 mb-1">
+                Status
+              </label>
+              <select
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters((f) => ({ ...f, status: e.target.value }))
+                }
+                className="px-3 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="verified">Verified</option>
+                <option value="incomplete">Incomplete</option>
+                <option value="admitted">Admitted</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-medium text-gray-600 mb-1">
+                From
+              </label>
               <input
                 type="date"
-                value={filters.dateTo}
+                value={filters.dateFrom}
                 onChange={(e) =>
-                  setFilters((f) => ({ ...f, dateTo: e.target.value }))
+                  setFilters((f) => ({ ...f, dateFrom: e.target.value }))
                 }
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="px-3 py-2 border border-gray-300 rounded-lg"
               />
-              <button
-                onClick={() =>
-                  setFilters({
-                    search: "",
-                    course: "all",
-                    status: "all",
-                    dateFrom: "",
-                    dateTo: "",
-                  })
-                }
-                className="px-3 py-2 text-sm border border-gray-300 rounded-lg"
-              >
-                Reset
-              </button>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-medium text-gray-600 mb-1">
+                To
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="date"
+                  value={filters.dateTo}
+                  onChange={(e) =>
+                    setFilters((f) => ({ ...f, dateTo: e.target.value }))
+                  }
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                />
+                <button
+                  onClick={() =>
+                    setFilters({
+                      search: "",
+                      course: "all",
+                      status: "all",
+                      dateFrom: "",
+                      dateTo: "",
+                    })
+                  }
+                  className="px-3 py-2 border border-gray-300 rounded-lg text-xs font-medium text-gray-600 hover:bg-gray-100"
+                  title="Reset filters"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -25,6 +25,7 @@ const ApplicationForm = () => {
     // Examination Permit fields
     examDateTime: "",
     examinerDateSigned: "",
+    privacyConsent: false,
   });
   const [photo, setPhoto] = useState(null);
   const [signaturePad, setSignaturePad] = useState(null);
@@ -159,6 +160,9 @@ const ApplicationForm = () => {
     if (!photo) newErrors.photo = "Profile photo is required";
     if (signaturePad?.isEmpty())
       newErrors.signature = "Digital signature is required";
+    if (!formData.privacyConsent)
+      newErrors.privacyConsent =
+        "You must acknowledge the Data Privacy Act notice to continue.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -195,6 +199,10 @@ const ApplicationForm = () => {
       formDataToSend.append("sex", formData.sex);
       formDataToSend.append("dateSigned", formData.dateSigned);
       formDataToSend.append("photo", photo);
+      formDataToSend.append(
+        "privacyConsent",
+        formData.privacyConsent ? "true" : "false"
+      );
 
       // Add examiner fields if they exist (for maritime courses)
       if (formData.examDateTime) {
@@ -798,11 +806,47 @@ const ApplicationForm = () => {
               </div>
             )}
 
+            {/* Data Privacy Consent */}
+            <div className="mt-8 bg-[#F5F7FA] border border-[#1B9AAA]/30 rounded-xl p-5">
+              <div className="flex items-start gap-3">
+                <input
+                  id="privacyConsent"
+                  type="checkbox"
+                  checked={formData.privacyConsent}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setFormData((prev) => ({
+                      ...prev,
+                      privacyConsent: checked,
+                    }));
+                    if (errors.privacyConsent && checked) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        privacyConsent: "",
+                      }));
+                    }
+                  }}
+                  className="mt-1 h-4 w-4 text-[#1B9AAA] focus:ring-[#1B9AAA] border-gray-300 rounded"
+                />
+                <label htmlFor="privacyConsent" className="text-sm text-[#0D1B2A] leading-relaxed">
+                  I hereby acknowledge that I have read and understood the{" "}
+                  <span className="font-semibold">Data Privacy Act of 2012 (RA 10173)</span> and
+                  consent to the collection and processing of my personal information by Exact
+                  Colleges of Asia for admission and related academic purposes.
+                </label>
+              </div>
+              {errors.privacyConsent && (
+                <p className="mt-2 text-xs text-[#E63946] font-medium">
+                  {errors.privacyConsent}
+                </p>
+              )}
+            </div>
+
             {/* Submit Button */}
             <div className="pt-8 border-t-2 border-[#E5E7EB] mt-8">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !formData.privacyConsent}
                 className="w-full bg-gradient-to-r from-[#1B9AAA] to-[#158A9A] hover:from-[#158A9A] hover:to-[#1B9AAA] text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none uppercase"
               >
                 {loading ? (

@@ -12,6 +12,20 @@ const CourseModal = ({
 }) => {
   if (!isOpen || !course) return null;
 
+  const defaultTheme = {
+    headerFrom: "#1B9AAA",
+    headerTo: "#0D4A6C",
+    accent: "#1B9AAA",
+    accentText: "#ffffff",
+    accentSoft: "rgba(27, 154, 170, 0.12)",
+    border: "rgba(27, 154, 170, 0.25)",
+    badgeBg: "rgba(27, 154, 170, 0.18)",
+    badgeText: "#0D1B2A",
+    tagBg: "rgba(27, 154, 170, 0.15)",
+  };
+
+  const theme = course.theme || defaultTheme;
+
   const prevIndex =
     (currentIndex - 1 + (courses?.length || 1)) % (courses?.length || 1);
   const nextIndex = (currentIndex + 1) % (courses?.length || 1);
@@ -28,7 +42,12 @@ const CourseModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Compact Header with logo and close button */}
-        <div className="relative bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] p-4 flex items-center justify-between">
+        <div
+          className="relative p-4 flex items-center justify-between"
+          style={{
+            background: `linear-gradient(135deg, ${theme.headerFrom}, ${theme.headerTo})`,
+          }}
+        >
           <div className="flex items-center gap-3">
             <img
               src={course.logo}
@@ -43,7 +62,15 @@ const CourseModal = ({
           <div className="flex items-center gap-2">
             <Link
               to="/application"
-              className="hidden sm:inline-block px-3 py-1 text-xs bg-white text-[#1B9AAA] font-semibold rounded-lg hover:bg-gray-100 shadow"
+              className="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-lg shadow-sm"
+              style={{
+                backgroundColor: theme.accentText === "#ffffff" ? theme.accent : "#ffffff",
+                color: theme.accentText === "#ffffff" ? theme.accentText : theme.accent,
+                border:
+                  theme.accentText === "#ffffff"
+                    ? "none"
+                    : `1px solid ${theme.border || "rgba(0,0,0,0.1)"}`,
+              }}
             >
               Apply Now
             </Link>
@@ -73,12 +100,19 @@ const CourseModal = ({
           {/* Duration & Units */}
           <div className="flex gap-2 mb-4">
             {course.duration && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#1B9AAA]/10 text-[#1B9AAA]">
+              <span
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                style={{
+                  backgroundColor: theme.badgeBg,
+                  color: theme.badgeText,
+                }}
+              >
                 <svg
                   className="w-3 h-3 mr-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  style={{ color: theme.badgeText }}
                 >
                   <path
                     strokeLinecap="round"
@@ -91,12 +125,19 @@ const CourseModal = ({
               </span>
             )}
             {course.units && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+              <span
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                style={{
+                  backgroundColor: theme.badgeBg,
+                  color: theme.badgeText,
+                }}
+              >
                 <svg
                   className="w-3 h-3 mr-1"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  style={{ color: theme.badgeText }}
                 >
                   <path
                     strokeLinecap="round"
@@ -113,7 +154,13 @@ const CourseModal = ({
           {/* Bento Grid Layout */}
           <div className="grid grid-cols-2 gap-3 mb-6">
             {/* Description Card */}
-            <div className="col-span-2 bg-[#1B9AAA]/5 rounded-lg p-3">
+            <div
+              className="col-span-2 rounded-lg p-3"
+              style={{
+                backgroundColor: theme.accentSoft,
+                border: `1px solid ${theme.border}`,
+              }}
+            >
               <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
                 Description
               </h3>
@@ -122,7 +169,10 @@ const CourseModal = ({
 
             {/* Requirements Card */}
             {course.requirements && (
-              <div className="bg-white border border-[#1B9AAA]/20 rounded-lg p-3">
+              <div
+                className="bg-white border rounded-lg p-3"
+                style={{ borderColor: theme.border }}
+              >
                 <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
                   Requirements
                 </h3>
@@ -132,7 +182,12 @@ const CourseModal = ({
                       key={idx}
                       className="text-xs text-gray-700 flex items-start"
                     >
-                      <span className="text-[#1B9AAA] mr-1">•</span>
+                      <span
+                        className="mr-1"
+                        style={{ color: theme.accent, fontWeight: 600 }}
+                      >
+                        •
+                      </span>
                       {req}
                     </li>
                   ))}
@@ -142,7 +197,10 @@ const CourseModal = ({
 
             {/* Curriculum Card */}
             {course.curriculum && (
-              <div className="bg-white border border-[#1B9AAA]/20 rounded-lg p-3">
+              <div
+                className="bg-white border rounded-lg p-3"
+                style={{ borderColor: theme.border }}
+              >
                 <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
                   Curriculum
                 </h3>
@@ -152,7 +210,12 @@ const CourseModal = ({
                       key={idx}
                       className="text-xs text-gray-700 flex items-start"
                     >
-                      <span className="text-[#1B9AAA] mr-1">•</span>
+                      <span
+                        className="mr-1"
+                        style={{ color: theme.accent, fontWeight: 600 }}
+                      >
+                        •
+                      </span>
                       {subj}
                     </li>
                   ))}
@@ -162,7 +225,13 @@ const CourseModal = ({
 
             {/* Career Opportunities Card */}
             {course.careerOpportunities && (
-              <div className="col-span-2 bg-gradient-to-br from-[#1B9AAA]/10 to-transparent rounded-lg p-3">
+              <div
+                className="col-span-2 rounded-lg p-3"
+                style={{
+                  background: `linear-gradient(135deg, ${theme.accentSoft}, rgba(255,255,255,0))`,
+                  border: `1px solid ${theme.border}`,
+                }}
+              >
                 <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
                   Career Opportunities
                 </h3>
@@ -170,7 +239,13 @@ const CourseModal = ({
                   {course.careerOpportunities.slice(0, 4).map((career, idx) => (
                     <span
                       key={idx}
-                      className="text-xs bg-white px-2 py-1 rounded border border-[#1B9AAA]/20"
+                      className="text-xs px-2 py-1 rounded border"
+                      style={{
+                        backgroundColor: theme.tagBg,
+                        borderColor: theme.border,
+                        color: theme.accent,
+                        fontWeight: 600,
+                      }}
                     >
                       {career}
                     </span>
@@ -184,14 +259,16 @@ const CourseModal = ({
           <div className="flex justify-between items-center gap-4 mt-6">
             <button
               onClick={onPrev}
-              className="text-sm text-[#1B9AAA] hover:text-[#158A9A] font-semibold truncate max-w-[40%]"
+              className="text-sm font-semibold truncate max-w-[40%]"
+              style={{ color: theme.accent }}
               title={prevCourseName}
             >
               ← {prevCourseName}
             </button>
             <button
               onClick={onNext}
-              className="text-sm text-[#1B9AAA] hover:text-[#158A9A] font-semibold truncate max-w-[40%] text-right ml-auto"
+              className="text-sm font-semibold truncate max-w-[40%] text-right ml-auto"
+              style={{ color: theme.accent }}
               title={nextCourseName}
             >
               {nextCourseName} →

@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 
 const LogoCarousel = () => {
   const logos = [
-    "logo na pogi.png",
     "logo/maritime.png",
     "logo/nurse.png",
     "logo/educ.png",

@@ -1,8 +1,25 @@
 import { useAuth } from "../contexts/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const AdminHeader = () => {
   const { admin, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const isActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(path);
+
+  const navLinkClasses = (path) =>
+    `group relative px-4 py-2 rounded-lg transition-all duration-300 ${
+      isActive(path)
+        ? "bg-white/20 text-white shadow-lg"
+        : "text-[#F5F7FA]/90 hover:text-white hover:bg-white/10"
+    }`;
+
+  const indicatorClasses = (path) =>
+    `absolute bottom-0 left-0 w-full h-0.5 bg-[#1B9AAA] transform transition-transform duration-300 ${
+      isActive(path) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+    }`;
 
   return (
     <header className="bg-gradient-to-r from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] shadow-2xl border-b border-[#1B9AAA]/30 backdrop-blur-sm">
@@ -44,7 +61,7 @@ const AdminHeader = () => {
             <nav className="hidden md:flex items-center space-x-1 mr-6">
               <Link
                 to="/admin/dashboard"
-                className="group relative px-4 py-2 text-[#F5F7FA]/90 hover:text-white transition-all duration-300 rounded-lg hover:bg-white/10"
+                className={navLinkClasses("/admin/dashboard")}
               >
                 <span className="flex items-center space-x-2">
                   <svg
@@ -68,11 +85,11 @@ const AdminHeader = () => {
                   </svg>
                   <span className="font-medium">Admission</span>
                 </span>
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1B9AAA] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className={indicatorClasses("/admin/dashboard")}></div>
               </Link>
               <Link
                 to="/admin/backup"
-                className="group relative px-4 py-2 text-[#F5F7FA]/90 hover:text-white transition-all duration-300 rounded-lg hover:bg-white/10"
+                className={navLinkClasses("/admin/backup")}
               >
                 <span className="flex items-center space-x-2">
                   <svg
@@ -90,11 +107,11 @@ const AdminHeader = () => {
                   </svg>
                   <span className="font-medium">Backup</span>
                 </span>
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1B9AAA] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className={indicatorClasses("/admin/backup")}></div>
               </Link>
               <Link
                 to="/admin/archives"
-                className="group relative px-4 py-2 text-[#F5F7FA]/90 hover:text-white transition-all duration-300 rounded-lg hover:bg-white/10"
+                className={navLinkClasses("/admin/archives")}
               >
                 <span className="flex items-center space-x-2">
                   <svg
@@ -112,11 +129,11 @@ const AdminHeader = () => {
                   </svg>
                   <span className="font-medium">Archives</span>
                 </span>
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1B9AAA] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className={indicatorClasses("/admin/archives")}></div>
               </Link>
               <Link
                 to="/admin/analytics"
-                className="group relative px-4 py-2 text-[#F5F7FA]/90 hover:text-white transition-all duration-300 rounded-lg hover:bg-white/10"
+                className={navLinkClasses("/admin/analytics")}
               >
                 <span className="flex items-center space-x-2">
                   <svg
@@ -134,29 +151,51 @@ const AdminHeader = () => {
                   </svg>
                   <span className="font-medium">Analytics</span>
                 </span>
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#1B9AAA] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                <div className={indicatorClasses("/admin/analytics")}></div>
               </Link>
             </nav>
 
             {/* User Info */}
             <div className="flex items-center space-x-4">
-              <div className="hidden sm:block text-right">
-                <p className="text-xs text-[#F5F7FA]/60 font-medium">
-                  Welcome back,
-                </p>
-                <p className="text-sm font-semibold text-white truncate max-w-32">
-                  {admin?.email}
-                </p>
-              </div>
+              <button
+                onClick={() => navigate("/admin/settings")}
+                className="hidden sm:flex items-center space-x-3 text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                <div className="text-right">
+                  <p className="text-xs text-[#F5F7FA]/60 font-medium">
+                    Welcome back,
+                  </p>
+                  <p className="text-sm font-semibold text-white truncate max-w-32">
+                    {admin?.email}
+                  </p>
+                </div>
+                <div className="h-10 w-10 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/20">
+                  <span className="text-white font-semibold text-sm">
+                    {admin?.email?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              </button>
 
-              {/* User Avatar */}
-              <div className="h-10 w-10 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-full flex items-center justify-center shadow-lg ring-2 ring-white/20">
-                <span className="text-white font-semibold text-sm">
-                  {admin?.email?.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              <button
+                onClick={() => navigate("/admin/settings")}
+                className="sm:hidden flex items-center justify-center h-10 w-10 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-full shadow-lg ring-2 ring-white/20 text-white font-semibold text-sm hover:scale-105 transition-transform"
+                title="Settings"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6V4m0 16v-2m8-6h2M4 12H2m15.364-7.364L18.5 4.5M5.5 19.5l1.136-1.136M18.5 19.5l-1.136-1.136M5.5 4.5l1.136 1.136"
+                  />
+                </svg>
+              </button>
 
-              {/* Logout Button */}
               <button
                 onClick={logout}
                 className="group relative bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 hover:scale-105"

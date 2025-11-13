@@ -48,6 +48,7 @@ const AdminDashboard = () => {
     { value: "pending", label: "Pending" },
     { value: "verified", label: "Verified" },
     { value: "incomplete", label: "Incomplete" },
+    { value: "enrolled", label: "Enrolled" },
     { value: "admitted", label: "Admitted" },
     { value: "rejected", label: "Rejected" },
   ];
@@ -121,6 +122,7 @@ const AdminDashboard = () => {
   };
 
   const fetchApplications = async (page = 1, courseTabId = null) => {
+    const previousScroll = window.scrollY || document.documentElement.scrollTop;
     try {
       setLoading(true);
 
@@ -154,6 +156,12 @@ const AdminDashboard = () => {
       console.error("Error fetching applications:", error);
     } finally {
       setLoading(false);
+      window.requestAnimationFrame(() => {
+        window.scrollTo({
+          top: previousScroll,
+          behavior: "auto",
+        });
+      });
     }
   };
 
@@ -245,7 +253,6 @@ const AdminDashboard = () => {
       email: application.email,
       contact: application.contact,
       courseApplied: application.courseApplied,
-      status: application.status,
     });
     setShowEditModal(true);
   };
@@ -1187,12 +1194,13 @@ const AdminDashboard = () => {
 
               <div className="space-y-2">
                 {[
-                  "Updated profile photo",
-                  "Clear digital signature",
-                  "Valid ID document",
-                  "Academic transcripts",
-                  "Recommendation letter",
-                  "Medical certificate",
+                  "2x2 recent photo with name tag (4pcs)",
+                  "Certificate of Good Moral Character",
+                  "Barangay Residency Certificate with seal",
+                  "Photocopy of PSA Birth Certificate",
+                  "Original Form 138",
+                  "Original Form 137",
+                  "Moving Up Certificate",
                   "Other supporting documents",
                 ].map((item, index) => (
                   <label key={index} className="flex items-center space-x-2">
@@ -1444,25 +1452,6 @@ const AdminDashboard = () => {
                   ].map((course) => (
                     <option key={course} value={course}>
                       {course}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status
-                </label>
-                <select
-                  value={editFormData.status}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, status: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent"
-                >
-                  {statusOptions.slice(1).map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
                     </option>
                   ))}
                 </select>
