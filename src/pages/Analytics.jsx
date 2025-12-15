@@ -182,6 +182,12 @@ const Analytics = () => {
     console.log("Loading state:", loading);
   }, [analyticsData, comparisonData, loading]);
 
+  const currentYearStats =
+    comparisonData?.yearlyData?.find((y) => y.year === selectedYear) || null;
+  const lastYearStats =
+    comparisonData?.yearlyData?.find((y) => y.year === selectedYear - 1) ||
+    null;
+
   const getStatusColor = (actual, target) => {
     const percentage = (actual / target) * 100;
     if (percentage >= 100) return "text-green-600";
@@ -500,6 +506,17 @@ const Analytics = () => {
             </button>
             <button
               type="button"
+              onClick={() => setActiveTab("comparison")}
+              className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
+                activeTab === "comparison"
+                  ? "border-[#1B9AAA] text-[#1B9AAA]"
+                  : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Comparison
+            </button>
+            <button
+              type="button"
               onClick={() => setActiveTab("enrolled")}
               className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
                 activeTab === "enrolled"
@@ -749,92 +766,286 @@ const Analytics = () => {
           </div>
             ) : null}
 
+            {/* Year-to-Year Comparison moved to Comparison tab */}
+          </>
+        )}
+
+        {activeTab === "comparison" && (
+          <>
             {/* Year-to-Year Comparison */}
             {comparisonData ? (
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#1B9AAA]/20">
-              <h3 className="text-xl font-semibold text-[#0D1B2A]">
-                Year-to-Year Comparison
-              </h3>
-              <p className="text-gray-600 mt-1">
-                Enrollment trends and growth analysis
-              </p>
-            </div>
-
-            <div className="p-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Total Enrollment Trend */}
-                <div>
-                  <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
-                    Total Enrollment Trend
-                  </h4>
-                  <div className="space-y-3">
-                    {comparisonData.yearlyData.map((year, index) => (
-                      <div
-                        key={year.year}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                      >
-                        <span className="font-medium text-gray-700">
-                          {year.year}
-                        </span>
-                        <div className="flex items-center space-x-4">
-                          <span className="text-sm text-gray-600">
-                            {year.enrollment}
-                          </span>
-                          {index > 0 && (
-                            <span
-                              className={`text-xs px-2 py-1 rounded-full ${
-                                year.growth > 0
-                                  ? "bg-green-100 text-green-800"
-                                  : year.growth < 0
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {year.growth > 0 ? "+" : ""}
-                              {year.growth}%
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
+                <div className="px-6 py-4 border-b border-[#1B9AAA]/20">
+                  <h3 className="text-xl font-semibold text-[#0D1B2A]">
+                    Year-to-Year Comparison
+                  </h3>
+                  <p className="text-gray-600 mt-1">
+                    Admission and enrollment trends and numeric comparison for{" "}
+                    {selectedYear} vs last year
+                  </p>
                 </div>
 
-                {/* Top Performing Courses */}
-                <div>
-                  <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
-                    Top Performing Courses
-                  </h4>
-                  <div className="space-y-3">
-                    {comparisonData.topCourses.map((course, index) => (
-                      <div
-                        key={course.name}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <span className="text-sm font-medium text-gray-500">
-                            #{index + 1}
-                          </span>
-                          <span className="font-medium text-gray-700">
-                            {course.name}
-                          </span>
+                <div className="p-6 space-y-8">
+                  {currentYearStats && lastYearStats && (
+                    <>
+                      {/* Enrolled comparison row */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Last Year Enrolled ({lastYearStats.year})
+                          </p>
+                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
+                            {lastYearStats.enrollment}
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Total enrolled students
+                          </p>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm text-gray-600">
-                            {course.enrollment}
-                          </span>
-                          <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                            {course.growth}%
-                          </span>
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            This Year Enrolled ({currentYearStats.year})
+                          </p>
+                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
+                            {currentYearStats.enrollment}
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Total enrolled students
+                          </p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Enrolled change vs last year
+                          </p>
+                          <p
+                            className={`mt-1 text-2xl font-bold ${
+                              (currentYearStats.enrollment ?? 0) >
+                              (lastYearStats.enrollment ?? 0)
+                                ? "text-green-600"
+                                : (currentYearStats.enrollment ?? 0) <
+                                  (lastYearStats.enrollment ?? 0)
+                                ? "text-red-600"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {currentYearStats.enrollment -
+                              lastYearStats.enrollment >=
+                            0
+                              ? "+"
+                              : ""}
+                            {currentYearStats.enrollment -
+                              lastYearStats.enrollment}
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Net difference in enrolled students
+                          </p>
                         </div>
                       </div>
-                    ))}
+
+                      {/* Admissions comparison row */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Last Year Admissions ({lastYearStats.year})
+                          </p>
+                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
+                            {lastYearStats.admissions ?? 0}
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Total admitted applicants
+                          </p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            This Year Admissions ({currentYearStats.year})
+                          </p>
+                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
+                            {currentYearStats.admissions ?? 0}
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Total admitted applicants
+                          </p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                            Admissions change vs last year
+                          </p>
+                          <p
+                            className={`mt-1 text-2xl font-bold ${
+                              (currentYearStats.admissions ?? 0) >
+                              (lastYearStats.admissions ?? 0)
+                                ? "text-green-600"
+                                : (currentYearStats.admissions ?? 0) <
+                                  (lastYearStats.admissions ?? 0)
+                                ? "text-red-600"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            {(currentYearStats.admissions ?? 0) -
+                              (lastYearStats.admissions ?? 0) >=
+                            0
+                              ? "+"
+                              : ""}
+                            {(currentYearStats.admissions ?? 0) -
+                              (lastYearStats.admissions ?? 0)}
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Net difference in admitted applicants
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Total Enrollment Trend */}
+                    <div>
+                      <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
+                        Total Enrollment Trend
+                      </h4>
+                      <div className="space-y-3">
+                        {comparisonData.yearlyData.map((year, index) => (
+                          <div
+                            key={year.year}
+                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                          >
+                            <span className="font-medium text-gray-700">
+                              {year.year}
+                            </span>
+                            <div className="flex items-center space-x-4">
+                              <span className="text-sm text-gray-600">
+                                {year.enrollment}
+                              </span>
+                              {index > 0 && (
+                                <span
+                                  className={`text-xs px-2 py-1 rounded-full ${
+                                    year.growth > 0
+                                      ? "bg-green-100 text-green-800"
+                                      : year.growth < 0
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-gray-100 text-gray-800"
+                                  }`}
+                                >
+                                  {year.growth > 0 ? "+" : ""}
+                                  {year.growth}%
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Top Performing Courses */}
+                    <div>
+                      <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
+                        Top Performing Courses
+                      </h4>
+                      <div className="space-y-3">
+                        {comparisonData.topCourses.map((course, index) => (
+                          <div
+                            key={course.name}
+                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <span className="text-sm font-medium text-gray-500">
+                                #{index + 1}
+                              </span>
+                              <span className="font-medium text-gray-700">
+                                {course.name}
+                              </span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-gray-600">
+                                {course.enrollment}
+                              </span>
+                              <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                                {course.growth}%
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+
+                  {/* All Courses Comparison Table */}
+                  {comparisonData.allCourses && comparisonData.allCourses.length > 0 && (
+                    <div className="mt-8">
+                      <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
+                        All Courses Comparison - {selectedYear} vs {selectedYear - 1}
+                      </h4>
+                      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full divide-y divide-[#1B9AAA]/20">
+                            <thead className="bg-[#F5F7FA]">
+                              <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                                  Course
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                                  {selectedYear - 1} Enrollment
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                                  {selectedYear} Enrollment
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                                  Change
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
+                                  Growth %
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white/50 divide-y divide-[#1B9AAA]/20">
+                              {comparisonData.allCourses.map((course, index) => (
+                                <tr key={course.name} className="hover:bg-[#F5F7FA]/50">
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className="text-sm font-medium text-gray-900">
+                                      {course.name}
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                    {course.previousEnrollment || 0}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    {course.enrollment}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                    <span
+                                      className={
+                                        course.change >= 0
+                                          ? "text-green-600 font-medium"
+                                          : "text-red-600 font-medium"
+                                      }
+                                    >
+                                      {course.change >= 0 ? "+" : ""}
+                                      {course.change}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    <span
+                                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                        course.growth > 0
+                                          ? "bg-green-100 text-green-800"
+                                          : course.growth < 0
+                                          ? "bg-red-100 text-red-800"
+                                          : "bg-gray-100 text-gray-800"
+                                      }`}
+                                    >
+                                      {course.growth > 0 ? "+" : ""}
+                                      {course.growth}%
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </div>
             ) : (
               <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-[#1B9AAA]/20">
                 <div className="text-center">
