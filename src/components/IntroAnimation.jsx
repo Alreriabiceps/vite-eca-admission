@@ -2,67 +2,125 @@ import { useState, useEffect } from "react";
 
 const IntroAnimation = ({ onComplete }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [animationPhase, setAnimationPhase] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-      onComplete();
-    }, 3000);
+    // Phase transitions
+    const phase1 = setTimeout(() => setAnimationPhase(1), 300);
+    const phase2 = setTimeout(() => setAnimationPhase(2), 600);
+    const phase3 = setTimeout(() => setAnimationPhase(3), 900);
 
-    return () => clearTimeout(timer);
+    // Fade out
+    const fadeOut = setTimeout(() => {
+      setIsVisible(false);
+    }, 2800);
+
+    // Complete
+    const complete = setTimeout(() => {
+      onComplete();
+    }, 3200);
+
+    return () => {
+      clearTimeout(phase1);
+      clearTimeout(phase2);
+      clearTimeout(phase3);
+      clearTimeout(fadeOut);
+      clearTimeout(complete);
+    };
   }, [onComplete]);
 
-  if (!isVisible) return null;
-
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-blue-200 via-blue-100 to-yellow-200 flex items-center justify-center">
-      {/* Background Design Elements */}
+    <div
+      className={`fixed inset-0 z-50 bg-gradient-to-br from-sky-100 via-sky-200 to-blue-200 flex items-center justify-center transition-opacity duration-500 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      {/* Subtle Background Accents */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Geometric shapes */}
-        <div className="absolute top-20 left-20 w-96 h-96 bg-blue-300 rounded-full opacity-40 blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-[500px] h-[500px] bg-yellow-300 rounded-full opacity-40 blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-200 rounded-full opacity-50 blur-3xl"></div>
-        <div className="absolute top-1/4 right-1/4 w-80 h-80 bg-yellow-200 rounded-full opacity-30 blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-sky-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Content */}
-      <div className="text-center max-w-4xl px-6 relative z-10">
-        {/* Logo */}
-        <div className="mb-12">
+      {/* Content Container with Formal Layout */}
+      <div className="text-center max-w-6xl px-6 relative z-10">
+        {/* University Seal/Logo Section */}
+        <div
+          className={`mb-12 transition-all duration-700 ease-out ${
+            animationPhase >= 1
+              ? "opacity-100 translate-y-0 scale-100"
+              : "opacity-0 translate-y-8 scale-95"
+          }`}
+        >
           <img
             src="/logo na pogi.png"
             alt="Exact Colleges of Asia Logo"
-            className="h-32 w-32 md:h-40 md:w-40 mx-auto object-contain"
+            className="h-40 w-40 md:h-52 md:w-52 lg:h-60 lg:w-60 mx-auto object-contain drop-shadow-lg"
           />
         </div>
 
-        {/* College Name */}
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 tracking-tight leading-none">
-          <span className="text-blue-600">EXACT</span>
-          <span className="text-gray-900 mx-2 md:mx-3">COLLEGES</span>
-          <span className="text-gray-900 mx-2">OF</span>
-          <span className="text-yellow-500">ASIA</span>
-        </h1>
+        {/* University Name - Formal Typography */}
+        <div
+          className={`mb-10 transition-all duration-700 ease-out delay-150 ${
+            animationPhase >= 2
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-6"
+          }`}
+        >
+          <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-bold mb-6 tracking-wide leading-tight">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6">
+              <span className="text-[#001f3f] font-black">EXACT</span>
+              <span className="text-[#FFD700] font-black">COLLEGES</span>
+            </div>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-5 mt-3">
+              <span className="text-[#001f3f] font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl">OF</span>
+              <span className="text-[#FFD700] font-black">ASIA</span>
+            </div>
+          </h1>
+        </div>
 
-        {/* Location */}
-        <div className="mb-12">
-          <p className="text-xl md:text-2xl text-gray-700 font-light">
+        {/* Formal Divider with Academic Style */}
+        <div
+          className={`flex items-center justify-center mb-10 transition-all duration-700 ease-out delay-300 ${
+            animationPhase >= 2
+              ? "opacity-100 scale-100"
+              : "opacity-0 scale-75"
+          }`}
+        >
+          <div className="flex items-center gap-4">
+            <div className="h-px w-20 md:w-24 bg-gradient-to-r from-transparent to-[#001f3f]"></div>
+            <div className="w-2 h-2 rounded-full bg-[#001f3f]"></div>
+            <div className="w-2 h-2 rounded-full bg-[#FFD700]"></div>
+            <div className="w-2 h-2 rounded-full bg-[#001f3f]"></div>
+            <div className="h-px w-20 md:w-24 bg-gradient-to-l from-transparent to-[#FFD700]"></div>
+          </div>
+        </div>
+
+        {/* Location - Formal Presentation */}
+        <div
+          className={`mb-12 transition-all duration-700 ease-out delay-450 ${
+            animationPhase >= 3
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-4"
+          }`}
+        >
+          <p className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-[#FFD700] font-semibold tracking-widest uppercase">
             Suclayin Arayat Pampanga
           </p>
         </div>
 
-        {/* Divider with accent colors */}
-        <div className="flex items-center justify-center mb-12">
-          <div className="w-8 h-1 bg-blue-600 rounded-full"></div>
-          <div className="w-2 h-2 bg-yellow-500 rounded-full mx-2"></div>
-          <div className="w-8 h-1 bg-yellow-500 rounded-full"></div>
-        </div>
-
-        {/* Welcome Text with background */}
-        <div className="inline-block px-8 py-4 bg-white/60 backdrop-blur-sm rounded-full border border-gray-200 shadow-sm">
-          <p className="text-base md:text-lg text-gray-600 font-light tracking-widest uppercase">
-            Welcome to Excellence in Education
-          </p>
+        {/* Motto/Tagline - Institutional */}
+        <div
+          className={`mt-14 transition-all duration-700 ease-out delay-600 ${
+            animationPhase >= 3
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-4"
+          }`}
+        >
+          <div className="inline-block px-12 py-5 border-t-2 border-b-2 border-[#001f3f]/40">
+            <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-[#001f3f] font-light tracking-[0.2em] uppercase">
+              Excellence in Education
+            </p>
+          </div>
         </div>
       </div>
     </div>
