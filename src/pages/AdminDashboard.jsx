@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import AdminHeader from "../components/AdminHeader";
 import axios from "axios";
@@ -42,6 +42,7 @@ const AdminDashboard = () => {
     courseApplied: "",
     status: "",
   });
+  const isInitialMount = useRef(true);
 
   const statusOptions = [
     { value: "", label: "All Status" },
@@ -144,7 +145,8 @@ const AdminDashboard = () => {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: "10",
-        ...filters,
+        ...(filters.search && { search: filters.search }),
+        ...(filters.status && { status: filters.status }),
         ...(courseFilter && { course: courseFilter }),
       });
 
@@ -205,26 +207,31 @@ const AdminDashboard = () => {
     fetchCourseTabCounts();
   }, []);
 
+  // Watch filters and refetch when they change
+  useEffect(() => {
+    // Skip initial mount to avoid double fetch
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    fetchApplications(1);
+  }, [filters.status, filters.search, selectedCourseTab]);
+
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
     }));
-    // Trigger refresh when filters change
-    setTimeout(() => {
-      fetchApplications(1);
-    }, 100);
+    // Reset to first page when filters change
+    setPagination((prev) => ({ ...prev, current: 1 }));
   };
 
   const handleCourseTabChange = (tabId) => {
     setSelectedCourseTab(tabId);
     // Reset to first page when changing tabs
     setPagination((prev) => ({ ...prev, current: 1 }));
-    // Trigger refresh when course tab changes - pass tabId directly
-    setTimeout(() => {
-      fetchApplications(1, tabId);
-      fetchCourseTabCounts(); // Refresh counts when switching tabs
-    }, 100);
+    // Refresh counts when switching tabs
+    fetchCourseTabCounts();
   };
 
   const getCourseTabCount = (tab) => {

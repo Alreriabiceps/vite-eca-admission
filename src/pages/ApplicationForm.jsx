@@ -254,50 +254,40 @@ const ApplicationForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] text-white relative">
+    <div className="min-h-screen bg-deep-navy-blue text-white relative">
       {/* Background Pattern */}
       <div
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-5 pointer-events-none"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231B9AAA' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD700' fill-opacity='0.2'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}
       ></div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Form Container - Styled like the physical form */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl p-10 mb-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-2xl p-10 mb-8 border-t-4 border-warm-gold">
           {/* Header */}
-          <div className="text-center mb-8 pb-6 border-b-4 border-[#0D1B2A]">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="h-16 w-16 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-full flex items-center justify-center shadow-lg">
-                <svg
-                  className="h-8 w-8 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-[#0D1B2A] tracking-wide">
+          <div className="text-center mb-8 pb-6 border-b-2 border-gray-100">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-6">
+              <img
+                src="/logo na pogi.png"
+                alt="Exact Colleges of Asia Logo"
+                className="h-24 w-24 object-contain drop-shadow-md"
+              />
+              <div className="text-center md:text-left">
+                <h1 className="text-3xl font-bold text-deep-navy-blue tracking-wide">
                   EXACT COLLEGES OF ASIA
                 </h1>
-                <p className="text-sm text-[#343A40]">
+                <p className="text-sm text-gray-600 font-medium">
                   Suclayin, Arayat, Pampanga
                 </p>
-                <p className="text-xs text-[#6B7280]">
+                <p className="text-xs text-gray-500 mt-1">
                   Tel. No. 0925-870-1013 | Email: exact.colleges@yahoo.com
                 </p>
               </div>
             </div>
-            <div className="bg-[#F5F7FA] py-2 px-4 rounded-md border border-[#E5E7EB]">
-              <p className="text-sm font-semibold text-[#0D1B2A] uppercase">
+            <div className="inline-block bg-deep-navy-blue py-2 px-6 rounded-full shadow-md">
+              <p className="text-sm font-bold text-warm-gold uppercase tracking-wider">
                 GUIDANCE OFFICE
               </p>
             </div>
@@ -333,8 +323,8 @@ const ApplicationForm = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1B9AAA] transition-all ${
-                      errors.lastName ? "border-[#E63946]" : "border-[#343A40]"
+                    className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
+                      errors.lastName ? "border-crimson-red" : "border-gray-300"
                     }`}
                     placeholder="Last Name"
                   />
@@ -353,8 +343,8 @@ const ApplicationForm = () => {
                     name="givenName"
                     value={formData.givenName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1B9AAA] transition-all ${
-                      errors.givenName ? "border-[#E63946]" : "border-[#343A40]"
+                    className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
+                      errors.givenName ? "border-crimson-red" : "border-gray-300"
                     }`}
                     placeholder="Given Name"
                   />
@@ -373,10 +363,10 @@ const ApplicationForm = () => {
                     name="middleName"
                     value={formData.middleName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1B9AAA] transition-all ${
+                    className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
                       errors.middleName
-                        ? "border-[#E63946]"
-                        : "border-[#343A40]"
+                        ? "border-crimson-red"
+                        : "border-gray-300"
                     }`}
                     placeholder="Middle Name"
                   />
@@ -402,10 +392,10 @@ const ApplicationForm = () => {
                 name="schoolLastAttended"
                 value={formData.schoolLastAttended}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1B9AAA] transition-all ${
+                className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
                   errors.schoolLastAttended
-                    ? "border-[#E63946]"
-                    : "border-[#343A40]"
+                    ? "border-crimson-red"
+                    : "border-gray-300"
                 }`}
                 placeholder="Enter school name"
               />
@@ -425,8 +415,8 @@ const ApplicationForm = () => {
                 name="courseApplied"
                 value={formData.courseApplied}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] focus:outline-none focus:border-[#1B9AAA] transition-all ${
-                  errors.courseApplied ? "border-[#E63946]" : "border-[#343A40]"
+                className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue focus:outline-none focus:border-warm-gold transition-all ${
+                  errors.courseApplied ? "border-crimson-red" : "border-gray-300"
                 }`}
               >
                 <option value="">Select a course</option>
@@ -453,10 +443,10 @@ const ApplicationForm = () => {
                 name="presentAddress"
                 value={formData.presentAddress}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1B9AAA] transition-all ${
+                className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
                   errors.presentAddress
-                    ? "border-[#E63946]"
-                    : "border-[#343A40]"
+                    ? "border-crimson-red"
+                    : "border-gray-300"
                 }`}
                 placeholder="Enter complete address"
               />
@@ -478,8 +468,8 @@ const ApplicationForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1B9AAA] transition-all ${
-                    errors.email ? "border-[#E63946]" : "border-[#343A40]"
+                  className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
+                    errors.email ? "border-crimson-red" : "border-gray-300"
                   }`}
                   placeholder="email@example.com"
                 />
@@ -499,8 +489,8 @@ const ApplicationForm = () => {
                   name="contact"
                   value={formData.contact}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1B9AAA] transition-all ${
-                    errors.contact ? "border-[#E63946]" : "border-[#343A40]"
+                  className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
+                    errors.contact ? "border-crimson-red" : "border-gray-300"
                   }`}
                   placeholder="09XX-XXX-XXXX"
                 />
@@ -523,8 +513,8 @@ const ApplicationForm = () => {
                   name="dateOfBirth"
                   value={formData.dateOfBirth}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-[#0D1B2A] focus:outline-none focus:border-[#1B9AAA] transition-all ${
-                    errors.dateOfBirth ? "border-[#E63946]" : "border-[#343A40]"
+                  className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue focus:outline-none focus:border-warm-gold transition-all ${
+                    errors.dateOfBirth ? "border-crimson-red" : "border-gray-300"
                   }`}
                 />
                 <p className="text-xs text-[#6B7280] italic">
@@ -847,7 +837,7 @@ const ApplicationForm = () => {
               <button
                 type="submit"
                 disabled={loading || !formData.privacyConsent}
-                className="w-full bg-gradient-to-r from-[#1B9AAA] to-[#158A9A] hover:from-[#158A9A] hover:to-[#1B9AAA] text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none uppercase"
+                className="w-full bg-warm-gold hover:bg-yellow-500 text-deep-navy-blue font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none uppercase"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -885,7 +875,7 @@ const ApplicationForm = () => {
         <div className="text-center mt-8 space-x-8">
           <a
             href="/"
-            className="inline-flex items-center text-[#1B9AAA] hover:text-[#158A9A] text-sm font-medium transition-colors duration-200"
+            className="inline-flex items-center text-warm-gold hover:text-white text-sm font-medium transition-colors duration-200"
           >
             <svg
               className="w-4 h-4 mr-2"
@@ -904,7 +894,7 @@ const ApplicationForm = () => {
           </a>
           <a
             href="/admin/login"
-            className="inline-flex items-center text-[#1B9AAA] hover:text-[#158A9A] text-sm font-medium transition-colors duration-200"
+            className="inline-flex items-center text-warm-gold hover:text-white text-sm font-medium transition-colors duration-200"
           >
             <svg
               className="w-4 h-4 mr-2"

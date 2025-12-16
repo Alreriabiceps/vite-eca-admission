@@ -585,30 +585,30 @@ const Hero = () => {
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-16 sm:py-20 md:py-24">
-          <div className="max-w-3xl">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4">
-              Build Your Future at Exact Colleges of Asia
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
+              Build Your Future at <br />
+              <span className="text-warm-gold">Exact Colleges of Asia</span>
             </h1>
-            <p className="text-white/90 text-sm sm:text-base md:text-lg mb-6">
-              Quality education, hands-on training, and a community that helps
-              you thrive.
+            <p className="text-soft-off-white text-lg sm:text-xl md:text-2xl mb-8 font-light max-w-2xl">
+              Excellence in education, hands-on training, and a community dedicated to your success.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-4">
               <Link
                 to="/application"
-                className="bg-[#1B9AAA] hover:bg-[#158A9A] text-white font-semibold py-3 px-6 rounded-lg shadow-lg"
+                className="bg-warm-gold hover:bg-yellow-500 text-deep-navy-blue font-bold py-4 px-8 rounded-lg shadow-xl transition-all hover:-translate-y-1"
               >
                 Apply Now
               </Link>
               <a
                 href="#programs"
-                className="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-lg border border-white/30"
+                className="bg-transparent hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-lg border-2 border-white/30 hover:border-white/50 transition-all"
               >
                 Explore Programs
               </a>
             </div>
           </div>
-        </div>
+        
+
         {/* Quick Stats Strip removed per request */}
       </section>
       {/* Available Programs Section */}
@@ -624,7 +624,8 @@ const Hero = () => {
         data-section="programs"
       >
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-deep-navy-blue/80 mix-blend-multiply"></div>
 
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
           <div
@@ -634,10 +635,10 @@ const Hero = () => {
                 : "opacity-0 translate-y-6"
             }`}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 text-white">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white">
               Available Programs
             </h2>
-            <div className="w-16 sm:w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-2 sm:mb-3"></div>
+            <div className="w-24 h-1.5 bg-warm-gold mx-auto rounded-full mb-6"></div>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white max-w-3xl mx-auto px-2">
               Choose from our comprehensive range of undergraduate programs
               designed for professional success.
@@ -744,53 +745,7 @@ const Hero = () => {
 
       {/* News Modal removed; using dedicated page */}
       {/* Why Choose Us */}
-      <section
-        className={`bg-white py-12 md:py-16 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0D1B2A] text-center mb-8">
-            Why Choose ECA
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Industry-Aligned Curriculum
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Programs designed with employer input to prepare you for real
-                jobs.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Hands-on Learning
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Laboratories, simulations, and internships for practical
-                experience.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Supportive Community
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Advising and mentoring to help you succeed from day one.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Affordable Tuition
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Scholarships and flexible payment options available.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* Testimonials Section */}
       <section className="bg-[#0D1B2A] py-12 md:py-16">
@@ -895,10 +850,10 @@ const Hero = () => {
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-deep-navy-blue mb-3 sm:mb-4">
               Our Departments
             </h2>
-            <div className="w-16 sm:w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-4 sm:mb-6"></div>
+            <div className="w-24 h-1.5 bg-warm-gold mx-auto rounded-full mb-4 sm:mb-6"></div>
             <p className="text-sm sm:text-base md:text-lg text-[#343A40] max-w-2xl mx-auto px-2">
               Explore the diverse colleges and departments that make up our
               educational institution
@@ -907,6 +862,32 @@ const Hero = () => {
           <LogoCarousel />
         </div>
       </div>
+
+      {/* Final Call to Action */}
+      <section className="bg-warm-gold py-16 md:py-20">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-deep-navy-blue mb-6">
+            Ready to Start Your Journey?
+          </h2>
+          <p className="text-deep-navy-blue/80 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+            Join a community of scholars, innovators, and leaders. Apply today and shape your future at Exact Colleges of Asia.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/application"
+              className="bg-deep-navy-blue text-white font-bold py-4 px-10 rounded-lg shadow-lg hover:bg-opacity-90 transition-all hover:-translate-y-1"
+            >
+              Apply Now
+            </Link>
+            <Link
+              to="/contact"
+              className="bg-transparent border-2 border-deep-navy-blue text-deep-navy-blue font-bold py-4 px-10 rounded-lg hover:bg-deep-navy-blue/10 transition-all"
+            >
+              Contact Admissions
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Course Modal */}
       {showCourseModal && (

@@ -135,8 +135,8 @@ const CourseModal = ({
         >
           {/* Left: Text content */}
           <div>
-            {/* Duration & Units */}
-            <div className="flex gap-2 mb-4">
+          {/* Duration & Units */}
+          <div className="flex gap-2 mb-4">
             {course.duration && (
               <span
                 className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
@@ -187,10 +187,10 @@ const CourseModal = ({
                 {course.units}
               </span>
             )}
-            </div>
+          </div>
 
-            {/* Bento Grid Layout */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
+          {/* Bento Grid Layout */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
             {/* Description Card */}
             <div
               className="col-span-2 rounded-lg p-3"
@@ -291,10 +291,10 @@ const CourseModal = ({
                 </div>
               </div>
             )}
-            </div>
+          </div>
 
-            {/* Navigation with course names */}
-            <div className="flex justify-between items-center gap-4 mt-6">
+          {/* Navigation with course names */}
+          <div className="flex justify-between items-center gap-4 mt-6">
             <button
               onClick={onPrev}
               className="text-sm font-semibold truncate max-w-[40%]"
@@ -311,7 +311,7 @@ const CourseModal = ({
             >
               {nextCourseName} →
             </button>
-            </div>
+          </div>
           </div>
 
           {/* Right: Anime illustration section */}
