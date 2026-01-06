@@ -55,16 +55,15 @@ const Hero = () => {
         "Maritime Consultant",
       ],
       theme: {
-        // College of Maritime Education — deep navy blue
-        headerFrom: "#003B8E",
-        headerTo: "#001F4D",
-        accent: "#003B8E",
+        headerFrom: "#1D4ED8",
+        headerTo: "#B91C1C",
+        accent: "#1D4ED8",
         accentText: "#ffffff",
-        accentSoft: "rgba(0, 59, 142, 0.12)",
-        border: "rgba(0, 59, 142, 0.4)",
-        badgeBg: "rgba(0, 59, 142, 0.18)",
+        accentSoft: "rgba(29, 78, 216, 0.12)",
+        border: "rgba(29, 78, 216, 0.25)",
+        badgeBg: "rgba(185, 28, 28, 0.18)",
         badgeText: "#0D1B2A",
-        tagBg: "rgba(0, 59, 142, 0.18)",
+        tagBg: "rgba(29, 78, 216, 0.15)",
       },
     },
     {
@@ -102,16 +101,15 @@ const Hero = () => {
         "Maritime Technical Consultant",
       ],
       theme: {
-        // College of Maritime Education — deep navy blue
-        headerFrom: "#003B8E",
-        headerTo: "#001F4D",
-        accent: "#003B8E",
+        headerFrom: "#1D4ED8",
+        headerTo: "#B91C1C",
+        accent: "#B91C1C",
         accentText: "#ffffff",
-        accentSoft: "rgba(0, 59, 142, 0.12)",
-        border: "rgba(0, 59, 142, 0.4)",
-        badgeBg: "rgba(0, 59, 142, 0.18)",
-        badgeText: "#0D1B2A",
-        tagBg: "rgba(0, 59, 142, 0.18)",
+        accentSoft: "rgba(185, 28, 28, 0.12)",
+        border: "rgba(185, 28, 28, 0.25)",
+        badgeBg: "rgba(226, 232, 240, 0.6)",
+        badgeText: "#0F172A",
+        tagBg: "rgba(185, 28, 28, 0.12)",
       },
     },
     {
@@ -149,16 +147,15 @@ const Hero = () => {
         "Nurse Researcher",
       ],
       theme: {
-        // College of Nursing — medium green
-        headerFrom: "#1E8A3A",
-        headerTo: "#145423",
-        accent: "#1E8A3A",
-        accentText: "#ffffff",
-        accentSoft: "rgba(30, 138, 58, 0.15)",
-        border: "rgba(30, 138, 58, 0.4)",
-        badgeBg: "rgba(30, 138, 58, 0.22)",
-        badgeText: "#ffffff",
-        tagBg: "rgba(30, 138, 58, 0.2)",
+        headerFrom: "#22C55E",
+        headerTo: "#FACC15",
+        accent: "#22C55E",
+        accentText: "#0A3F1C",
+        accentSoft: "rgba(34, 197, 94, 0.15)",
+        border: "rgba(34, 197, 94, 0.25)",
+        badgeBg: "rgba(250, 204, 21, 0.22)",
+        badgeText: "#1E3A8A",
+        tagBg: "rgba(34, 197, 94, 0.18)",
       },
     },
     {
@@ -196,16 +193,15 @@ const Hero = () => {
         "Childcare Center Administrator",
       ],
       theme: {
-        // College of Education — royal blue
-        headerFrom: "#0066CC",
-        headerTo: "#003A73",
-        accent: "#0066CC",
-        accentText: "#ffffff",
-        accentSoft: "rgba(0, 102, 204, 0.15)",
-        border: "rgba(0, 102, 204, 0.4)",
-        badgeBg: "rgba(0, 102, 204, 0.22)",
-        badgeText: "#ffffff",
-        tagBg: "rgba(0, 102, 204, 0.2)",
+        headerFrom: "#FDE68A",
+        headerTo: "#60A5FA",
+        accent: "#FBBF24",
+        accentText: "#1F2937",
+        accentSoft: "rgba(251, 191, 36, 0.15)",
+        border: "rgba(96, 165, 250, 0.25)",
+        badgeBg: "rgba(251, 191, 36, 0.22)",
+        badgeText: "#1F2937",
+        tagBg: "rgba(96, 165, 250, 0.18)",
       },
     },
     {
@@ -244,16 +240,15 @@ const Hero = () => {
         "Culinary Consultant",
       ],
       theme: {
-        // College of Education — royal blue
-        headerFrom: "#0066CC",
-        headerTo: "#003A73",
-        accent: "#0066CC",
-        accentText: "#ffffff",
-        accentSoft: "rgba(0, 102, 204, 0.15)",
-        border: "rgba(0, 102, 204, 0.4)",
-        badgeBg: "rgba(0, 102, 204, 0.22)",
-        badgeText: "#ffffff",
-        tagBg: "rgba(0, 102, 204, 0.2)",
+        headerFrom: "#FDE68A",
+        headerTo: "#38BDF8",
+        accent: "#38BDF8",
+        accentText: "#0C4A6E",
+        accentSoft: "rgba(56, 189, 248, 0.12)",
+        border: "rgba(56, 189, 248, 0.25)",
+        badgeBg: "rgba(253, 230, 138, 0.22)",
+        badgeText: "#92400E",
+        tagBg: "rgba(56, 189, 248, 0.18)",
       },
     },
     {
@@ -291,16 +286,15 @@ const Hero = () => {
         "Business Development Manager",
       ],
       theme: {
-        // College of Business Administration — golden yellow
-        headerFrom: "#FFC300",
-        headerTo: "#D4A100",
-        accent: "#FFC300",
-        accentText: "#1F2937",
-        accentSoft: "rgba(255, 195, 0, 0.18)",
-        border: "rgba(255, 195, 0, 0.5)",
-        badgeBg: "rgba(255, 195, 0, 0.22)",
-        badgeText: "#1F2937",
-        tagBg: "rgba(255, 195, 0, 0.2)",
+        headerFrom: "#047857",
+        headerTo: "#60A5FA",
+        accent: "#047857",
+        accentText: "#ffffff",
+        accentSoft: "rgba(4, 120, 87, 0.12)",
+        border: "rgba(4, 120, 87, 0.25)",
+        badgeBg: "rgba(96, 165, 250, 0.2)",
+        badgeText: "#0F172A",
+        tagBg: "rgba(4, 120, 87, 0.18)",
       },
     },
     {
@@ -338,16 +332,15 @@ const Hero = () => {
         "Business Analyst",
       ],
       theme: {
-        // College of Business Administration — golden yellow
-        headerFrom: "#FFC300",
-        headerTo: "#D4A100",
-        accent: "#FFC300",
-        accentText: "#1F2937",
-        accentSoft: "rgba(255, 195, 0, 0.18)",
-        border: "rgba(255, 195, 0, 0.5)",
-        badgeBg: "rgba(255, 195, 0, 0.22)",
-        badgeText: "#1F2937",
-        tagBg: "rgba(255, 195, 0, 0.2)",
+        headerFrom: "#047857",
+        headerTo: "#064E3B",
+        accent: "#047857",
+        accentText: "#ffffff",
+        accentSoft: "rgba(4, 120, 87, 0.12)",
+        border: "rgba(4, 120, 87, 0.25)",
+        badgeBg: "rgba(4, 120, 87, 0.18)",
+        badgeText: "#063222",
+        tagBg: "rgba(4, 120, 87, 0.15)",
       },
     },
     {
@@ -385,16 +378,15 @@ const Hero = () => {
         "Information Systems Manager",
       ],
       theme: {
-        // BS Information System — neutral gray treatment
-        headerFrom: "#4B5563",
-        headerTo: "#111827",
-        accent: "#4B5563",
+        headerFrom: "#2563EB",
+        headerTo: "#FACC15",
+        accent: "#2563EB",
         accentText: "#ffffff",
-        accentSoft: "rgba(75, 85, 99, 0.15)",
-        border: "rgba(75, 85, 99, 0.45)",
-        badgeBg: "rgba(75, 85, 99, 0.22)",
-        badgeText: "#ffffff",
-        tagBg: "rgba(75, 85, 99, 0.2)",
+        accentSoft: "rgba(37, 99, 235, 0.12)",
+        border: "rgba(37, 99, 235, 0.25)",
+        badgeBg: "rgba(250, 204, 21, 0.22)",
+        badgeText: "#1E3A8A",
+        tagBg: "rgba(37, 99, 235, 0.18)",
       },
     },
     {
@@ -432,16 +424,15 @@ const Hero = () => {
         "Tourism Consultant",
       ],
       theme: {
-        // College of Tourism Management — warm pink
-        headerFrom: "#F06A8A",
-        headerTo: "#C93C60",
-        accent: "#F06A8A",
+        headerFrom: "#EC4899",
+        headerTo: "#BE123C",
+        accent: "#EC4899",
         accentText: "#ffffff",
-        accentSoft: "rgba(240, 106, 138, 0.15)",
-        border: "rgba(240, 106, 138, 0.4)",
-        badgeBg: "rgba(240, 106, 138, 0.22)",
-        badgeText: "#ffffff",
-        tagBg: "rgba(240, 106, 138, 0.2)",
+        accentSoft: "rgba(236, 72, 153, 0.12)",
+        border: "rgba(236, 72, 153, 0.25)",
+        badgeBg: "rgba(236, 72, 153, 0.18)",
+        badgeText: "#5F0D2A",
+        tagBg: "rgba(236, 72, 153, 0.15)",
       },
     },
     {
@@ -479,16 +470,15 @@ const Hero = () => {
         "Law Enforcement Administrator",
       ],
       theme: {
-        // College of Criminology / Criminal Justice — dark maroon
-        headerFrom: "#8B0000",
-        headerTo: "#4A0000",
-        accent: "#8B0000",
-        accentText: "#ffffff",
-        accentSoft: "rgba(139, 0, 0, 0.15)",
-        border: "rgba(139, 0, 0, 0.5)",
-        badgeBg: "rgba(139, 0, 0, 0.22)",
-        badgeText: "#ffffff",
-        tagBg: "rgba(139, 0, 0, 0.2)",
+        headerFrom: "#DC2626",
+        headerTo: "#FBBF24",
+        accent: "#DC2626",
+        accentText: "#1F2937",
+        accentSoft: "rgba(220, 38, 38, 0.12)",
+        border: "rgba(251, 191, 36, 0.25)",
+        badgeBg: "rgba(220, 38, 38, 0.18)",
+        badgeText: "#7C2D12",
+        tagBg: "rgba(251, 191, 36, 0.18)",
       },
     },
   ];
@@ -585,30 +575,30 @@ const Hero = () => {
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-16 sm:py-20 md:py-24">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-              Build Your Future at <br />
-              <span className="text-warm-gold">Exact Colleges of Asia</span>
+          <div className="max-w-3xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4">
+              Build Your Future at Exact Colleges of Asia
             </h1>
-            <p className="text-soft-off-white text-lg sm:text-xl md:text-2xl mb-8 font-light max-w-2xl">
-              Excellence in education, hands-on training, and a community dedicated to your success.
+            <p className="text-white/90 text-sm sm:text-base md:text-lg mb-6">
+              Quality education, hands-on training, and a community that helps
+              you thrive.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3">
               <Link
                 to="/application"
-                className="bg-warm-gold hover:bg-yellow-500 text-deep-navy-blue font-bold py-4 px-8 rounded-lg shadow-xl transition-all hover:-translate-y-1"
+                className="bg-[#1B9AAA] hover:bg-[#158A9A] text-white font-semibold py-3 px-6 rounded-lg shadow-lg"
               >
                 Apply Now
               </Link>
               <a
                 href="#programs"
-                className="bg-transparent hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-lg border-2 border-white/30 hover:border-white/50 transition-all"
+                className="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-lg border border-white/30"
               >
                 Explore Programs
               </a>
             </div>
           </div>
-        
-
+        </div>
         {/* Quick Stats Strip removed per request */}
       </section>
       {/* Available Programs Section */}
@@ -624,8 +614,7 @@ const Hero = () => {
         data-section="programs"
       >
         {/* Overlay for better text readability */}
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-deep-navy-blue/80 mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
           <div
@@ -635,17 +624,17 @@ const Hero = () => {
                 : "opacity-0 translate-y-6"
             }`}
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 text-white">
               Available Programs
             </h2>
-            <div className="w-24 h-1.5 bg-warm-gold mx-auto rounded-full mb-6"></div>
+            <div className="w-16 sm:w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-2 sm:mb-3"></div>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white max-w-3xl mx-auto px-2">
               Choose from our comprehensive range of undergraduate programs
               designed for professional success.
             </p>
           </div>
 
-          {/* Course Cards Grid */}
+          {/* Course Books Grid */}
           <div
             className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8 transition-all duration-1200 delay-400 ${
               revealedSections["programs"]
@@ -661,7 +650,7 @@ const Hero = () => {
                   setSelectedCourseIndex(index);
                   setShowCourseModal(true);
                 }}
-                className={`group relative flex flex-col bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 overflow-hidden transform w-full ${
+                className={`group relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 overflow-hidden transform w-full ${
                   revealedCourseIdxs.has(index)
                     ? "opacity-100 translate-y-0 scale-100"
                     : "opacity-0 translate-y-8 scale-95"
@@ -672,57 +661,65 @@ const Hero = () => {
                 data-role="course-card"
                 data-idx={index}
               >
-                {/* Colored header with large faint logo */}
-                <div
-                  className="relative px-4 pt-4 pb-3 overflow-hidden"
-                  style={{
-                    background: `linear-gradient(135deg, ${
-                      course.theme?.headerFrom || "#1B9AAA"
-                    }, ${course.theme?.headerTo || "#0D1B2A"})`,
-                  }}
-                >
-                  {/* Big watermark logo */}
-                  <div className="pointer-events-none absolute -right-6 -bottom-6 opacity-20 group-hover:opacity-30 transition-opacity duration-300">
-                    <img
-                      src={course.logo}
-                      alt=""
-                      className="w-28 h-28 sm:w-32 sm:h-32 object-contain"
-                    />
+                {/* Book Spine Effect */}
+                <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-gray-300 to-gray-400 rounded-l-2xl"></div>
+
+                {/* Course Content */}
+                <div className="relative p-4 sm:p-6">
+                  {/* Course Title */}
+                  <div className="text-center mb-3">
+                    <h3 className="text-lg font-bold text-[#0D1B2A] mb-1 line-clamp-2">
+                      {course.title}
+                    </h3>
+                    <p className="text-xs text-[#1B9AAA] font-medium">
+                      {course.college}
+                    </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="text-left">
-                      <p className="text-[11px] font-medium text-white/80 uppercase tracking-wide">
-                        {course.college}
-                      </p>
-                      <h3 className="text-sm sm:text-base font-semibold text-white line-clamp-2">
-                        {course.title}
-                      </h3>
+                  {/* Logo moved after title */}
+                  <div className="flex justify-center mb-4">
+                    <div className="h-16 w-16 bg-white rounded-xl flex items-center justify-center shadow-lg p-2">
+                      <img
+                        src={course.logo}
+                        alt={`${course.title} logo`}
+                        className="h-full w-full object-contain"
+                      />
                     </div>
                   </div>
-                </div>
 
-                {/* Body */}
-                <div className="flex-1 flex flex-col px-4 pb-4 pt-3 bg-white/95">
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-3">
+                  {/* Description */}
+                  <p className="text-xs text-gray-600 mb-3 line-clamp-3 text-center">
                     {course.description}
                   </p>
 
-                  <div className="mt-auto flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span
-                      className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium"
-                      style={{
-                        backgroundColor:
-                          course.theme?.accentSoft || "rgba(27, 154, 170, 0.08)",
-                        color: course.theme?.accent || "#1B9AAA",
-                      }}
-                    >
-                      Program details
-                    </span>
-                    <span className="flex items-center text-xs font-semibold text-[#1B9AAA] group-hover:translate-x-0.5 transition-transform">
-                      View more
+                  {/* Duration Badge */}
+                  <div className="flex justify-center">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#1B9AAA]/10 text-[#1B9AAA]">
                       <svg
-                        className="w-3.5 h-3.5 ml-1"
+                        className="w-3 h-3 mr-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      {course.duration}
+                    </span>
+                  </div>
+
+                  {/* Hover Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
+
+                  {/* Read More Indicator */}
+                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-[#1B9AAA] text-white p-2 rounded-full shadow-lg">
+                      <svg
+                        className="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -734,7 +731,7 @@ const Hero = () => {
                           d="M9 5l7 7-7 7"
                         />
                       </svg>
-                    </span>
+                    </div>
                   </div>
                 </div>
               </button>
@@ -745,7 +742,53 @@ const Hero = () => {
 
       {/* News Modal removed; using dedicated page */}
       {/* Why Choose Us */}
-
+      <section
+        className={`bg-white py-12 md:py-16 ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0D1B2A] text-center mb-8">
+            Why Choose ECA
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
+              <h3 className="font-semibold text-[#0D1B2A] mb-2">
+                Industry-Aligned Curriculum
+              </h3>
+              <p className="text-sm text-[#343A40]">
+                Programs designed with employer input to prepare you for real
+                jobs.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
+              <h3 className="font-semibold text-[#0D1B2A] mb-2">
+                Hands-on Learning
+              </h3>
+              <p className="text-sm text-[#343A40]">
+                Laboratories, simulations, and internships for practical
+                experience.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
+              <h3 className="font-semibold text-[#0D1B2A] mb-2">
+                Supportive Community
+              </h3>
+              <p className="text-sm text-[#343A40]">
+                Advising and mentoring to help you succeed from day one.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
+              <h3 className="font-semibold text-[#0D1B2A] mb-2">
+                Affordable Tuition
+              </h3>
+              <p className="text-sm text-[#343A40]">
+                Scholarships and flexible payment options available.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Testimonials Section */}
       <section className="bg-[#0D1B2A] py-12 md:py-16">
@@ -850,10 +893,10 @@ const Hero = () => {
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-deep-navy-blue mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-3 sm:mb-4">
               Our Departments
             </h2>
-            <div className="w-24 h-1.5 bg-warm-gold mx-auto rounded-full mb-4 sm:mb-6"></div>
+            <div className="w-16 sm:w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-4 sm:mb-6"></div>
             <p className="text-sm sm:text-base md:text-lg text-[#343A40] max-w-2xl mx-auto px-2">
               Explore the diverse colleges and departments that make up our
               educational institution
@@ -862,32 +905,6 @@ const Hero = () => {
           <LogoCarousel />
         </div>
       </div>
-
-      {/* Final Call to Action */}
-      <section className="bg-warm-gold py-16 md:py-20">
-        <div className="max-w-5xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-deep-navy-blue mb-6">
-            Ready to Start Your Journey?
-          </h2>
-          <p className="text-deep-navy-blue/80 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-            Join a community of scholars, innovators, and leaders. Apply today and shape your future at Exact Colleges of Asia.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/application"
-              className="bg-deep-navy-blue text-white font-bold py-4 px-10 rounded-lg shadow-lg hover:bg-opacity-90 transition-all hover:-translate-y-1"
-            >
-              Apply Now
-            </Link>
-            <Link
-              to="/contact"
-              className="bg-transparent border-2 border-deep-navy-blue text-deep-navy-blue font-bold py-4 px-10 rounded-lg hover:bg-deep-navy-blue/10 transition-all"
-            >
-              Contact Admissions
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Course Modal */}
       {showCourseModal && (

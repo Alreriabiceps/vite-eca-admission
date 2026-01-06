@@ -17,12 +17,7 @@ const Analytics = () => {
   const [saving, setSaving] = useState(false);
   const [printing, setPrinting] = useState(false);
   const [showBatchUploadModal, setShowBatchUploadModal] = useState(false);
-  const [uploadingBatch, setUploadingBatch] = useState(false);
-  const [batchSummary, setBatchSummary] = useState(null);
-  const [activeTab, setActiveTab] = useState("overview");
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
-  const [enrolledLoading, setEnrolledLoading] = useState(false);
-  const [enrolledError, setEnrolledError] = useState("");
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   const terms = [
     { value: "all", label: "All Terms" },
@@ -71,25 +66,6 @@ const Analytics = () => {
       setCourseTargets(response.data);
     } catch (error) {
       console.error("Error fetching course targets:", error);
-    }
-  };
-
-  const fetchEnrolledStudents = async () => {
-    try {
-      setEnrolledLoading(true);
-      setEnrolledError("");
-      const response = await axios.get(
-        `/api/analytics/enrolled-students?year=${selectedYear}&term=${selectedTerm}`
-      );
-      setEnrolledStudents(response.data.students || []);
-    } catch (error) {
-      console.error("Error fetching enrolled students:", error);
-      setEnrolledError(
-        error.response?.data?.message ||
-          "Failed to load enrolled students. Please try again."
-      );
-    } finally {
-      setEnrolledLoading(false);
     }
   };
 
@@ -173,7 +149,6 @@ const Analytics = () => {
     fetchAnalyticsData();
     fetchComparisonData();
     fetchCourseTargets();
-    fetchEnrolledStudents();
   }, [selectedYear, selectedTerm]);
 
   useEffect(() => {
@@ -181,12 +156,6 @@ const Analytics = () => {
     console.log("Comparison data state:", comparisonData);
     console.log("Loading state:", loading);
   }, [analyticsData, comparisonData, loading]);
-
-  const currentYearStats =
-    comparisonData?.yearlyData?.find((y) => y.year === selectedYear) || null;
-  const lastYearStats =
-    comparisonData?.yearlyData?.find((y) => y.year === selectedYear - 1) ||
-    null;
 
   const getStatusColor = (actual, target) => {
     const percentage = (actual / target) * 100;
@@ -207,47 +176,6 @@ const Analytics = () => {
     if (percentage >= 100) return "Target Met";
     if (percentage >= 80) return "Near Target";
     return "Below Target";
-  };
-
-  const handleBatchFileUpload = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setUploadingBatch(true);
-      setBatchSummary(null);
-
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await axios.post(
-        "/api/enrollment-import/batch-enrollment",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      setBatchSummary(response.data.summary || null);
-
-      // Refresh analytics to reflect newly marked enrolled students
-      await fetchAnalyticsData();
-      await fetchComparisonData();
-
-      alert("Batch enrollment file processed successfully.");
-    } catch (error) {
-      console.error("Batch upload error:", error);
-      const message =
-        error.response?.data?.message ||
-        "Failed to process batch file. Please check the template and try again.";
-      alert(message);
-    } finally {
-      setUploadingBatch(false);
-      // Reset input so same file can be re-uploaded if needed
-      event.target.value = "";
-    }
   };
 
   const handleCustomPrint = () => {
@@ -433,23 +361,26 @@ const Analytics = () => {
         id="analytics-print-area"
       >
         {/* Header */}
-        <div className="bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-xl border border-[#1B9AAA]/20 mb-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-[#0D1B2A]">
-                Admission Analytics
+              <h1 className="text-3xl font-bold text-[#0D1B2A] mb-2">
+                Admission Analytics Report
               </h1>
-              <p className="text-sm text-gray-600">
-                Enrolled students by course, year, and term.
+              <p className="text-gray-600">
+                Track and compare enrollment data per course across different
+                years and terms
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-600">Academic Year</span>
+            <div className="flex flex-col sm:flex-row gap-4 mt-4 lg:mt-0">
+              <div>
+                <label className="block text-sm font-medium text-[#0D1B2A] mb-2">
+                  Academic Year
+                </label>
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white text-sm"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white shadow-sm"
                 >
                   {years.map((year) => (
                     <option key={year} value={year}>
@@ -458,12 +389,14 @@ const Analytics = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-600">Term</span>
+              <div>
+                <label className="block text-sm font-medium text-[#0D1B2A] mb-2">
+                  Term
+                </label>
                 <select
                   value={selectedTerm}
                   onChange={(e) => setSelectedTerm(e.target.value)}
-                  className="px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white text-sm"
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent bg-white shadow-sm"
                 >
                   {terms.map((term) => (
                     <option key={term.value} value={term.value}>
@@ -472,16 +405,16 @@ const Analytics = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-end gap-3">
                 <button
                   onClick={() => setShowTargetModal(true)}
-                  className="px-4 py-1.5 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] focus:outline-none focus:ring-2 focus:ring-[#16a34a] focus:ring-offset-2 text-sm font-semibold"
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200"
                 >
                   Edit Targets
                 </button>
                 <button
                   onClick={handleCustomPrint}
-                  className="px-4 py-1.5 bg-[#1B9AAA] text-white rounded-lg hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 text-sm font-semibold"
+                  className="px-6 py-2 bg-[#1B9AAA] text-white rounded-lg hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 transition-all duration-200"
                 >
                   Print
                 </button>
@@ -490,49 +423,37 @@ const Analytics = () => {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
-          <nav className="flex space-x-4" aria-label="Tabs">
+        <div className="bg-white text-[#0D1B2A] border border-[#1B9AAA]/30 rounded-2xl p-6 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6 shadow-lg shadow-[#0D1B2A]/5">
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold tracking-tight">
+              Enrollment Sync (Registrar Import) — Preview
+            </h2>
+            <p className="text-base leading-relaxed text-[#0D1B2A]/80">
+              Analytics now track <span className="font-semibold">enrolled</span> students only.
+              Soon you will be able to match registrar lists against admission
+              records and confirm which applicants have officially enrolled.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={() => setActiveTab("overview")}
-              className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
-                activeTab === "overview"
-                  ? "border-[#1B9AAA] text-[#1B9AAA]"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
+              onClick={() => setShowBatchUploadModal(true)}
+              className="px-5 py-2.5 bg-[#1B9AAA] text-white rounded-lg shadow hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 focus:ring-offset-white transition-colors text-sm font-semibold"
             >
-              Overview
+              Open Batch Upload Preview
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab("comparison")}
-              className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
-                activeTab === "comparison"
-                  ? "border-[#1B9AAA] text-[#1B9AAA]"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
+              onClick={() => setShowTemplateModal(true)}
+              className="px-5 py-2.5 border border-[#1B9AAA] text-[#0D1B2A] rounded-lg hover:bg-[#1B9AAA]/10 focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 focus:ring-offset-white transition-colors text-sm font-semibold"
             >
-              Comparison
+              View Sample Template
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("enrolled")}
-              className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
-                activeTab === "enrolled"
-                  ? "border-[#1B9AAA] text-[#1B9AAA]"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Enrolled Students
-            </button>
-          </nav>
+          </div>
         </div>
 
-        {activeTab === "overview" && (
-          <>
-            {/* Summary Cards */}
-            {analyticsData ? (
+        {/* Summary Cards */}
+        {analyticsData ? (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20">
               <div className="flex items-center">
@@ -646,22 +567,22 @@ const Analytics = () => {
               </div>
             </div>
           </div>
-            ) : (
-              <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-[#1B9AAA]/20 mb-8">
-                <div className="text-center">
-                  <div className="text-gray-500 text-lg">
-                    No analytics data available
-                  </div>
-                  <div className="text-gray-400 text-sm mt-2">
-                    Data is being loaded or no applications found for the selected
-                    period
-                  </div>
-                </div>
+        ) : (
+          <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-[#1B9AAA]/20 mb-8">
+            <div className="text-center">
+              <div className="text-gray-500 text-lg">
+                No analytics data available
               </div>
-            )}
+              <div className="text-gray-400 text-sm mt-2">
+                Data is being loaded or no applications found for the selected
+                period
+              </div>
+            </div>
+          </div>
+        )}
 
-            {/* Course Enrollment Analysis */}
-            {analyticsData ? (
+        {/* Course Enrollment Analysis */}
+        {analyticsData ? (
           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden mb-8">
             <div className="px-6 py-4 border-b border-[#1B9AAA]/20">
               <h3 className="text-xl font-semibold text-[#0D1B2A]">
@@ -764,455 +685,126 @@ const Analytics = () => {
               </table>
             </div>
           </div>
-            ) : null}
+        ) : null}
 
-            {/* Year-to-Year Comparison moved to Comparison tab */}
-          </>
-        )}
-
-        {activeTab === "comparison" && (
-          <>
-            {/* Year-to-Year Comparison */}
-            {comparisonData ? (
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
-                <div className="px-6 py-4 border-b border-[#1B9AAA]/20">
-                  <h3 className="text-xl font-semibold text-[#0D1B2A]">
-                    Year-to-Year Comparison
-                  </h3>
-                  <p className="text-gray-600 mt-1">
-                    Admission and enrollment trends and numeric comparison for{" "}
-                    {selectedYear} vs last year
-                  </p>
-                </div>
-
-                <div className="p-6 space-y-8">
-                  {currentYearStats && lastYearStats && (
-                    <>
-                      {/* Enrolled comparison row */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Last Year Enrolled ({lastYearStats.year})
-                          </p>
-                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
-                            {lastYearStats.enrollment}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            Total enrolled students
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            This Year Enrolled ({currentYearStats.year})
-                          </p>
-                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
-                            {currentYearStats.enrollment}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            Total enrolled students
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Enrolled change vs last year
-                          </p>
-                          <p
-                            className={`mt-1 text-2xl font-bold ${
-                              (currentYearStats.enrollment ?? 0) >
-                              (lastYearStats.enrollment ?? 0)
-                                ? "text-green-600"
-                                : (currentYearStats.enrollment ?? 0) <
-                                  (lastYearStats.enrollment ?? 0)
-                                ? "text-red-600"
-                                : "text-gray-700"
-                            }`}
-                          >
-                            {currentYearStats.enrollment -
-                              lastYearStats.enrollment >=
-                            0
-                              ? "+"
-                              : ""}
-                            {currentYearStats.enrollment -
-                              lastYearStats.enrollment}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            Net difference in enrolled students
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Admissions comparison row */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Last Year Admissions ({lastYearStats.year})
-                          </p>
-                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
-                            {lastYearStats.admissions ?? 0}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            Total admitted applicants
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            This Year Admissions ({currentYearStats.year})
-                          </p>
-                          <p className="mt-1 text-2xl font-bold text-[#0D1B2A]">
-                            {currentYearStats.admissions ?? 0}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            Total admitted applicants
-                          </p>
-                        </div>
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                            Admissions change vs last year
-                          </p>
-                          <p
-                            className={`mt-1 text-2xl font-bold ${
-                              (currentYearStats.admissions ?? 0) >
-                              (lastYearStats.admissions ?? 0)
-                                ? "text-green-600"
-                                : (currentYearStats.admissions ?? 0) <
-                                  (lastYearStats.admissions ?? 0)
-                                ? "text-red-600"
-                                : "text-gray-700"
-                            }`}
-                          >
-                            {(currentYearStats.admissions ?? 0) -
-                              (lastYearStats.admissions ?? 0) >=
-                            0
-                              ? "+"
-                              : ""}
-                            {(currentYearStats.admissions ?? 0) -
-                              (lastYearStats.admissions ?? 0)}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500">
-                            Net difference in admitted applicants
-                          </p>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Total Enrollment Trend */}
-                    <div>
-                      <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
-                        Total Enrollment Trend
-                      </h4>
-                      <div className="space-y-3">
-                        {comparisonData.yearlyData.map((year, index) => (
-                          <div
-                            key={year.year}
-                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                          >
-                            <span className="font-medium text-gray-700">
-                              {year.year}
-                            </span>
-                            <div className="flex items-center space-x-4">
-                              <span className="text-sm text-gray-600">
-                                {year.enrollment}
-                              </span>
-                              {index > 0 && (
-                                <span
-                                  className={`text-xs px-2 py-1 rounded-full ${
-                                    year.growth > 0
-                                      ? "bg-green-100 text-green-800"
-                                      : year.growth < 0
-                                      ? "bg-red-100 text-red-800"
-                                      : "bg-gray-100 text-gray-800"
-                                  }`}
-                                >
-                                  {year.growth > 0 ? "+" : ""}
-                                  {year.growth}%
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Top Performing Courses */}
-                    <div>
-                      <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
-                        Top Performing Courses
-                      </h4>
-                      <div className="space-y-3">
-                        {comparisonData.topCourses.map((course, index) => (
-                          <div
-                            key={course.name}
-                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <span className="text-sm font-medium text-gray-500">
-                                #{index + 1}
-                              </span>
-                              <span className="font-medium text-gray-700">
-                                {course.name}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-gray-600">
-                                {course.enrollment}
-                              </span>
-                              <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                                {course.growth}%
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* All Courses Comparison Table */}
-                  {comparisonData.allCourses && comparisonData.allCourses.length > 0 && (
-                    <div className="mt-8">
-                      <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
-                        All Courses Comparison - {selectedYear} vs {selectedYear - 1}
-                      </h4>
-                      <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-[#1B9AAA]/20">
-                            <thead className="bg-[#F5F7FA]">
-                              <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
-                                  Course
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
-                                  {selectedYear - 1} Enrollment
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
-                                  {selectedYear} Enrollment
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
-                                  Change
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
-                                  Growth %
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white/50 divide-y divide-[#1B9AAA]/20">
-                              {comparisonData.allCourses.map((course, index) => (
-                                <tr key={course.name} className="hover:bg-[#F5F7FA]/50">
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm font-medium text-gray-900">
-                                      {course.name}
-                                    </div>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                    {course.previousEnrollment || 0}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {course.enrollment}
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                    <span
-                                      className={
-                                        course.change >= 0
-                                          ? "text-green-600 font-medium"
-                                          : "text-red-600 font-medium"
-                                      }
-                                    >
-                                      {course.change >= 0 ? "+" : ""}
-                                      {course.change}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4 whitespace-nowrap">
-                                    <span
-                                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                        course.growth > 0
-                                          ? "bg-green-100 text-green-800"
-                                          : course.growth < 0
-                                          ? "bg-red-100 text-red-800"
-                                          : "bg-gray-100 text-gray-800"
-                                      }`}
-                                    >
-                                      {course.growth > 0 ? "+" : ""}
-                                      {course.growth}%
-                                    </span>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-[#1B9AAA]/20">
-                <div className="text-center">
-                  <div className="text-gray-500 text-lg">
-                    No comparison data available
-                  </div>
-                  <div className="text-gray-400 text-sm mt-2">
-                    Historical data is being loaded or not available
-                  </div>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-
-        {activeTab === "enrolled" && (
-          <div className="space-y-4">
-            <div className="bg-white text-[#0D1B2A] border border-[#1B9AAA]/30 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-lg shadow-[#0D1B2A]/5">
-              <div>
-                <h2 className="text-lg font-semibold">
-                  Enrolled Students (From Admissions)
-                </h2>
-                <p className="text-sm text-[#0D1B2A]/75">
-                  Shows applicants whose status is now{" "}
-                  <span className="font-semibold">enrolled</span> for the
-                  selected year and term.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowBatchUploadModal(true)}
-                  className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg shadow hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 text-sm font-semibold"
-                >
-                  Batch Upload
-                </button>
-                <a
-                  href="/TEMPLATE.xlsx"
-                  download
-                  className="px-4 py-2 border border-[#1B9AAA] text-[#0D1B2A] rounded-lg hover:bg-[#1B9AAA]/10 focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 text-sm font-semibold"
-                >
-                  Download Template
-                </a>
-              </div>
+        {/* Year-to-Year Comparison */}
+        {comparisonData ? (
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#1B9AAA]/20">
+              <h3 className="text-xl font-semibold text-[#0D1B2A]">
+                Year-to-Year Comparison
+              </h3>
+              <p className="text-gray-600 mt-1">
+                Enrollment trends and growth analysis
+              </p>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-[#1B9AAA]/20 overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#1B9AAA]/20 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-[#0D1B2A]">
-                  Enrolled Students — {selectedYear}{" "}
-                  {selectedTerm !== "all" &&
-                    `(${terms.find((t) => t.value === selectedTerm)?.label})`}
-                </h3>
-                <span className="text-xs text-gray-500">
-                  Total:{" "}
-                  <span className="font-semibold">{enrolledStudents.length}</span>
-                </span>
-              </div>
-
-              {enrolledError && (
-                <div className="px-6 py-3 bg-red-50 text-red-700 text-sm border-b border-red-100">
-                  {enrolledError}
-                </div>
-              )}
-
-              {enrolledLoading ? (
-                <div className="px-6 py-10 flex justify-center">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1B9AAA] mx-auto"></div>
-                    <p className="mt-3 text-sm text-gray-600">
-                      Loading enrolled students...
-                    </p>
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Total Enrollment Trend */}
+                <div>
+                  <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
+                    Total Enrollment Trend
+                  </h4>
+                  <div className="space-y-3">
+                    {comparisonData.yearlyData.map((year, index) => (
+                      <div
+                        key={year.year}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
+                        <span className="font-medium text-gray-700">
+                          {year.year}
+                        </span>
+                        <div className="flex items-center space-x-4">
+                          <span className="text-sm text-gray-600">
+                            {year.enrollment}
+                          </span>
+                          {index > 0 && (
+                            <span
+                              className={`text-xs px-2 py-1 rounded-full ${
+                                year.growth > 0
+                                  ? "bg-green-100 text-green-800"
+                                  : year.growth < 0
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {year.growth > 0 ? "+" : ""}
+                              {year.growth}%
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ) : enrolledStudents.length === 0 ? (
-                <div className="px-6 py-10 text-center text-gray-500 text-sm">
-                  No enrolled students found for the selected year/term.
+
+                {/* Top Performing Courses */}
+                <div>
+                  <h4 className="text-lg font-semibold text-[#0D1B2A] mb-4">
+                    Top Performing Courses
+                  </h4>
+                  <div className="space-y-3">
+                    {comparisonData.topCourses.map((course, index) => (
+                      <div
+                        key={course.name}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <span className="text-sm font-medium text-gray-500">
+                            #{index + 1}
+                          </span>
+                          <span className="font-medium text-gray-700">
+                            {course.name}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-600">
+                            {course.enrollment}
+                          </span>
+                          <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                            {course.growth}%
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-[#1B9AAA]/20 text-sm">
-                    <thead className="bg-[#F5F7FA]">
-                      <tr>
-                        <th className="px-4 py-3 text-left font-semibold text-[#0D1B2A]">
-                          #
-                        </th>
-                        <th className="px-4 py-3 text-left font-semibold text-[#0D1B2A]">
-                          Name
-                        </th>
-                        <th className="px-4 py-3 text-left font-semibold text-[#0D1B2A]">
-                          Course
-                        </th>
-                        <th className="px-4 py-3 text-left font-semibold text-[#0D1B2A]">
-                          Email
-                        </th>
-                        <th className="px-4 py-3 text-left font-semibold text-[#0D1B2A]">
-                          Contact
-                        </th>
-                        <th className="px-4 py-3 text-left font-semibold text-[#0D1B2A]">
-                          Birthdate
-                        </th>
-                        <th className="px-4 py-3 text-left font-semibold text-[#0D1B2A]">
-                          Application Date
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-[#1B9AAA]/15">
-                      {enrolledStudents.map((student, index) => (
-                        <tr key={student.id} className="hover:bg-[#F8FBFC]">
-                          <td className="px-4 py-3 text-xs text-gray-500">
-                            {index + 1}
-                          </td>
-                          <td className="px-4 py-3">
-                            <div className="font-medium text-[#0D1B2A]">
-                              {student.fullName ||
-                                `${student.givenName || ""} ${
-                                  student.lastName || ""
-                                }`}
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-[#0D1B2A]">
-                            {student.courseApplied}
-                          </td>
-                          <td className="px-4 py-3 text-gray-700">
-                            {student.email}
-                          </td>
-                          <td className="px-4 py-3 text-gray-700">
-                            {student.contact || "-"}
-                          </td>
-                          <td className="px-4 py-3 text-gray-700">
-                            {student.dateOfBirth
-                              ? new Date(student.dateOfBirth)
-                                  .toISOString()
-                                  .slice(0, 10)
-                              : "-"}
-                          </td>
-                          <td className="px-4 py-3 text-gray-700">
-                            {student.submittedAt
-                              ? new Date(student.submittedAt)
-                                  .toISOString()
-                                  .slice(0, 10)
-                              : "-"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-xl border border-[#1B9AAA]/20">
+            <div className="text-center">
+              <div className="text-gray-500 text-lg">
+                No comparison data available
+              </div>
+              <div className="text-gray-400 text-sm mt-2">
+                Historical data is being loaded or not available
+              </div>
             </div>
           </div>
         )}
 
-        {/* Batch Upload Modal (simplified) */}
+        {/* Batch Upload Preview Modal */}
         {showBatchUploadModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-[#0D1B2A]">
-                  Batch Upload (Registrar List)
-                </h3>
+                <div>
+                  <h3 className="text-2xl font-semibold text-[#0D1B2A]">
+                    Batch Upload Preview
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Walkthrough of the upcoming registrar import flow.
+                  </p>
+                </div>
                 <button
                   onClick={() => setShowBatchUploadModal(false)}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-6 h-6"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1227,16 +819,130 @@ const Analytics = () => {
                 </button>
               </div>
 
-              <div className="px-6 py-5 space-y-4">
-                <p className="text-sm text-[#0D1B2A]/75">
-                  Upload the official enrolled list from the registrar in{" "}
-                  <span className="font-semibold">CSV or XLSX</span> format.
-                  We&apos;ll process the file and update enrollment analytics.
-                </p>
+              <div className="px-6 py-5 space-y-6 max-h-[70vh] overflow-y-auto">
+                <div className="grid md:grid-cols-2 gap-4">
+                  {[
+                    {
+                      title: "Step 1 · Download Template",
+                      description:
+                        "Registrar exports the enrolled list using the standardized CSV/XLSX template to ensure column names line up.",
+                    },
+                    {
+                      title: "Step 2 · Upload Registrar File",
+                      description:
+                        "Upload the file here. The system validates required columns (Full Name, Student ID, Program, Enrollment Date).",
+                    },
+                    {
+                      title: "Step 3 · Match & Review",
+                      description:
+                        "Admissions records are matched by name + birthdate. Any conflicts will be highlighted for manual review.",
+                    },
+                    {
+                      title: "Step 4 · Confirm Updates",
+                      description:
+                        "After reviewing matches, confirm to mark the matched applicants as enrolled and log the import batch.",
+                    },
+                  ].map((step) => (
+                    <div
+                      key={step.title}
+                      className="p-4 border border-[#1B9AAA]/30 rounded-xl bg-[#F8FBFC]"
+                    >
+                      <h4 className="font-semibold text-[#0D1B2A] mb-1 text-base">
+                        {step.title}
+                      </h4>
+                      <p className="text-sm text-[#0D1B2A]/75 leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
 
-                <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#1B9AAA] rounded-xl p-6 cursor-pointer bg-[#F8FBFC] hover:bg-[#F1FAFE] transition-colors">
+                <div className="border border-dashed border-[#1B9AAA]/40 rounded-2xl p-6 bg-[#F1FAFE]">
+                  <h4 className="text-lg font-semibold text-[#0D1B2A] mb-2">
+                    Try a Sample Upload
+                  </h4>
+                  <p className="text-sm text-[#0D1B2A]/70 mb-4">
+                    This preview uploader is for demonstration only—files aren’t
+                    saved yet, but you can see the interaction.
+                  </p>
+                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#1B9AAA] rounded-xl p-6 cursor-pointer bg-white hover:bg-[#F8FBFC] transition-colors">
+                    <svg
+                      className="w-10 h-10 text-[#1B9AAA] mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M4 12l8-8 8 8M12 4v12"
+                      />
+                    </svg>
+                    <span className="text-sm font-semibold text-[#1B9AAA]">
+                      Click to upload registrar CSV / XLSX
+                    </span>
+                    <span className="mt-2 text-xs text-[#0D1B2A]/60">
+                      Supported soon · .csv, .xlsx · Max 5MB
+                    </span>
+                    <input
+                      type="file"
+                      accept=".csv,.xlsx"
+                      className="hidden"
+                      onChange={() => {
+                        alert(
+                          "Thanks for trying the preview! Import processing will be enabled in the live release."
+                        );
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-gray-50">
+                <div className="text-sm text-gray-500">
+                  Status: <span className="font-medium text-[#0D1B2A]">Design Preview</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg cursor-not-allowed"
+                    disabled
+                  >
+                    Match Records (disabled)
+                  </button>
+                  <button
+                    type="button"
+                    className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg cursor-not-allowed"
+                    disabled
+                  >
+                    Confirm Enrollment (disabled)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Template Preview Modal */}
+        {showTemplateModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-semibold text-[#0D1B2A]">
+                    Sample Template Preview
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Final column list may adjust before launch.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowTemplateModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
                   <svg
-                    className="w-10 h-10 text-[#1B9AAA] mb-3"
+                    className="w-6 h-6"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1245,60 +951,85 @@ const Analytics = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M4 12l8-8 8 8M12 4v12"
+                      d="M6 18L18 6M6 6l12 12"
                     />
                   </svg>
-                  <span className="text-sm font-semibold text-[#1B9AAA]">
-                    {uploadingBatch
-                      ? "Processing file..."
-                      : "Click to choose CSV / XLSX file"}
-                  </span>
-                  <span className="mt-2 text-xs text-[#0D1B2A]/60">
-                    Supported formats: .xlsx, .csv · Max 5MB
-                  </span>
-                  <input
-                    type="file"
-                    accept=".csv,.xlsx"
-                    className="hidden"
-                    onChange={handleBatchFileUpload}
-                    disabled={uploadingBatch}
-                  />
-                </label>
-
-                {batchSummary && (
-                  <div className="mt-2 text-sm text-[#0D1B2A] bg-white rounded-xl border border-[#1B9AAA]/20 p-4">
-                    <p className="font-semibold mb-2">Latest batch results</p>
-                    <ul className="space-y-1">
-                      <li>
-                        <span className="font-medium">Total rows:</span>{" "}
-                        {batchSummary.totalRows}
-                      </li>
-                      <li>
-                        <span className="font-medium">
-                          Matched and marked enrolled:
-                        </span>{" "}
-                        {batchSummary.matchedAndUpdated}
-                      </li>
-                      <li>
-                        <span className="font-medium">Already enrolled:</span>{" "}
-                        {batchSummary.alreadyEnrolled}
-                      </li>
-                      <li>
-                        <span className="font-medium">Unmatched rows:</span>{" "}
-                        {batchSummary.unmatched}
-                      </li>
-                    </ul>
-                  </div>
-                )}
+                </button>
               </div>
 
-              <div className="px-6 py-3 border-t border-gray-200 bg-gray-50 flex justify-end">
+              <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+                <p className="text-sm text-[#0D1B2A]/75">
+                  Suggested columns for the registrar upload. Ensure values are
+                  clean and free from extra spaces for the best match accuracy.
+                </p>
+                <div className="overflow-x-auto border border-gray-200 rounded-xl">
+                  <table className="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead className="bg-[#F5F7FA] text-[#0D1B2A]">
+                      <tr>
+                        {[
+                          "Student ID",
+                          "Full Name",
+                          "Birthdate (YYYY-MM-DD)",
+                          "Program",
+                          "Enrollment Date",
+                          "Registrar Remarks",
+                        ].map((column) => (
+                          <th key={column} className="px-4 py-3 text-left font-semibold">
+                            {column}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100 text-[#0D1B2A]/80">
+                      {[
+                        [
+                          "ECA-24-001",
+                          "Maria Angelica Santos",
+                          "2007-05-12",
+                          "BS Nursing",
+                          "2025-08-15",
+                          "Section assigned",
+                        ],
+                        [
+                          "ECA-24-002",
+                          "John Michael Reyes",
+                          "2006-11-03",
+                          "BS Information System",
+                          "2025-08-16",
+                          "Requires ID photo",
+                        ],
+                      ].map((row, rowIndex) => (
+                        <tr key={rowIndex} className="hover:bg-[#F8FBFC]">
+                          {row.map((cell, cellIndex) => (
+                            <td key={cellIndex} className="px-4 py-3 whitespace-nowrap">
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
                 <button
                   type="button"
-                  onClick={() => setShowBatchUploadModal(false)}
-                  className="px-4 py-2 bg-[#0D1B2A] text-white rounded-lg hover:bg-[#11253a] transition-colors text-sm font-semibold"
+                  className="px-5 py-2 bg-[#1B9AAA] text-white rounded-lg shadow hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 transition-colors text-sm font-semibold"
+                  onClick={() =>
+                    alert(
+                      "Template download will be available once the batch upload feature goes live."
+                    )
+                  }
                 >
-                  Close
+                  Download Sample (Soon)
+                </button>
+              </div>
+
+              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowTemplateModal(false)}
+                  className="px-5 py-2 bg-[#0D1B2A] text-white rounded-lg hover:bg-[#11253a] transition-colors text-sm font-semibold"
+                >
+                  Close Preview
                 </button>
               </div>
             </div>

@@ -9,6 +9,7 @@ const Layout = ({ children }) => {
   const isAdminPage = location.pathname.startsWith("/admin");
   const isAdminLogin = location.pathname === "/admin/login";
   const isAdminDashboard = location.pathname === "/admin/dashboard";
+  const hideFooter = isAdminDashboard || isAdminLogin;
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0D1B2A]">
@@ -45,7 +46,7 @@ const Layout = ({ children }) => {
         </div>
       )}
       <div className="flex-1">{children}</div>
-      {!isAdminDashboard && <Footer />}
+      {!hideFooter && <Footer />}
     </div>
   );
 };

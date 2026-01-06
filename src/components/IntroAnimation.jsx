@@ -117,8 +117,11 @@ const IntroAnimation = ({ onComplete }) => {
           }`}
         >
           <div className="inline-block px-12 py-5 border-t-2 border-b-2 border-soft-off-white/40">
-            <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-soft-off-white font-light tracking-[0.2em] uppercase">
-              Excellence in Education
+            <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-blue-400 font-bold tracking-[0.2em] uppercase">
+              THE ROAD TO ACADEMIC EXCELLENCE
+            </p>
+            <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-red-500 font-bold tracking-[0.2em] uppercase mt-4">
+              WELCOME ABOARD
             </p>
           </div>
         </div>

@@ -26,38 +26,6 @@ const CourseModal = ({
 
   const theme = course.theme || defaultTheme;
 
-  // Map course IDs to their anime illustrations
-  const getAnimeImage = (courseId, courseTitle) => {
-    const id = courseId?.toLowerCase() || "";
-    const title = courseTitle?.toLowerCase() || "";
-
-    if (id === "marine-transportation" || id === "marine-engineering" || title.includes("marine")) {
-      return "/ANIME/MARINE.png";
-    }
-    if (id === "nursing" || title.includes("nursing")) {
-      return "/ANIME/NURSING.png";
-    }
-    if (id === "early-childhood-education" || id === "technical-vocational-teacher" || title.includes("education") || title.includes("teacher")) {
-      return "/ANIME/EDUC.png";
-    }
-    if (id === "entrepreneurship" || id === "management-accounting" || title.includes("entrepreneurship") || title.includes("management accounting") || title.includes("business")) {
-      return "/ANIME/BUSINESS.png";
-    }
-    if (id === "information-system" || title.includes("information system")) {
-      return "/ANIME/IS.png";
-    }
-    if (id === "tourism-management" || title.includes("tourism")) {
-      return "/ANIME/TOURISM.png";
-    }
-    if (id === "criminology" || title.includes("criminology")) {
-      return "/ANIME/CRIME.png";
-    }
-    return null;
-  };
-
-  const animeImage = getAnimeImage(course.id, course.title);
-  const hasAnimeImage = animeImage !== null;
-
   const prevIndex =
     (currentIndex - 1 + (courses?.length || 1)) % (courses?.length || 1);
   const nextIndex = (currentIndex + 1) % (courses?.length || 1);
@@ -128,13 +96,7 @@ const CourseModal = ({
         </div>
 
         {/* Content */}
-        <div
-          className={`p-6 overflow-y-auto max-h-[70vh] ${
-            hasAnimeImage ? "md:grid md:grid-cols-[minmax(0,2fr)_minmax(0,1.3fr)] md:gap-6" : ""
-          }`}
-        >
-          {/* Left: Text content */}
-          <div>
+        <div className="p-6 overflow-y-auto max-h-[70vh]">
           {/* Duration & Units */}
           <div className="flex gap-2 mb-4">
             {course.duration && (
@@ -312,18 +274,6 @@ const CourseModal = ({
               {nextCourseName} →
             </button>
           </div>
-          </div>
-
-          {/* Right: Anime illustration section */}
-          {hasAnimeImage && (
-            <div className="mt-6 md:mt-0 flex items-center justify-center">
-              <img
-                src={animeImage}
-                alt={`${course.title} students in uniform`}
-                className="max-h-[26rem] md:max-h-[30rem] w-full object-contain drop-shadow-lg"
-              />
-            </div>
-          )}
         </div>
       </div>
     </div>,

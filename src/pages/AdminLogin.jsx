@@ -50,7 +50,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] min-h-full flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8 relative">
+    <div className="bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] min-h-screen flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8 relative">
       {/* Background Pattern */}
       <div
         className="absolute inset-0 opacity-10"
@@ -60,8 +60,25 @@ const AdminLogin = () => {
       ></div>
 
       <div className="max-w-md w-full space-y-6 relative z-10 mx-auto">
+        {/* Logo / Title */}
+        <div className="flex flex-col items-center text-center">
+          <div className="h-16 w-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center shadow-lg mb-3">
+            <img
+              src="/logo na pogi.png"
+              alt="Exact Colleges of Asia Logo"
+              className="h-12 w-12 object-contain"
+            />
+          </div>
+          <h1 className="text-2xl font-bold text-white tracking-wide">
+            Admin Sign In
+          </h1>
+          <p className="mt-1 text-sm text-white/70">
+            Secure access to the Admission Management System
+          </p>
+        </div>
+
         {/* Login Form */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-7">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-lg">
               <p className="text-red-600 font-medium">{error}</p>
