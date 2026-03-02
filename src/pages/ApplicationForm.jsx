@@ -757,10 +757,10 @@ const ApplicationForm = () => {
                   </p>
 
                   <div className="space-y-4">
-                    {/* DATE/TIME OF TEST */}
+                    {/* DATE/TIME OF TEST (Optional) */}
                     <div className="space-y-2">
                       <label className="block text-sm font-bold text-[#343A40] uppercase">
-                        DATE/TIME OF TEST *
+                        DATE/TIME OF TEST (Optional)
                       </label>
                       <input
                         type="datetime-local"
@@ -770,14 +770,14 @@ const ApplicationForm = () => {
                         className="w-full px-4 py-2 border-2 rounded-lg bg-white text-[#0D1B2A] border-[#343A40] focus:outline-none focus:border-[#1B9AAA] focus:ring-2 focus:ring-[#1B9AAA]"
                       />
                       <p className="text-xs text-[#6B7280] italic">
-                        Select date and time for the examination
+                        Select date and time for the examination (if already scheduled)
                       </p>
                     </div>
 
-                    {/* Date Signed */}
+                    {/* Date Signed (Optional) */}
                     <div className="space-y-2">
                       <label className="block text-sm font-bold text-[#343A40] uppercase">
-                        Date Signed *
+                        Date Signed (Optional)
                       </label>
                       <input
                         type="date"
