@@ -69,11 +69,11 @@ const IntroAnimation = ({ onComplete }) => {
           <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-bold mb-6 tracking-wide leading-tight">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6">
               <span className="text-soft-off-white font-black">EXACT</span>
-              <span className="text-warm-gold font-black">COLLEGES</span>
+              <span className="text-soft-off-white font-black">COLLEGES</span>
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-5 mt-3">
               <span className="text-soft-off-white font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl">OF</span>
-              <span className="text-warm-gold font-black">ASIA</span>
+              <span className="text-soft-off-white font-black">ASIA</span>
             </div>
           </h1>
         </div>

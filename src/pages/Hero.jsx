@@ -1,6 +1,7 @@
 import LogoCarousel from "../components/LogoCarousel";
 import CoursesCarousel from "../components/CoursesCarousel";
 import CourseModal from "../components/CourseModal";
+import ProgramsShowcase from "../components/ProgramsShowcase";
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
@@ -602,228 +603,112 @@ const Hero = () => {
         {/* Quick Stats Strip removed per request */}
       </section>
       {/* Available Programs Section */}
-      <div
-        id="programs"
-        className="py-8 sm:py-12 md:py-16 lg:py-20 relative"
-        style={{
-          backgroundImage: `url("/bg.jpg")`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+      <ProgramsShowcase
+        courses={courses}
+        onCourseClick={(index) => {
+          setSelectedCourseIndex(index);
+          setShowCourseModal(true);
         }}
-        data-section="programs"
-      >
-        {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
-          <div
-            className={`text-center mb-8 sm:mb-12 md:mb-16 transition-all duration-1200 delay-200 ${
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-6"
-            }`}
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 text-white">
-              Available Programs
-            </h2>
-            <div className="w-16 sm:w-20 h-1 bg-[#1B9AAA] mx-auto rounded-full mb-2 sm:mb-3"></div>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white max-w-3xl mx-auto px-2">
-              Choose from our comprehensive range of undergraduate programs
-              designed for professional success.
-            </p>
-          </div>
-
-          {/* Course Books Grid */}
-          <div
-            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8 transition-all duration-1200 delay-400 ${
-              revealedSections["programs"]
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}
-            ref={courseContainerRef}
-          >
-            {courses.map((course, index) => (
-              <button
-                key={course.id}
-                onClick={() => {
-                  setSelectedCourseIndex(index);
-                  setShowCourseModal(true);
-                }}
-                className={`group relative bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 overflow-hidden transform w-full ${
-                  revealedCourseIdxs.has(index)
-                    ? "opacity-100 translate-y-0 scale-100"
-                    : "opacity-0 translate-y-8 scale-95"
-                }`}
-                style={{
-                  transitionDelay: `${index * 120}ms`,
-                }}
-                data-role="course-card"
-                data-idx={index}
-              >
-                {/* Book Spine Effect */}
-                <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-b from-gray-300 to-gray-400 rounded-l-2xl"></div>
-
-                {/* Course Content */}
-                <div className="relative p-4 sm:p-6">
-                  {/* Course Title */}
-                  <div className="text-center mb-3">
-                    <h3 className="text-lg font-bold text-[#0D1B2A] mb-1 line-clamp-2">
-                      {course.title}
-                    </h3>
-                    <p className="text-xs text-[#1B9AAA] font-medium">
-                      {course.college}
-                    </p>
-                  </div>
-
-                  {/* Logo moved after title */}
-                  <div className="flex justify-center mb-4">
-                    <div className="h-16 w-16 bg-white rounded-xl flex items-center justify-center shadow-lg p-2">
-                      <img
-                        src={course.logo}
-                        alt={`${course.title} logo`}
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-3 text-center">
-                    {course.description}
-                  </p>
-
-                  {/* Duration Badge */}
-                  <div className="flex justify-center">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#1B9AAA]/10 text-[#1B9AAA]">
-                      <svg
-                        className="w-3 h-3 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      {course.duration}
-                    </span>
-                  </div>
-
-                  {/* Hover Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#1B9AAA]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"></div>
-
-                  {/* Read More Indicator */}
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="bg-[#1B9AAA] text-white p-2 rounded-full shadow-lg">
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      />
 
       {/* News Modal removed; using dedicated page */}
       {/* Why Choose Us */}
-      <section
-        className={`bg-white py-12 md:py-16 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0D1B2A] text-center mb-8">
-            Why Choose ECA
-          </h2>
+      <section className="bg-white py-20 md:py-28">
+        {/* Why Choose ECA — redesigned */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <span className="inline-block text-[#1B9AAA] text-xs font-bold tracking-[0.3em] uppercase mb-3">Why ECA</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-[#0D1B2A] tracking-tight">Built for Your Success</h2>
+            <div className="w-12 h-1 bg-[#1B9AAA] rounded-full mx-auto mt-4" />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Industry-Aligned Curriculum
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Programs designed with employer input to prepare you for real
-                jobs.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Hands-on Learning
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Laboratories, simulations, and internships for practical
-                experience.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Supportive Community
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Advising and mentoring to help you succeed from day one.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl border border-[#1B9AAA]/20 bg-[#1B9AAA]/5">
-              <h3 className="font-semibold text-[#0D1B2A] mb-2">
-                Affordable Tuition
-              </h3>
-              <p className="text-sm text-[#343A40]">
-                Scholarships and flexible payment options available.
-              </p>
-            </div>
+            {[
+              {
+                title: "Industry-Aligned Curriculum",
+                desc: "Programs designed with employer input to prepare you for real jobs.",
+                num: "01",
+                icon: <svg className="w-6 h-6 text-[#1B9AAA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
+              },
+              {
+                title: "Hands-on Learning",
+                desc: "Laboratories, simulations, and internships for practical experience.",
+                num: "02",
+                icon: <svg className="w-6 h-6 text-[#1B9AAA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+              },
+              {
+                title: "Supportive Community",
+                desc: "Advising and mentoring to help you succeed from day one.",
+                num: "03",
+                icon: <svg className="w-6 h-6 text-[#1B9AAA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              },
+              {
+                title: "Affordable Tuition",
+                desc: "Scholarships and flexible payment options available.",
+                num: "04",
+                icon: <svg className="w-6 h-6 text-[#1B9AAA]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              },
+            ].map((item) => (
+              <div key={item.num} className="group relative bg-white rounded-xl p-7 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1 border border-gray-100 overflow-hidden">
+                <span className="absolute -top-3 -right-1 text-8xl font-black text-[#1B9AAA]/5 select-none leading-none">{item.num}</span>
+                <div className="w-12 h-12 rounded-lg bg-[#1B9AAA]/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                  {item.icon}
+                </div>
+                <div className="w-8 h-0.5 bg-[#1B9AAA] rounded-full mb-4" />
+                <h3 className="font-black text-[#0D1B2A] text-base mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#1B9AAA]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="bg-[#0D1B2A] py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-8">
-            What Our Students Say
-          </h2>
+      <section className="relative overflow-hidden py-20 md:py-28" style={{ background: "linear-gradient(135deg, #0D1B2A 0%, #0a2a3a 60%, #0D1B2A 100%)" }}>
+        {/* Grid bg */}
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
+          backgroundSize: "60px 60px"
+        }} />
+        {/* Glow blobs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#1B9AAA]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-[#1B9AAA]/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <span className="inline-block text-[#1B9AAA] text-xs font-bold tracking-[0.3em] uppercase mb-3">Testimonials</span>
+            <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">What Our Students Say</h2>
+            <div className="w-12 h-1 bg-[#1B9AAA] rounded-full mx-auto mt-4" />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <blockquote className="bg-white/10 border border-white/20 rounded-2xl p-6 text-white">
-              <p className="text-sm mb-3">
-                The hands-on training at ECA prepared me for my first job
-                immediately after graduation.
-              </p>
-              <footer className="text-xs text-white/80">
-                — Alumni, BS Nursing
-              </footer>
-            </blockquote>
-            <blockquote className="bg-white/10 border border-white/20 rounded-2xl p-6 text-white">
-              <p className="text-sm mb-3">
-                Professors truly care about our success and the curriculum
-                matches industry needs.
-              </p>
-              <footer className="text-xs text-white/80">
-                — Student, BS Information System
-              </footer>
-            </blockquote>
-            <blockquote className="bg-white/10 border border-white/20 rounded-2xl p-6 text-white">
-              <p className="text-sm mb-3">
-                Affordable tuition and scholarships made quality education
-                possible for me.
-              </p>
-              <footer className="text-xs text-white/80">
-                — Parent of ECA Student
-              </footer>
-            </blockquote>
+            {[
+              { quote: "The hands-on training at ECA prepared me for my first job immediately after graduation.", author: "Alumni", program: "BS Nursing", initial: "A" },
+              { quote: "Professors truly care about our success and the curriculum matches industry needs.", author: "Student", program: "BS Information System", initial: "S" },
+              { quote: "Affordable tuition and scholarships made quality education possible for me.", author: "Parent", program: "ECA Student", initial: "P" },
+            ].map((t, i) => (
+              <blockquote key={i} className="group relative bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#1B9AAA]/40 rounded-xl p-8 transition-all duration-500 hover:-translate-y-1 overflow-hidden">
+                <span className="absolute top-4 right-6 text-7xl font-black text-white/5 leading-none select-none">"</span>
+                <div className="flex gap-1 mb-5">
+                  {[...Array(5)].map((_, s) => (
+                    <svg key={s} className="w-4 h-4 text-[#1B9AAA]" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-white/80 text-base leading-relaxed mb-8 italic">"{t.quote}"</p>
+                <footer className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#1B9AAA]/30 border border-[#1B9AAA]/50 flex items-center justify-center text-white font-black text-sm">
+                    {t.initial}
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm">{t.author}</p>
+                    <p className="text-white/40 text-xs">{t.program}</p>
+                  </div>
+                </footer>
+              </blockquote>
+            ))}
           </div>
         </div>
       </section>
