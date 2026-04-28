@@ -15,7 +15,20 @@ const ProgramsShowcase = ({ courses, onCourseClick }) => {
   }, []);
 
   return (
-    <div id="programs" data-section="programs" className="relative bg-[#080814] py-20 px-4 sm:px-8">
+    <div id="programs" data-section="programs" className="relative overflow-hidden py-20 px-4 sm:px-8">
+      {/* Background image */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            'url("/ChatGPT Image Apr 29, 2026, 03_15_54 AM.png")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      {/* Black overlay for readability */}
+      <div className="absolute inset-0 bg-black/65 pointer-events-none" />
+
       {/* Grid bg */}
       <div
         className="absolute inset-0 opacity-[0.05] pointer-events-none"

@@ -68,12 +68,12 @@ const IntroAnimation = ({ onComplete }) => {
         >
           <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-bold mb-6 tracking-wide leading-tight">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6">
-              <span className="text-soft-off-white font-black">EXACT</span>
-              <span className="text-soft-off-white font-black">COLLEGES</span>
+              <span className="text-white font-black">EXACT</span>
+              <span className="text-white font-black">COLLEGES</span>
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-5 mt-3">
-              <span className="text-soft-off-white font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl">OF</span>
-              <span className="text-soft-off-white font-black">ASIA</span>
+              <span className="text-white font-bold text-4xl md:text-5xl lg:text-6xl xl:text-7xl">OF</span>
+              <span className="text-white font-black">ASIA</span>
             </div>
           </h1>
         </div>
@@ -87,11 +87,11 @@ const IntroAnimation = ({ onComplete }) => {
           }`}
         >
           <div className="flex items-center gap-4">
-            <div className="h-px w-20 md:w-24 bg-gradient-to-r from-transparent to-soft-off-white"></div>
-            <div className="w-2 h-2 rounded-full bg-soft-off-white"></div>
-            <div className="w-2 h-2 rounded-full bg-warm-gold"></div>
-            <div className="w-2 h-2 rounded-full bg-soft-off-white"></div>
-            <div className="h-px w-20 md:w-24 bg-gradient-to-l from-transparent to-warm-gold"></div>
+            <div className="h-px w-20 md:w-24 bg-gradient-to-r from-transparent to-white"></div>
+            <div className="w-2 h-2 rounded-full bg-white"></div>
+            <div className="w-2 h-2 rounded-full bg-white"></div>
+            <div className="w-2 h-2 rounded-full bg-white"></div>
+            <div className="h-px w-20 md:w-24 bg-gradient-to-l from-transparent to-white"></div>
           </div>
         </div>
 
@@ -103,7 +103,7 @@ const IntroAnimation = ({ onComplete }) => {
               : "opacity-0 translate-y-4"
           }`}
         >
-          <p className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-warm-gold font-semibold tracking-widest uppercase">
+          <p className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-white font-semibold tracking-widest uppercase">
             Suclayin Arayat Pampanga
           </p>
         </div>
@@ -116,8 +116,8 @@ const IntroAnimation = ({ onComplete }) => {
               : "opacity-0 translate-y-4"
           }`}
         >
-          <div className="inline-block px-12 py-5 border-t-2 border-b-2 border-soft-off-white/40">
-            <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-soft-off-white font-light tracking-[0.2em] uppercase">
+          <div className="inline-block px-12 py-5 border-t-2 border-b-2 border-white/40">
+            <p className="text-lg md:text-xl lg:text-2xl xl:text-3xl text-white font-light tracking-[0.2em] uppercase">
               Excellence in Education
             </p>
           </div>

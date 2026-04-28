@@ -2,7 +2,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#0D1B2A] text-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
           {/* Left Section - Logo and University Name */}
           <div className="flex items-start space-x-4">
             <img
@@ -94,6 +94,23 @@ const Footer = () => {
                   @ExactCollegesAsia
                 </span>
               </div>
+            </div>
+          </div>
+
+          {/* Right Section - Campus Map */}
+          <div className="space-y-2">
+            <h4 className="text-lg font-semibold text-white mb-2">Campus Map</h4>
+            <div className="w-full max-w-md rounded-xl overflow-hidden border border-white/15 shadow-lg bg-black/20">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4582.782728504767!2d120.79452447582355!3d15.172564185384452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396e486a8172a75%3A0x647ba9bb45487c6a!2sExact%20Colleges%20of%20Asia!5e1!3m2!1sen!2sph!4v1777403834809!5m2!1sen!2sph"
+                width="100%"
+                height="220"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Exact Colleges of Asia Map"
+              />
             </div>
           </div>
         </div>

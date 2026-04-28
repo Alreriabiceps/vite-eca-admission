@@ -12,6 +12,49 @@ const CourseModal = ({
 }) => {
   if (!isOpen || !course) return null;
 
+  const getCourseAnimeImage = (selectedCourse) => {
+    if (!selectedCourse) return null;
+
+    const title = (selectedCourse.title || "").toLowerCase();
+    const college = (selectedCourse.college || "").toLowerCase();
+
+    if (title.includes("marine") || college.includes("maritime")) {
+      return "/ANIME/MARINE.png";
+    }
+    if (title.includes("nursing") || college.includes("nursing")) {
+      return "/ANIME/NURSING.png";
+    }
+    if (
+      college.includes("education") ||
+      title.includes("education") ||
+      title.includes("teacher")
+    ) {
+      return "/ANIME/EDUC.png";
+    }
+    if (
+      title.includes("entrepreneurship") ||
+      title.includes("management accounting") ||
+      college.includes("business")
+    ) {
+      return "/ANIME/BUSINESS.png";
+    }
+    if (
+      title.includes("information system") ||
+      title.includes("information systems") ||
+      college.includes("information technology")
+    ) {
+      return "/ANIME/IS.png";
+    }
+    if (title.includes("tourism") || college.includes("tourism")) {
+      return "/ANIME/TOURISM.png";
+    }
+    if (title.includes("criminology") || college.includes("criminology")) {
+      return "/ANIME/CRIME.png";
+    }
+
+    return null;
+  };
+
   const defaultTheme = {
     headerFrom: "#1B9AAA",
     headerTo: "#0D4A6C",
@@ -31,6 +74,7 @@ const CourseModal = ({
   const nextIndex = (currentIndex + 1) % (courses?.length || 1);
   const prevCourseName = courses?.[prevIndex]?.title || "Previous";
   const nextCourseName = courses?.[nextIndex]?.title || "Next";
+  const courseAnimeImage = getCourseAnimeImage(course);
 
   return createPortal(
     <div
@@ -151,106 +195,125 @@ const CourseModal = ({
             )}
           </div>
 
-          {/* Bento Grid Layout */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            {/* Description Card */}
-            <div
-              className="col-span-2 rounded-lg p-3"
-              style={{
-                backgroundColor: theme.accentSoft,
-                border: `1px solid ${theme.border}`,
-              }}
-            >
-              <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
-                Description
-              </h3>
-              <p className="text-xs text-gray-700">{course.description}</p>
-            </div>
-
-            {/* Requirements Card */}
-            {course.requirements && (
-              <div
-                className="bg-white border rounded-lg p-3"
-                style={{ borderColor: theme.border }}
-              >
-                <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
-                  Requirements
-                </h3>
-                <ul className="space-y-1">
-                  {course.requirements.slice(0, 3).map((req, idx) => (
-                    <li
-                      key={idx}
-                      className="text-xs text-gray-700 flex items-start"
-                    >
-                      <span
-                        className="mr-1"
-                        style={{ color: theme.accent, fontWeight: 600 }}
-                      >
-                        •
-                      </span>
-                      {req}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Curriculum Card */}
-            {course.curriculum && (
-              <div
-                className="bg-white border rounded-lg p-3"
-                style={{ borderColor: theme.border }}
-              >
-                <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
-                  Curriculum
-                </h3>
-                <ul className="space-y-1">
-                  {course.curriculum.slice(0, 3).map((subj, idx) => (
-                    <li
-                      key={idx}
-                      className="text-xs text-gray-700 flex items-start"
-                    >
-                      <span
-                        className="mr-1"
-                        style={{ color: theme.accent, fontWeight: 600 }}
-                      >
-                        •
-                      </span>
-                      {subj}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Career Opportunities Card */}
-            {course.careerOpportunities && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {/* Bento Grid Layout */}
+            <div className="md:col-span-2 grid grid-cols-2 gap-3">
+              {/* Description Card */}
               <div
                 className="col-span-2 rounded-lg p-3"
                 style={{
-                  background: `linear-gradient(135deg, ${theme.accentSoft}, rgba(255,255,255,0))`,
+                  backgroundColor: theme.accentSoft,
                   border: `1px solid ${theme.border}`,
                 }}
               >
                 <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
-                  Career Opportunities
+                  Description
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {course.careerOpportunities.slice(0, 4).map((career, idx) => (
-                    <span
-                      key={idx}
-                      className="text-xs px-2 py-1 rounded border"
-                      style={{
-                        backgroundColor: theme.tagBg,
-                        borderColor: theme.border,
-                        color: theme.accent,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {career}
-                    </span>
-                  ))}
+                <p className="text-xs text-gray-700">{course.description}</p>
+              </div>
+
+              {/* Requirements Card */}
+              {course.requirements && (
+                <div
+                  className="bg-white border rounded-lg p-3"
+                  style={{ borderColor: theme.border }}
+                >
+                  <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
+                    Requirements
+                  </h3>
+                  <ul className="space-y-1">
+                    {course.requirements.slice(0, 3).map((req, idx) => (
+                      <li
+                        key={idx}
+                        className="text-xs text-gray-700 flex items-start"
+                      >
+                        <span
+                          className="mr-1"
+                          style={{ color: theme.accent, fontWeight: 600 }}
+                        >
+                          •
+                        </span>
+                        {req}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
+              )}
+
+              {/* Curriculum Card */}
+              {course.curriculum && (
+                <div
+                  className="bg-white border rounded-lg p-3"
+                  style={{ borderColor: theme.border }}
+                >
+                  <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
+                    Curriculum
+                  </h3>
+                  <ul className="space-y-1">
+                    {course.curriculum.slice(0, 3).map((subj, idx) => (
+                      <li
+                        key={idx}
+                        className="text-xs text-gray-700 flex items-start"
+                      >
+                        <span
+                          className="mr-1"
+                          style={{ color: theme.accent, fontWeight: 600 }}
+                        >
+                          •
+                        </span>
+                        {subj}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Career Opportunities Card */}
+              {course.careerOpportunities && (
+                <div
+                  className="col-span-2 rounded-lg p-3"
+                  style={{
+                    background: `linear-gradient(135deg, ${theme.accentSoft}, rgba(255,255,255,0))`,
+                    border: `1px solid ${theme.border}`,
+                  }}
+                >
+                  <h3 className="text-sm font-semibold text-[#0D1B2A] mb-2">
+                    Career Opportunities
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {course.careerOpportunities.slice(0, 4).map((career, idx) => (
+                      <span
+                        key={idx}
+                        className="text-xs px-2 py-1 rounded border"
+                        style={{
+                          backgroundColor: theme.tagBg,
+                          borderColor: theme.border,
+                          color: theme.accent,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {career}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Course visual from /public/ANIME */}
+            {courseAnimeImage && (
+              <div
+                className="md:col-span-1 rounded-lg p-2 h-fit"
+                style={{
+                  background: `linear-gradient(135deg, ${theme.accentSoft}, rgba(255,255,255,0.7))`,
+                  border: `1px solid ${theme.border}`,
+                }}
+              >
+                <img
+                  src={courseAnimeImage}
+                  alt={`${course.title} visual`}
+                  className="w-full h-full max-h-80 md:max-h-[420px] object-cover rounded-md"
+                />
               </div>
             )}
           </div>
