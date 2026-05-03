@@ -12,14 +12,14 @@ const Layout = ({ children }) => {
   const hideFooter = isAdminDashboard || isAdminLogin;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0D1B2A]">
+    <div className="min-h-screen flex flex-col bg-[#060d1e]">
       {!isAdminPage && <Header />}
       {isAdminLogin && (
-        <div className="bg-[#0D1B2A] text-white py-4">
+        <div className="bg-[#060d1e] text-white py-4">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-center">
               <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 bg-gradient-to-br from-[#1B9AAA] to-[#158A9A] rounded-lg flex items-center justify-center">
+                <div className="h-10 w-10 bg-gradient-to-br from-[#1a4fd6] to-[#1640b0] rounded-lg flex items-center justify-center">
                   <svg
                     className="h-5 w-5 text-white"
                     fill="none"

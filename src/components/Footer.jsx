@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-[#0D1B2A] text-white py-6">
+    <footer className="bg-[#060d1e] text-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
           {/* Left Section - Logo and University Name */}
@@ -26,7 +26,7 @@ const Footer = () => {
             <div className="space-y-1">
               <div className="flex items-center space-x-3">
                 <svg
-                  className="h-5 w-5 text-[#1B9AAA] flex-shrink-0"
+                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -50,7 +50,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <svg
-                  className="h-5 w-5 text-[#1B9AAA] flex-shrink-0"
+                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -68,7 +68,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <svg
-                  className="h-5 w-5 text-[#1B9AAA] flex-shrink-0"
+                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -84,7 +84,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <svg
-                  className="h-5 w-5 text-[#1B9AAA] flex-shrink-0"
+                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -124,7 +124,7 @@ const Footer = () => {
             <span className="text-xs text-[#F5F7FA]">
               Admission Management System (AMS)
             </span>
-            <button className="bg-[#1B9AAA] hover:bg-[#158A9A] text-white p-2 rounded transition-colors">
+            <button className="bg-[#1a4fd6] hover:bg-[#1640b0] text-white p-2 rounded transition-colors">
               <svg
                 className="h-4 w-4"
                 fill="none"
