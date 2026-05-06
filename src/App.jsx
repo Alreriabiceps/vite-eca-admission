@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import BackupManagement from "./pages/BackupManagement";
 import Archives from "./pages/Archives";
 import Analytics from "./pages/Analytics";
+import MatchedEnrolled from "./pages/MatchedEnrolled";
 import CourseDetails from "./pages/CourseDetails";
 import NewsPost from "./pages/NewsPost";
 import AdminSettings from "./pages/AdminSettings";
@@ -80,6 +81,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/matched-enrolled"
+              element={
+                <ProtectedRoute>
+                  <MatchedEnrolled />
                 </ProtectedRoute>
               }
             />

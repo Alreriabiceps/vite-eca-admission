@@ -18,6 +18,10 @@ const Analytics = () => {
   const [printing, setPrinting] = useState(false);
   const [showBatchUploadModal, setShowBatchUploadModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [batchFile, setBatchFile] = useState(null);
+  const [batchUploading, setBatchUploading] = useState(false);
+  const [batchResult, setBatchResult] = useState(null);
+  const [batchSchoolYear, setBatchSchoolYear] = useState("");
 
   const terms = [
     { value: "all", label: "All Terms" },
@@ -30,6 +34,10 @@ const Analytics = () => {
     { length: 5 },
     (_, i) => new Date().getFullYear() - i
   );
+  const schoolYearOptions = Array.from({ length: 6 }, (_, i) => {
+    const start = new Date().getFullYear() - 2 + i;
+    return `${start}-${start + 1}`;
+  });
 
   const fetchAnalyticsData = async () => {
     try {
@@ -142,6 +150,62 @@ const Analytics = () => {
   const handleCancelEdit = () => {
     setIsEditingAll(false);
     setEditValues({});
+  };
+
+  const handleBatchFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const lowerName = file.name.toLowerCase();
+    const validType = lowerName.endsWith(".csv") || lowerName.endsWith(".xlsx");
+    if (!validType) {
+      alert("Please upload a .csv or .xlsx file.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File is too large. Maximum size is 5MB.");
+      event.target.value = "";
+      return;
+    }
+
+    setBatchResult(null);
+    setBatchFile(file);
+  };
+
+  const handleBatchUpload = async () => {
+    if (!batchFile) {
+      alert("Please choose a registrar file first.");
+      return;
+    }
+    if (!batchSchoolYear) {
+      alert("Please select a school year for this upload batch.");
+      return;
+    }
+
+    try {
+      setBatchUploading(true);
+      const formData = new FormData();
+      formData.append("file", batchFile);
+      formData.append("schoolYear", batchSchoolYear);
+
+      const response = await axios.post("/api/enrollment-import/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setBatchResult(response.data);
+      await fetchAnalyticsData();
+      await fetchComparisonData();
+      alert("Batch upload completed successfully.");
+    } catch (error) {
+      console.error("Enrollment import upload error:", error);
+      const message =
+        error.response?.data?.message || "Failed to process upload. Please try again.";
+      alert(message);
+    } finally {
+      setBatchUploading(false);
+    }
   };
 
   useEffect(() => {
@@ -425,13 +489,10 @@ const Analytics = () => {
 
         <div className="bg-white text-[#0D1B2A] border border-[#1B9AAA]/30 rounded-2xl p-6 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6 shadow-lg shadow-[#0D1B2A]/5">
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold tracking-tight">
-              Enrollment Sync (Registrar Import) — Preview
-            </h2>
+            <h2 className="text-xl font-semibold tracking-tight">Enrollment Sync (Registrar Import)</h2>
             <p className="text-base leading-relaxed text-[#0D1B2A]/80">
-              Analytics now track <span className="font-semibold">enrolled</span> students only.
-              Soon you will be able to match registrar lists against admission
-              records and confirm which applicants have officially enrolled.
+              Upload registrar CSV/XLSX to match applicants and update their
+              status to <span className="font-semibold">enrolled</span>.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -440,7 +501,7 @@ const Analytics = () => {
               onClick={() => setShowBatchUploadModal(true)}
               className="px-5 py-2.5 bg-[#1B9AAA] text-white rounded-lg shadow hover:bg-[#158A9A] focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:ring-offset-2 focus:ring-offset-white transition-colors text-sm font-semibold"
             >
-              Open Batch Upload Preview
+              Open Batch Upload
             </button>
             <button
               type="button"
@@ -762,7 +823,16 @@ const Analytics = () => {
                           <span className="text-sm text-gray-600">
                             {course.enrollment}
                           </span>
-                          <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full ${
+                              course.growth > 0
+                                ? "bg-green-100 text-green-800"
+                                : course.growth < 0
+                                ? "bg-red-100 text-red-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {course.growth > 0 ? "+" : ""}
                             {course.growth}%
                           </span>
                         </div>
@@ -786,21 +856,26 @@ const Analytics = () => {
           </div>
         )}
 
-        {/* Batch Upload Preview Modal */}
+        {/* Batch Upload Modal */}
         {showBatchUploadModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-semibold text-[#0D1B2A]">
-                    Batch Upload Preview
+                    Batch Upload
                   </h3>
                   <p className="text-sm text-gray-500 mt-1">
-                    Walkthrough of the upcoming registrar import flow.
+                    Upload a registrar list and sync enrollment status.
                   </p>
                 </div>
                 <button
-                  onClick={() => setShowBatchUploadModal(false)}
+                  onClick={() => {
+                    setShowBatchUploadModal(false);
+                    setBatchFile(null);
+                    setBatchSchoolYear("");
+                    setBatchResult(null);
+                  }}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   <svg
@@ -838,9 +913,9 @@ const Analytics = () => {
                         "Admissions records are matched by name + birthdate. Any conflicts will be highlighted for manual review.",
                     },
                     {
-                      title: "Step 4 · Confirm Updates",
+                      title: "Step 4 · Apply Enrollment Updates",
                       description:
-                        "After reviewing matches, confirm to mark the matched applicants as enrolled and log the import batch.",
+                        "The system marks matched applicants as enrolled and keeps unmatched rows for review.",
                     },
                   ].map((step) => (
                     <div
@@ -859,12 +934,32 @@ const Analytics = () => {
 
                 <div className="border border-dashed border-[#1B9AAA]/40 rounded-2xl p-6 bg-[#F1FAFE]">
                   <h4 className="text-lg font-semibold text-[#0D1B2A] mb-2">
-                    Try a Sample Upload
+                    Upload Registrar File
                   </h4>
                   <p className="text-sm text-[#0D1B2A]/70 mb-4">
-                    This preview uploader is for demonstration only—files aren’t
-                    saved yet, but you can see the interaction.
+                    Supported formats: `.csv`, `.xlsx` (up to 5MB).
                   </p>
+                  <p className="text-xs text-[#0D1B2A]/70 mb-4">
+                    Note: Only applicants with <span className="font-semibold">verified</span>{" "}
+                    status are eligible for batch matching and enrollment update.
+                  </p>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-[#0D1B2A] mb-2">
+                      School Year (required)
+                    </label>
+                    <select
+                      value={batchSchoolYear}
+                      onChange={(e) => setBatchSchoolYear(e.target.value)}
+                      className="w-full max-w-sm px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] bg-white"
+                    >
+                      <option value="">Select school year</option>
+                      {schoolYearOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#1B9AAA] rounded-xl p-6 cursor-pointer bg-white hover:bg-[#F8FBFC] transition-colors">
                     <svg
                       className="w-10 h-10 text-[#1B9AAA] mb-3"
@@ -883,40 +978,80 @@ const Analytics = () => {
                       Click to upload registrar CSV / XLSX
                     </span>
                     <span className="mt-2 text-xs text-[#0D1B2A]/60">
-                      Supported soon · .csv, .xlsx · Max 5MB
+                      Supported now · .csv, .xlsx · Max 5MB
                     </span>
+                    {batchFile && (
+                      <span className="mt-2 text-xs text-green-700 font-medium">
+                        Selected: {batchFile.name}
+                      </span>
+                    )}
                     <input
                       type="file"
                       accept=".csv,.xlsx"
                       className="hidden"
-                      onChange={() => {
-                        alert(
-                          "Thanks for trying the preview! Import processing will be enabled in the live release."
-                        );
-                      }}
+                      onChange={handleBatchFileChange}
                     />
                   </label>
                 </div>
+
+                {batchResult && (
+                  <div className="border border-green-200 bg-green-50 rounded-xl p-4">
+                    <h5 className="text-sm font-semibold text-green-800 mb-2">
+                      Import Result
+                    </h5>
+                    <div className="text-sm text-green-900 space-y-1">
+                      <p>School Year: {batchResult.schoolYear || "-"}</p>
+                      <p>Total Rows: {batchResult.totalRows}</p>
+                      <p>Matched: {batchResult.matched}</p>
+                      <p>Updated to Enrolled: {batchResult.updated}</p>
+                      <p>Already Enrolled: {batchResult.alreadyEnrolled}</p>
+                      <p>Unmatched: {batchResult.unmatchedCount}</p>
+                    </div>
+                    {batchResult.unmatched?.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-xs font-semibold text-green-800 mb-1">
+                          Unmatched Rows (first 20):
+                        </p>
+                        <ul className="text-xs text-green-900 list-disc list-inside space-y-1 max-h-28 overflow-y-auto">
+                          {batchResult.unmatched.map((item, index) => (
+                            <li key={`${item.name}-${index}`}>
+                              {item.name}: {item.reason}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-gray-50">
                 <div className="text-sm text-gray-500">
-                  Status: <span className="font-medium text-[#0D1B2A]">Design Preview</span>
+                  Status:{" "}
+                  <span className="font-medium text-[#0D1B2A]">
+                    {batchUploading ? "Processing..." : "Ready"}
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <button
                     type="button"
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg cursor-not-allowed"
-                    disabled
+                    onClick={handleBatchUpload}
+                    className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg hover:bg-[#158A9A] disabled:opacity-60 disabled:cursor-not-allowed"
+                    disabled={!batchFile || batchUploading}
                   >
-                    Match Records (disabled)
+                    {batchUploading ? "Uploading..." : "Match & Enroll"}
                   </button>
                   <button
                     type="button"
-                    className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg cursor-not-allowed"
-                    disabled
+                    onClick={() => {
+                      setShowBatchUploadModal(false);
+                      setBatchFile(null);
+                      setBatchSchoolYear("");
+                      setBatchResult(null);
+                    }}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                   >
-                    Confirm Enrollment (disabled)
+                    Close
                   </button>
                 </div>
               </div>
