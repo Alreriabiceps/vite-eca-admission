@@ -1,130 +1,179 @@
+import { useLocation, useNavigate } from "react-router-dom";
+import { COURSE_NAV_ITEMS, scrollToCourse } from "../config/siteNav";
+
+function FooterCourseLinks() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleCourseClick = (e, courseId) => {
+    e.preventDefault();
+    if (location.pathname === "/") {
+      scrollToCourse(courseId);
+    } else {
+      navigate("/");
+      setTimeout(() => scrollToCourse(courseId), 500);
+    }
+  };
+
+  return (
+    <nav className="w-full min-w-0" aria-label="Academic programs">
+      <h4 className="text-sm font-semibold text-white mb-3">Programs</h4>
+      <ul className="m-0 list-none space-y-2 p-0">
+        {COURSE_NAV_ITEMS.map((c) => (
+          <li key={c.id} className="min-w-0">
+            <a
+              href="#programs"
+              onClick={(e) => handleCourseClick(e, c.id)}
+              className="block w-full min-w-0 break-words text-sm leading-snug text-white/75 no-underline transition-colors hover:text-white hover:underline"
+            >
+              {c.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 const Footer = () => {
   return (
     <footer className="bg-[#060d1e] text-white py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
-          {/* Left Section - Logo and University Name */}
-          <div className="flex items-start space-x-4">
-            <img
-              src="/logo na pogi.png"
-              alt="Exact Colleges of Asia Logo"
-              className="h-12 w-12 object-contain flex-shrink-0"
-            />
-            <div>
-              <h3 className="text-xl font-bold text-white mb-2">
-                EXACT COLLEGES OF ASIA
-              </h3>
-              <p className="text-sm text-[#F5F7FA]">Suclayin Arayat Pampanga</p>
-            </div>
-          </div>
-
-          {/* Middle Section - Contact Information */}
-          <div className="space-y-2">
-            <h4 className="text-lg font-semibold text-white mb-2">
-              Contact Information
-            </h4>
-            <div className="space-y-1">
-              <div className="flex items-center space-x-3">
-                <svg
-                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span className="text-sm text-[#F5F7FA]">
-                  Suclayin, Arayat, Pampanga, Philippines
-                </span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <svg
-                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="text-sm text-[#F5F7FA]">
-                  info@exactcolleges.edu.ph
-                </span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <svg
-                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-                <span className="text-sm text-[#F5F7FA]">(045) 123-4567</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <svg
-                  className="h-5 w-5 text-[#1a4fd6] flex-shrink-0"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                </svg>
-                <span className="text-sm text-[#F5F7FA]">
-                  @ExactCollegesAsia
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Section - Campus Map */}
-          <div className="space-y-2">
-            <h4 className="text-lg font-semibold text-white mb-2">Campus Map</h4>
-            <div className="w-full max-w-md rounded-xl overflow-hidden border border-white/15 shadow-lg bg-black/20">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4582.782728504767!2d120.79452447582355!3d15.172564185384452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396e486a8172a75%3A0x647ba9bb45487c6a!2sExact%20Colleges%20of%20Asia!5e1!3m2!1sen!2sph!4v1777403834809!5m2!1sen!2sph"
-                width="100%"
-                height="220"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Exact Colleges of Asia Map"
+        <div className="mb-4 grid min-w-0 grid-cols-1 gap-8 md:grid-cols-3 md:gap-6">
+          {/* Column 1 — brand only */}
+          <div className="min-w-0">
+            <div className="flex items-start gap-4">
+              <img
+                src="/logo na pogi.png"
+                alt="Exact Colleges of Asia Logo"
+                className="h-12 w-12 shrink-0 object-contain"
               />
+              <div className="min-w-0">
+                <h3 className="mb-2 text-xl font-bold text-white">
+                  EXACT COLLEGES OF ASIA
+                </h3>
+                <p className="text-sm text-[#F5F7FA]">Suclayin Arayat Pampanga</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2 — simple program links */}
+          <div className="min-w-0 border-t border-white/10 pt-6 md:border-t-0 md:border-l md:border-white/10 md:pt-0 md:pl-6">
+            <FooterCourseLinks />
+          </div>
+
+          {/* Column 3 — contact + map */}
+          <div className="min-w-0 space-y-6 border-t border-white/10 pt-6 md:border-t-0 md:pt-0">
+            <div className="space-y-2">
+              <h4 className="mb-2 text-lg font-semibold text-white">
+                Contact Information
+              </h4>
+              <div className="space-y-1">
+                <div className="flex items-start gap-3">
+                  <svg
+                    className="mt-0.5 h-5 w-5 shrink-0 text-[#1a4fd6]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <span className="text-sm text-[#F5F7FA]">
+                    Suclayin, Arayat, Pampanga, Philippines
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg
+                    className="h-5 w-5 shrink-0 text-[#1a4fd6]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span className="text-sm text-[#F5F7FA]">
+                    info@exactcolleges.edu.ph
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg
+                    className="h-5 w-5 shrink-0 text-[#1a4fd6]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+                  <span className="text-sm text-[#F5F7FA]">(045) 123-4567</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <svg
+                    className="h-5 w-5 shrink-0 text-[#1a4fd6]"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                  </svg>
+                  <span className="text-sm text-[#F5F7FA]">
+                    @ExactCollegesAsia
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="text-lg font-semibold text-white">Campus Map</h4>
+              <div className="overflow-hidden rounded-xl border border-white/15 bg-black/20 shadow-lg">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4582.782728504767!2d120.79452447582355!3d15.172564185384452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396e486a8172a75%3A0x647ba9bb45487c6a!2sExact%20Colleges%20of%20Asia!5e1!3m2!1sen!2sph!4v1777403834809!5m2!1sen!2sph"
+                  width="100%"
+                  height="220"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Exact Colleges of Asia Map"
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="border-t border-[#343A40] pt-4 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-xs text-[#F5F7FA] mb-4 md:mb-0">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-[#343A40] pt-4 md:flex-row">
+          <p className="text-xs text-[#F5F7FA]">
             © 2024 Exact Colleges of Asia. All rights reserved.
           </p>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-4">
             <span className="text-xs text-[#F5F7FA]">
               Admission Management System (AMS)
             </span>
-            <button className="bg-[#1a4fd6] hover:bg-[#1640b0] text-white p-2 rounded transition-colors">
+            <button
+              type="button"
+              className="rounded bg-[#1a4fd6] p-2 text-white transition-colors hover:bg-[#1640b0]"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              aria-label="Back to top"
+            >
               <svg
                 className="h-4 w-4"
                 fill="none"
