@@ -390,7 +390,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
       <AdminHeader />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto w-full max-w-[min(120rem,calc(100vw-2.5rem))] px-4 sm:px-6 lg:px-8 py-8">
         {/* Course Tabs */}
         <div className="bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-[#1B9AAA]/20 mb-4">
           <div className="mb-3">

@@ -23,7 +23,7 @@ const AdminHeader = () => {
 
   return (
     <header className="bg-gradient-to-r from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] shadow-2xl border-b border-[#1B9AAA]/30 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[min(120rem,calc(100vw-2.5rem))] px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-6">
           {/* Left Side - Logo and Title */}
           <div className="flex items-center space-x-6">
