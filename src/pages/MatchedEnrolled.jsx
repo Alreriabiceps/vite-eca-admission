@@ -89,9 +89,9 @@ const MatchedEnrolled = () => {
         ? `for filtered scope${
             selectedSourceFile ? ` (file: ${selectedSourceFile})` : ""
           }${selectedSchoolYear ? ` (school year: ${selectedSchoolYear})` : ""}`
-        : "for ALL matched imported records";
+        : "for ALL imported enrolled records";
     const confirmed = window.confirm(
-      `Reset batch ${scopeText}?\n\nThis will move matched imported students back to VERIFIED and clear import tags.`
+      `Reset batch ${scopeText}?\n\nMatched admission records will go back to VERIFIED. Registrar-only records created from upload will be removed.`
     );
     if (!confirmed) return;
 
@@ -109,7 +109,11 @@ const MatchedEnrolled = () => {
           "No records were reset. Check filters (Source File / School Year) and ensure records are currently enrolled via import."
         );
       } else {
-        alert(`Batch reset complete. ${resetCount} record(s) reverted.`);
+        const removedImportedOnly = response.data.removedImportedOnly || 0;
+        const revertedCount = response.data.revertedCount || 0;
+        alert(
+          `Batch reset complete. ${revertedCount} matched record(s) reverted, ${removedImportedOnly} registrar-only record(s) removed.`
+        );
       }
       fetchMatched(1, appliedFilters);
     } catch (error) {
@@ -127,7 +131,7 @@ const MatchedEnrolled = () => {
         <div className="mb-5">
           <h1 className="text-2xl font-bold text-white">Matched Enrolled</h1>
           <p className="text-sm text-gray-300">
-            Applicants matched by batch import and updated to enrolled.
+            Students enrolled from batch import, including matched applicants and registrar-only records.
           </p>
         </div>
 
@@ -236,7 +240,7 @@ const MatchedEnrolled = () => {
             <div className="p-6 text-sm text-gray-600">Loading records...</div>
           ) : applications.length === 0 ? (
             <div className="p-6 text-sm text-gray-600">
-              No matched enrolled records found.
+              No imported enrolled records found.
             </div>
           ) : (
             <div className="overflow-x-auto">

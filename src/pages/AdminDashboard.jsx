@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import AdminHeader from "../components/AdminHeader";
 import axios from "axios";
 
 const AdminDashboard = () => {
-  const { admin, logout } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -20,8 +18,11 @@ const AdminDashboard = () => {
   });
   const [stats, setStats] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(null);
+  const [showApplicationDetails, setShowApplicationDetails] = useState(false);
   const [showMissingRequirementsModal, setShowMissingRequirementsModal] =
     useState(false);
+  const [showRequirementsModal, setShowRequirementsModal] = useState(false);
+  const [requirementsDraft, setRequirementsDraft] = useState([]);
   const [showCustomNotificationModal, setShowCustomNotificationModal] =
     useState(false);
   const [missingRequirements, setMissingRequirements] = useState([]);
@@ -30,10 +31,9 @@ const AdminDashboard = () => {
   const [customNotificationMessage, setCustomNotificationMessage] =
     useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [savingRequirements, setSavingRequirements] = useState(false);
   const [courseTabCounts, setCourseTabCounts] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showArchiveModal, setShowArchiveModal] = useState(false);
   const [editingApplication, setEditingApplication] = useState(null);
   const [editFormData, setEditFormData] = useState({
     name: "",
@@ -121,6 +121,58 @@ const AdminDashboard = () => {
     enrolled: "bg-emerald-100 text-emerald-800",
     admitted: "bg-green-100 text-green-800",
     rejected: "bg-red-100 text-red-800",
+  };
+
+  const requirementStatusOptions = [
+    { value: "pending", label: "Pending" },
+    { value: "complete", label: "Complete" },
+    { value: "passed", label: "Passed" },
+  ];
+
+  const requirementStatusColors = {
+    pending: "bg-gray-100 text-gray-700 border-gray-200",
+    complete: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    passed: "bg-green-100 text-green-800 border-green-200",
+  };
+
+  const completedRequirementStatuses = ["complete", "passed"];
+
+  const getApplicationRequirements = (application) =>
+    Array.isArray(application?.requirements) ? application.requirements : [];
+
+  const getRequirementSummaryFromList = (requirements = []) => {
+    const completed = requirements.filter((requirement) =>
+      completedRequirementStatuses.includes(requirement.status)
+    ).length;
+
+    return {
+      completed,
+      total: requirements.length,
+      pending: Math.max(requirements.length - completed, 0),
+    };
+  };
+
+  const getRequirementSummary = (application) =>
+    getRequirementSummaryFromList(getApplicationRequirements(application));
+
+  const getRequirementStatusLabel = (status) =>
+    requirementStatusOptions.find((option) => option.value === status)?.label ||
+    "Pending";
+
+  const updateApplicationInState = (updatedApplication) => {
+    setApplications((currentApplications) =>
+      currentApplications.map((application) =>
+        application._id === updatedApplication._id
+          ? updatedApplication
+          : application
+      )
+    );
+
+    setSelectedApplication((currentApplication) =>
+      currentApplication?._id === updatedApplication._id
+        ? updatedApplication
+        : currentApplication
+    );
   };
 
   const fetchApplications = async (page = 1, courseTabId = null) => {
@@ -252,6 +304,91 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error("Error updating status:", error);
     }
+  };
+
+  const openApplicationDetails = (application) => {
+    setSelectedApplication(application);
+    setShowApplicationDetails(true);
+  };
+
+  const openRequirementsModal = (application) => {
+    setSelectedApplication(application);
+    setRequirementsDraft(getApplicationRequirements(application));
+    setShowRequirementsModal(true);
+  };
+
+  const closeRequirementsModal = () => {
+    setRequirementsDraft([]);
+    setShowRequirementsModal(false);
+  };
+
+  const handleRequirementStatusChange = (requirementName, status) => {
+    setRequirementsDraft((currentRequirements) =>
+      currentRequirements.map((requirement) =>
+        requirement.name === requirementName
+          ? { ...requirement, status }
+          : requirement
+      )
+    );
+  };
+
+  const handleSaveRequirements = async () => {
+    if (!selectedApplication) return;
+
+    setSavingRequirements(true);
+    try {
+      const response = await axios.patch(
+        `/api/applications/${selectedApplication._id}/requirements`,
+        {
+          requirements: requirementsDraft,
+        }
+      );
+
+      updateApplicationInState(response.data.application);
+      closeRequirementsModal();
+      alert("Requirements updated successfully!");
+    } catch (error) {
+      console.error("Error updating requirements:", error);
+      alert("Failed to update requirements. Please try again.");
+    } finally {
+      setSavingRequirements(false);
+    }
+  };
+
+  const openMissingRequirementsModal = (application = selectedApplication) => {
+    if (!application) return;
+
+    const pendingRequirements = getApplicationRequirements(application)
+      .filter(
+        (requirement) =>
+          !completedRequirementStatuses.includes(requirement.status)
+      )
+      .map((requirement) => requirement.name);
+
+    setSelectedApplication(application);
+    setMissingRequirements(pendingRequirements);
+    setShowMissingRequirementsModal(true);
+  };
+
+  const areAllMissingRequirementsSelected = () => {
+    const requirements = getApplicationRequirements(selectedApplication);
+
+    return (
+      requirements.length > 0 &&
+      requirements.every((requirement) =>
+        missingRequirements.includes(requirement.name)
+      )
+    );
+  };
+
+  const handleToggleAllMissingRequirements = (checked) => {
+    setMissingRequirements(
+      checked
+        ? getApplicationRequirements(selectedApplication).map(
+            (requirement) => requirement.name
+          )
+        : []
+    );
   };
 
   const handleEditApplication = (application) => {
@@ -567,6 +704,9 @@ const AdminDashboard = () => {
                     <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
                       Status
                     </th>
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider w-40">
+                      Requirements
+                    </th>
                     <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
                       Submitted
                     </th>
@@ -712,6 +852,42 @@ const AdminDashboard = () => {
                           {application.status}
                         </span>
                       </td>
+                      <td className="px-3 py-3">
+                        <button
+                          onClick={() => openRequirementsModal(application)}
+                          className="w-full rounded-lg border border-[#1B9AAA]/20 bg-white px-2 py-2 text-left shadow-sm transition-colors hover:bg-[#F5F7FA]"
+                          title="Open requirements checklist"
+                        >
+                          <div className="flex items-center justify-between gap-2 text-xs">
+                            <span className="font-semibold text-[#0D1B2A]">
+                              {getRequirementSummary(application).completed}/
+                              {getRequirementSummary(application).total}
+                            </span>
+                            <span className="text-[11px] text-gray-500">
+                              done
+                            </span>
+                          </div>
+                          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-200">
+                            <div
+                              className="h-full rounded-full bg-[#1B9AAA]"
+                              style={{
+                                width: `${
+                                  getRequirementSummary(application).total
+                                    ? (getRequirementSummary(application)
+                                        .completed /
+                                        getRequirementSummary(application)
+                                          .total) *
+                                      100
+                                    : 0
+                                }%`,
+                              }}
+                            />
+                          </div>
+                          <div className="mt-1 text-[11px] font-medium text-[#1B9AAA]">
+                            Checklist
+                          </div>
+                        </button>
+                      </td>
                       <td className="px-3 py-3 text-xs text-gray-500">
                         {formatDate(application.submittedAt)}
                       </td>
@@ -736,7 +912,7 @@ const AdminDashboard = () => {
                           <div className="flex space-x-1 justify-center">
                             <button
                               onClick={() =>
-                                setSelectedApplication(application)
+                                openApplicationDetails(application)
                               }
                               className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
                               title="View Details"
@@ -862,7 +1038,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Application Detail Modal */}
-      {selectedApplication && (
+      {showApplicationDetails && selectedApplication && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pb-3 border-b">
@@ -870,7 +1046,10 @@ const AdminDashboard = () => {
                 Application Details
               </h3>
               <button
-                onClick={() => setSelectedApplication(null)}
+                onClick={() => {
+                  setShowApplicationDetails(false);
+                  setSelectedApplication(null);
+                }}
                 className="text-gray-400 hover:text-gray-600"
               >
                 <svg
@@ -1027,6 +1206,50 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
+              {/* Requirements Checklist */}
+              <div className="border-t pt-4">
+                <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h5 className="text-lg font-bold text-gray-900">
+                      Requirements Checklist
+                    </h5>
+                    <p className="text-sm text-gray-500">
+                      {getRequirementSummary(selectedApplication).completed} of{" "}
+                      {getRequirementSummary(selectedApplication).total} marked
+                      complete or passed
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => openRequirementsModal(selectedApplication)}
+                    className="self-start rounded-lg bg-[#1B9AAA] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#158A9A]"
+                  >
+                    Update Checklist
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                  {getApplicationRequirements(selectedApplication).map(
+                    (requirement) => (
+                      <div
+                        key={requirement.name}
+                        className="flex items-start justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3"
+                      >
+                        <span className="text-sm text-gray-700">
+                          {requirement.name}
+                        </span>
+                        <span
+                          className={`shrink-0 rounded-full border px-2 py-1 text-xs font-semibold ${
+                            requirementStatusColors[requirement.status] ||
+                            requirementStatusColors.pending
+                          }`}
+                        >
+                          {getRequirementStatusLabel(requirement.status)}
+                        </span>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+
               {/* Signatures Section */}
               <div className="border-t pt-4">
                 <h5 className="text-lg font-bold text-gray-900 mb-3">
@@ -1149,7 +1372,9 @@ const AdminDashboard = () => {
               {/* Action Buttons */}
               <div className="flex justify-center space-x-4 pt-4 border-t">
                 <button
-                  onClick={() => setShowMissingRequirementsModal(true)}
+                  onClick={() =>
+                    openMissingRequirementsModal(selectedApplication)
+                  }
                   className="bg-[#FFC300] hover:bg-[#E6AC00] text-[#0D1B2A] font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
                 >
                   Missing Requirements
@@ -1161,6 +1386,134 @@ const AdminDashboard = () => {
                   Custom Notification
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Requirements Checklist Modal */}
+      {showRequirementsModal && selectedApplication && (
+        <div className="fixed inset-0 z-[60] h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
+          <div className="relative top-10 mx-auto w-11/12 max-w-3xl rounded-md border bg-white p-5 shadow-lg">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Requirements Checklist
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {selectedApplication.name}
+                </p>
+              </div>
+              <button
+                onClick={closeRequirementsModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="mb-4 rounded-lg border border-[#1B9AAA]/20 bg-[#F5F7FA] p-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-[#0D1B2A]">
+                    {getRequirementSummaryFromList(requirementsDraft).completed}{" "}
+                    of {getRequirementSummaryFromList(requirementsDraft).total}{" "}
+                    complete
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {selectedApplication.courseApplied}
+                  </p>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-white sm:w-48">
+                  <div
+                    className="h-full rounded-full bg-[#1B9AAA]"
+                    style={{
+                      width: `${
+                        getRequirementSummaryFromList(requirementsDraft).total
+                          ? (getRequirementSummaryFromList(requirementsDraft)
+                              .completed /
+                              getRequirementSummaryFromList(requirementsDraft)
+                                .total) *
+                            100
+                          : 0
+                      }%`,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="max-h-[52vh] space-y-3 overflow-y-auto pr-1">
+              {requirementsDraft.length === 0 ? (
+                <p className="rounded-lg border border-dashed border-gray-300 p-4 text-center text-sm text-gray-500">
+                  No requirements found
+                </p>
+              ) : (
+                requirementsDraft.map((requirement) => (
+                  <div
+                    key={requirement.name}
+                    className="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-[1fr_12rem] sm:items-center"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900">
+                        {requirement.name}
+                      </p>
+                      <span
+                        className={`mt-2 inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${
+                          requirementStatusColors[requirement.status] ||
+                          requirementStatusColors.pending
+                        }`}
+                      >
+                        {getRequirementStatusLabel(requirement.status)}
+                      </span>
+                    </div>
+                    <select
+                      value={requirement.status || "pending"}
+                      onChange={(e) =>
+                        handleRequirementStatusChange(
+                          requirement.name,
+                          e.target.value
+                        )
+                      }
+                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-all duration-200 hover:border-[#1B9AAA]/50 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#1B9AAA]"
+                    >
+                      {requirementStatusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="mt-5 flex justify-end space-x-3 border-t pt-4">
+              <button
+                onClick={closeRequirementsModal}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-gray-600 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveRequirements}
+                disabled={savingRequirements}
+                className="rounded-lg bg-[#1B9AAA] px-4 py-2 text-white hover:bg-[#158A9A] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {savingRequirements ? "Saving..." : "Save Requirements"}
+              </button>
             </div>
           </div>
         </div>
@@ -1200,38 +1553,50 @@ const AdminDashboard = () => {
                 <strong>{selectedApplication?.name}</strong> about:
               </p>
 
+              <label className="flex w-fit items-center space-x-2 rounded-lg border border-[#1B9AAA]/20 bg-[#1B9AAA]/5 px-3 py-2">
+                <input
+                  type="checkbox"
+                  checked={areAllMissingRequirementsSelected()}
+                  onChange={(e) =>
+                    handleToggleAllMissingRequirements(e.target.checked)
+                  }
+                  className="rounded border-gray-300 text-[#1B9AAA] focus:ring-[#1B9AAA]"
+                />
+                <span className="text-sm font-semibold text-[#0D1B2A]">
+                  Select all
+                </span>
+              </label>
+
               <div className="space-y-2">
-                {[
-                  "2x2 recent photo with name tag (4pcs)",
-                  "Certificate of Good Moral Character",
-                  "Barangay Residency Certificate with seal",
-                  "Photocopy of PSA Birth Certificate",
-                  "Original Form 138",
-                  "Original Form 137",
-                  "Moving Up Certificate",
-                  "Other supporting documents",
-                ].map((item, index) => (
-                  <label key={index} className="flex items-center space-x-2">
+                {getApplicationRequirements(selectedApplication).map(
+                  (requirement) => (
+                    <label
+                      key={requirement.name}
+                      className="flex items-center space-x-2"
+                    >
                     <input
                       type="checkbox"
-                      checked={missingRequirements.includes(item)}
+                      checked={missingRequirements.includes(requirement.name)}
                       onChange={(e) => {
                         if (e.target.checked) {
                           setMissingRequirements([
                             ...missingRequirements,
-                            item,
+                            requirement.name,
                           ]);
                         } else {
                           setMissingRequirements(
-                            missingRequirements.filter((req) => req !== item)
+                            missingRequirements.filter(
+                              (req) => req !== requirement.name
+                            )
                           );
                         }
                       }}
                       className="rounded border-gray-300 text-[#1B9AAA] focus:ring-[#1B9AAA]"
                     />
-                    <span className="text-gray-700">{item}</span>
+                    <span className="text-gray-700">{requirement.name}</span>
                   </label>
-                ))}
+                  )
+                )}
               </div>
 
               <div className="space-y-2">

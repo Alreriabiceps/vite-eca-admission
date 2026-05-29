@@ -175,6 +175,28 @@ const AdminHeader = () => {
                 </span>
                 <div className={indicatorClasses("/admin/matched-enrolled")}></div>
               </Link>
+              <Link
+                to="/admin/email"
+                className={navLinkClasses("/admin/email")}
+              >
+                <span className="flex items-center space-x-2">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18a2 2 0 002-2V8a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span className="font-medium">Email</span>
+                </span>
+                <div className={indicatorClasses("/admin/email")}></div>
+              </Link>
             </nav>
 
             {/* User Info */}

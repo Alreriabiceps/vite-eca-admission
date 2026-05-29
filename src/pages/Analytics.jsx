@@ -910,12 +910,12 @@ const Analytics = () => {
                     {
                       title: "Step 3 · Match & Review",
                       description:
-                        "Admissions records are matched by name + birthdate. Any conflicts will be highlighted for manual review.",
+                        "Admissions records are matched by name + birthdate. Students without an admission record are created from the registrar list.",
                     },
                     {
                       title: "Step 4 · Apply Enrollment Updates",
                       description:
-                        "The system marks matched applicants as enrolled and keeps unmatched rows for review.",
+                        "The system marks matched applicants as enrolled and adds registrar-only students as enrolled records.",
                     },
                   ].map((step) => (
                     <div
@@ -940,8 +940,9 @@ const Analytics = () => {
                     Supported formats: `.csv`, `.xlsx` (up to 5MB).
                   </p>
                   <p className="text-xs text-[#0D1B2A]/70 mb-4">
-                    Note: Only applicants with <span className="font-semibold">verified</span>{" "}
-                    status are eligible for batch matching and enrollment update.
+                    Note: Verified applicants are matched and updated. Rows
+                    without an admission record are added as enrolled imported
+                    students.
                   </p>
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-[#0D1B2A] mb-2">
@@ -1004,13 +1005,14 @@ const Analytics = () => {
                       <p>Total Rows: {batchResult.totalRows}</p>
                       <p>Matched: {batchResult.matched}</p>
                       <p>Updated to Enrolled: {batchResult.updated}</p>
+                      <p>Created as Enrolled: {batchResult.created || 0}</p>
                       <p>Already Enrolled: {batchResult.alreadyEnrolled}</p>
-                      <p>Unmatched: {batchResult.unmatchedCount}</p>
+                      <p>Skipped: {batchResult.unmatchedCount}</p>
                     </div>
                     {batchResult.unmatched?.length > 0 && (
                       <div className="mt-3">
                         <p className="text-xs font-semibold text-green-800 mb-1">
-                          Unmatched Rows (first 20):
+                          Skipped Rows (first 20):
                         </p>
                         <ul className="text-xs text-green-900 list-disc list-inside space-y-1 max-h-28 overflow-y-auto">
                           {batchResult.unmatched.map((item, index) => (

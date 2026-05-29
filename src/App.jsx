@@ -12,6 +12,7 @@ import BackupManagement from "./pages/BackupManagement";
 import Archives from "./pages/Archives";
 import Analytics from "./pages/Analytics";
 import MatchedEnrolled from "./pages/MatchedEnrolled";
+import BatchEmail from "./pages/BatchEmail";
 import CourseDetails from "./pages/CourseDetails";
 import NewsPost from "./pages/NewsPost";
 import AdminSettings from "./pages/AdminSettings";
@@ -89,6 +90,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <MatchedEnrolled />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/email"
+              element={
+                <ProtectedRoute>
+                  <BatchEmail />
                 </ProtectedRoute>
               }
             />
