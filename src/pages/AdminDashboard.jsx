@@ -1534,94 +1534,115 @@ const AdminDashboard = () => {
         )}
 
       {/* Custom Notification Modal */}
-      {showCustomNotificationModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                Send Custom Notification
-              </h3>
-              <button
-                onClick={() => setShowCustomNotificationModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+      {showCustomNotificationModal &&
+        selectedApplication &&
+        createPortal(
+          <div
+            className="admin-req-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="custom-email-title"
+            onClick={() => setShowCustomNotificationModal(false)}
+          >
+            <div
+              className="admin-req-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="admin-req-header">
+                <div>
+                  <p className="admin-req-kicker">Email Student</p>
+                  <h3 id="custom-email-title">Send Custom Email</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomNotificationModal(false)}
+                  className="admin-req-close"
+                  aria-label="Close email dialog"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="admin-req-body">
+                <div className="admin-req-recipient">
+                  <span className="admin-req-recipient-label">To</span>
+                  <span className="admin-req-recipient-value">
+                    {selectedApplication.name} &lt;{selectedApplication.email}&gt;
+                  </span>
+                </div>
+
+                <div className="admin-req-section">
+                  <label className="admin-req-label" htmlFor="custom-email-subject">
+                    Subject *
+                  </label>
+                  <input
+                    id="custom-email-subject"
+                    type="text"
+                    value={customSubject}
+                    onChange={(e) => setCustomSubject(e.target.value)}
+                    placeholder="Application update, important information, etc."
+                    className="admin-req-input"
                   />
-                </svg>
-              </button>
-            </div>
+                </div>
 
-            <div className="space-y-4">
-              <p className="text-gray-600">
-                Send a custom notification to{" "}
-                <strong>{selectedApplication?.name}</strong>:
-              </p>
+                <div className="admin-req-section">
+                  <label className="admin-req-label" htmlFor="custom-email-message">
+                    Message *
+                  </label>
+                  <textarea
+                    id="custom-email-message"
+                    value={customNotificationMessage}
+                    onChange={(e) =>
+                      setCustomNotificationMessage(e.target.value)
+                    }
+                    placeholder="Write your message to the student..."
+                    className="admin-req-textarea"
+                    rows={5}
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Subject *
-                </label>
-                <input
-                  type="text"
-                  value={customSubject}
-                  onChange={(e) => setCustomSubject(e.target.value)}
-                  placeholder="e.g., Application Update, Important Information, etc."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Message *
-                </label>
-                <textarea
-                  value={customNotificationMessage}
-                  onChange={(e) => setCustomNotificationMessage(e.target.value)}
-                  placeholder="Write your custom message here..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent"
-                  rows={6}
-                />
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-800">
-                  <strong>Tip:</strong> You can use line breaks in your message.
-                  The email will be formatted professionally with your
-                  institution's branding.
+                <p className="admin-req-tip">
+                  Line breaks are preserved. The email is sent with your
+                  institution branding.
                 </p>
               </div>
 
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="admin-req-footer">
                 <button
+                  type="button"
                   onClick={() => setShowCustomNotificationModal(false)}
-                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="admin-req-btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
+                  type="button"
                   onClick={handleSendCustomNotification}
                   disabled={
                     !customSubject || !customNotificationMessage || sendingEmail
                   }
-                  className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg hover:bg-[#158A9A] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="admin-req-btn-primary"
                 >
-                  {sendingEmail ? "Sending..." : "Send Notification"}
+                  {sendingEmail ? "Sending..." : "Send Email"}
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* Edit Application Modal */}
       {showEditModal && editingApplication && (
