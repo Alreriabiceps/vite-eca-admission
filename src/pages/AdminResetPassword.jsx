@@ -68,8 +68,8 @@ const AdminResetPassword = () => {
 
   if (!isTokenValid) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] px-4">
-        <div className="max-w-md w-full bg-white/95 rounded-2xl shadow-xl border border-[#1B9AAA]/30 p-8 text-center">
+      <div className="admin-auth-page px-4">
+        <div className="admin-auth-card max-w-md w-full bg-white/95 rounded-2xl shadow-xl border border-[#1B9AAA]/30 p-8 text-center">
           <h1 className="text-2xl font-bold text-[#0D1B2A] mb-3">
             Invalid Reset Link
           </h1>
@@ -89,8 +89,8 @@ const AdminResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] px-4">
-      <div className="max-w-md w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-[#1B9AAA]/30 p-8">
+    <div className="admin-auth-page px-4">
+      <div className="admin-auth-card max-w-md w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-[#1B9AAA]/30 p-8">
         <h1 className="text-2xl font-bold text-[#0D1B2A] text-center mb-2">
           Set a New Password
         </h1>

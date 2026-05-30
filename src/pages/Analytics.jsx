@@ -404,7 +404,7 @@ const Analytics = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+      <div className="admin-page">
         <AdminHeader />
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
@@ -417,7 +417,7 @@ const Analytics = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] print:bg-white">
+    <div className="admin-page print:bg-white">
       <AdminHeader />
 
       <div

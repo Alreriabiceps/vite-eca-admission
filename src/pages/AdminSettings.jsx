@@ -111,7 +111,7 @@ const AdminSettings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+    <div className="admin-page">
       <AdminHeader />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-[#1B9AAA]/20 mb-6">
@@ -268,5 +268,4 @@ const AdminSettings = () => {
 };
 
 export default AdminSettings;
-
 

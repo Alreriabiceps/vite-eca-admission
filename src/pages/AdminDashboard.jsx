@@ -1,6 +1,54 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import AdminHeader from "../components/AdminHeader";
 import axios from "axios";
+
+const hasDetailValue = (value) =>
+  value !== undefined && value !== null && String(value).trim() !== "";
+
+const joinDetailValues = (values) => values.filter(hasDetailValue).join(", ");
+
+const completedRequirementStatuses = ["complete", "passed"];
+
+const getPendingRequirementNames = (application) =>
+  Array.isArray(application?.requirements)
+    ? application.requirements
+        .filter(
+          (requirement) =>
+            !completedRequirementStatuses.includes(requirement.status)
+        )
+        .map((requirement) => requirement.name)
+        .filter(hasDetailValue)
+    : [];
+
+const getApplicationRequirements = (application) =>
+  Array.isArray(application?.requirements) ? application.requirements : [];
+
+const splitRequirementsText = (value) =>
+  String(value || "")
+    .split(/\r?\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+const DetailField = ({ label, value, wide = false }) => {
+  if (!hasDetailValue(value)) return null;
+
+  return (
+    <div className={`admin-view-field ${wide ? "admin-view-field-wide" : ""}`}>
+      <span>{label}</span>
+      <p>{value}</p>
+    </div>
+  );
+};
+
+const DetailSection = ({ title, children }) => (
+  <section className="admin-view-section">
+    <div className="admin-view-section-title">
+      <span>{title}</span>
+    </div>
+    <div className="admin-view-field-grid">{children}</div>
+  </section>
+);
 
 const AdminDashboard = () => {
   const [applications, setApplications] = useState([]);
@@ -19,19 +67,17 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [showApplicationDetails, setShowApplicationDetails] = useState(false);
-  const [showMissingRequirementsModal, setShowMissingRequirementsModal] =
+  const [showRequirementsEmailModal, setShowRequirementsEmailModal] =
     useState(false);
-  const [showRequirementsModal, setShowRequirementsModal] = useState(false);
-  const [requirementsDraft, setRequirementsDraft] = useState([]);
+  const [selectedRequirements, setSelectedRequirements] = useState([]);
+  const [requirementsEmailText, setRequirementsEmailText] = useState("");
+  const [requirementsEmailMessage, setRequirementsEmailMessage] = useState("");
   const [showCustomNotificationModal, setShowCustomNotificationModal] =
     useState(false);
-  const [missingRequirements, setMissingRequirements] = useState([]);
-  const [customMessage, setCustomMessage] = useState("");
   const [customSubject, setCustomSubject] = useState("");
   const [customNotificationMessage, setCustomNotificationMessage] =
     useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
-  const [savingRequirements, setSavingRequirements] = useState(false);
   const [courseTabCounts, setCourseTabCounts] = useState({});
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingApplication, setEditingApplication] = useState(null);
@@ -121,58 +167,6 @@ const AdminDashboard = () => {
     enrolled: "bg-emerald-100 text-emerald-800",
     admitted: "bg-green-100 text-green-800",
     rejected: "bg-red-100 text-red-800",
-  };
-
-  const requirementStatusOptions = [
-    { value: "pending", label: "Pending" },
-    { value: "complete", label: "Complete" },
-    { value: "passed", label: "Passed" },
-  ];
-
-  const requirementStatusColors = {
-    pending: "bg-gray-100 text-gray-700 border-gray-200",
-    complete: "bg-emerald-100 text-emerald-800 border-emerald-200",
-    passed: "bg-green-100 text-green-800 border-green-200",
-  };
-
-  const completedRequirementStatuses = ["complete", "passed"];
-
-  const getApplicationRequirements = (application) =>
-    Array.isArray(application?.requirements) ? application.requirements : [];
-
-  const getRequirementSummaryFromList = (requirements = []) => {
-    const completed = requirements.filter((requirement) =>
-      completedRequirementStatuses.includes(requirement.status)
-    ).length;
-
-    return {
-      completed,
-      total: requirements.length,
-      pending: Math.max(requirements.length - completed, 0),
-    };
-  };
-
-  const getRequirementSummary = (application) =>
-    getRequirementSummaryFromList(getApplicationRequirements(application));
-
-  const getRequirementStatusLabel = (status) =>
-    requirementStatusOptions.find((option) => option.value === status)?.label ||
-    "Pending";
-
-  const updateApplicationInState = (updatedApplication) => {
-    setApplications((currentApplications) =>
-      currentApplications.map((application) =>
-        application._id === updatedApplication._id
-          ? updatedApplication
-          : application
-      )
-    );
-
-    setSelectedApplication((currentApplication) =>
-      currentApplication?._id === updatedApplication._id
-        ? updatedApplication
-        : currentApplication
-    );
   };
 
   const fetchApplications = async (page = 1, courseTabId = null) => {
@@ -306,89 +300,78 @@ const AdminDashboard = () => {
     }
   };
 
+  const handlePrintAdmissionForm = async (application) => {
+    const printWindow = window.open("", "_blank", "width=900,height=1100");
+
+    if (!printWindow) {
+      alert("Please allow pop-ups to print the admission form.");
+      return;
+    }
+
+    printWindow.document.write(
+      "<p style='font-family: Arial, sans-serif; padding: 24px;'>Preparing admission form...</p>"
+    );
+
+    try {
+      const response = await axios.get(
+        `/api/applications/${application._id}/print/admission-form?autoPrint=1`,
+        { responseType: "text" }
+      );
+
+      printWindow.document.open();
+      printWindow.document.write(response.data);
+      printWindow.document.close();
+    } catch (error) {
+      console.error("Error loading printable admission form:", error);
+      printWindow.close();
+      alert("Failed to load printable admission form.");
+    }
+  };
+
   const openApplicationDetails = (application) => {
     setSelectedApplication(application);
     setShowApplicationDetails(true);
   };
 
-  const openRequirementsModal = (application) => {
-    setSelectedApplication(application);
-    setRequirementsDraft(getApplicationRequirements(application));
-    setShowRequirementsModal(true);
-  };
-
-  const closeRequirementsModal = () => {
-    setRequirementsDraft([]);
-    setShowRequirementsModal(false);
-  };
-
-  const handleRequirementStatusChange = (requirementName, status) => {
-    setRequirementsDraft((currentRequirements) =>
-      currentRequirements.map((requirement) =>
-        requirement.name === requirementName
-          ? { ...requirement, status }
-          : requirement
-      )
-    );
-  };
-
-  const handleSaveRequirements = async () => {
-    if (!selectedApplication) return;
-
-    setSavingRequirements(true);
-    try {
-      const response = await axios.patch(
-        `/api/applications/${selectedApplication._id}/requirements`,
-        {
-          requirements: requirementsDraft,
-        }
-      );
-
-      updateApplicationInState(response.data.application);
-      closeRequirementsModal();
-      alert("Requirements updated successfully!");
-    } catch (error) {
-      console.error("Error updating requirements:", error);
-      alert("Failed to update requirements. Please try again.");
-    } finally {
-      setSavingRequirements(false);
-    }
-  };
-
-  const openMissingRequirementsModal = (application = selectedApplication) => {
+  const openRequirementsEmailModal = (application = selectedApplication) => {
     if (!application) return;
 
-    const pendingRequirements = getApplicationRequirements(application)
-      .filter(
-        (requirement) =>
-          !completedRequirementStatuses.includes(requirement.status)
-      )
-      .map((requirement) => requirement.name);
-
+    const pendingRequirements = getPendingRequirementNames(application);
     setSelectedApplication(application);
-    setMissingRequirements(pendingRequirements);
-    setShowMissingRequirementsModal(true);
+    setSelectedRequirements(pendingRequirements);
+    setRequirementsEmailText("");
+    setRequirementsEmailMessage("");
+    setShowRequirementsEmailModal(true);
   };
 
-  const areAllMissingRequirementsSelected = () => {
-    const requirements = getApplicationRequirements(selectedApplication);
+  const getRequirementOptionNames = () =>
+    getApplicationRequirements(selectedApplication)
+      .map((requirement) => requirement.name)
+      .filter(hasDetailValue);
+
+  const areAllRequirementsSelected = () => {
+    const requirementNames = getRequirementOptionNames();
 
     return (
-      requirements.length > 0 &&
-      requirements.every((requirement) =>
-        missingRequirements.includes(requirement.name)
-      )
+      requirementNames.length > 0 &&
+      requirementNames.every((name) => selectedRequirements.includes(name))
     );
   };
 
-  const handleToggleAllMissingRequirements = (checked) => {
-    setMissingRequirements(
-      checked
-        ? getApplicationRequirements(selectedApplication).map(
-            (requirement) => requirement.name
-          )
-        : []
-    );
+  const handleToggleRequirement = (requirementName, checked) => {
+    setSelectedRequirements((currentRequirements) => {
+      if (checked) {
+        return currentRequirements.includes(requirementName)
+          ? currentRequirements
+          : [...currentRequirements, requirementName];
+      }
+
+      return currentRequirements.filter((name) => name !== requirementName);
+    });
+  };
+
+  const handleToggleAllRequirements = (checked) => {
+    setSelectedRequirements(checked ? getRequirementOptionNames() : []);
   };
 
   const handleEditApplication = (application) => {
@@ -471,26 +454,37 @@ const AdminDashboard = () => {
     });
   };
 
-  const handleSendMissingRequirements = async () => {
-    if (!selectedApplication || missingRequirements.length === 0) return;
+  const handleSendRequirementsEmail = async () => {
+    const missingItems = Array.from(
+      new Set([
+        ...selectedRequirements,
+        ...splitRequirementsText(requirementsEmailText),
+      ])
+    );
+
+    if (!selectedApplication || missingItems.length === 0) return;
 
     setSendingEmail(true);
     try {
       await axios.post(
         `/api/applications/${selectedApplication._id}/send-missing-requirements`,
         {
-          missingItems: missingRequirements,
-          customMessage: customMessage,
+          missingItems,
+          customMessage: requirementsEmailMessage,
         }
       );
 
-      alert("Missing requirements notification sent successfully!");
-      setShowMissingRequirementsModal(false);
-      setMissingRequirements([]);
-      setCustomMessage("");
+      alert("Requirements email sent successfully!");
+      setShowRequirementsEmailModal(false);
+      setSelectedRequirements([]);
+      setRequirementsEmailText("");
+      setRequirementsEmailMessage("");
     } catch (error) {
-      console.error("Error sending missing requirements:", error);
-      alert("Failed to send notification. Please try again.");
+      console.error("Error sending requirements email:", error);
+      alert(
+        error.response?.data?.message ||
+          "Failed to send requirements email. Please try again."
+      );
     } finally {
       setSendingEmail(false);
     }
@@ -524,7 +518,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+    <div className="admin-page">
       <AdminHeader />
 
       <div className="mx-auto w-full max-w-[min(120rem,calc(100vw-2.5rem))] px-4 sm:px-6 lg:px-8 py-8">
@@ -704,13 +698,10 @@ const AdminDashboard = () => {
                     <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider w-40">
-                      Requirements
-                    </th>
                     <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider">
                       Submitted
                     </th>
-                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider w-40">
+                    <th className="px-3 py-2 text-left text-xs font-medium text-[#0D1B2A] uppercase tracking-wider w-44">
                       Actions
                     </th>
                   </tr>
@@ -852,42 +843,6 @@ const AdminDashboard = () => {
                           {application.status}
                         </span>
                       </td>
-                      <td className="px-3 py-3">
-                        <button
-                          onClick={() => openRequirementsModal(application)}
-                          className="w-full rounded-lg border border-[#1B9AAA]/20 bg-white px-2 py-2 text-left shadow-sm transition-colors hover:bg-[#F5F7FA]"
-                          title="Open requirements checklist"
-                        >
-                          <div className="flex items-center justify-between gap-2 text-xs">
-                            <span className="font-semibold text-[#0D1B2A]">
-                              {getRequirementSummary(application).completed}/
-                              {getRequirementSummary(application).total}
-                            </span>
-                            <span className="text-[11px] text-gray-500">
-                              done
-                            </span>
-                          </div>
-                          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-gray-200">
-                            <div
-                              className="h-full rounded-full bg-[#1B9AAA]"
-                              style={{
-                                width: `${
-                                  getRequirementSummary(application).total
-                                    ? (getRequirementSummary(application)
-                                        .completed /
-                                        getRequirementSummary(application)
-                                          .total) *
-                                      100
-                                    : 0
-                                }%`,
-                              }}
-                            />
-                          </div>
-                          <div className="mt-1 text-[11px] font-medium text-[#1B9AAA]">
-                            Checklist
-                          </div>
-                        </button>
-                      </td>
                       <td className="px-3 py-3 text-xs text-gray-500">
                         {formatDate(application.submittedAt)}
                       </td>
@@ -934,6 +889,27 @@ const AdminDashboard = () => {
                                   strokeLinejoin="round"
                                   strokeWidth={2}
                                   d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() =>
+                                handlePrintAdmissionForm(application)
+                              }
+                              className="text-slate-600 hover:text-slate-900 p-1 rounded hover:bg-slate-50"
+                              title="Print Admission Form"
+                            >
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"
                                 />
                               </svg>
                             </button>
@@ -1039,24 +1015,33 @@ const AdminDashboard = () => {
 
       {/* Application Detail Modal */}
       {showApplicationDetails && selectedApplication && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4 sticky top-0 bg-white pb-3 border-b">
-              <h3 className="text-xl font-bold text-gray-900">
-                Application Details
-              </h3>
+        <div
+          className={`admin-view-overlay${
+            showRequirementsEmailModal || showCustomNotificationModal
+              ? " admin-view-overlay-inert"
+              : ""
+          }`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="application-detail-title"
+        >
+          <div className="admin-view-shell">
+            <aside className="admin-view-rail">
               <button
+                type="button"
                 onClick={() => {
                   setShowApplicationDetails(false);
                   setSelectedApplication(null);
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="admin-view-close"
+                aria-label="Close application details"
               >
                 <svg
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -1066,223 +1051,273 @@ const AdminDashboard = () => {
                   />
                 </svg>
               </button>
-            </div>
 
-            <div className="space-y-6">
-              {/* Header with Photo and Basic Info */}
-              <div className="flex items-start space-x-4 bg-gray-50 p-4 rounded-lg">
-                <img
-                  className="h-24 w-24 rounded-lg object-cover border-2 border-gray-200"
-                  src={selectedApplication.photoUrl}
-                  alt={selectedApplication.name}
-                />
-                <div className="flex-1">
-                  <h4 className="text-2xl font-bold text-gray-900 mb-2">
-                    {selectedApplication.name}
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <span className="font-medium text-gray-700">Email:</span>
-                      <p className="text-gray-600">
-                        {selectedApplication.email}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-700">
-                        Contact:
-                      </span>
-                      <p className="text-gray-600">
-                        {selectedApplication.contact}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <span
-                      className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                        statusColors[selectedApplication.status]
-                      }`}
-                    >
-                      {selectedApplication.status}
-                    </span>
-                  </div>
-                </div>
+              <img
+                className="admin-view-photo"
+                src={selectedApplication.photoUrl}
+                alt={selectedApplication.name}
+              />
+
+              <div className="admin-view-identity">
+                <span
+                  className={`admin-view-status ${
+                    statusColors[selectedApplication.status] || ""
+                  }`}
+                >
+                  {selectedApplication.status}
+                </span>
+                <h3 id="application-detail-title">
+                  {selectedApplication.name}
+                </h3>
+                <p>{selectedApplication.courseApplied}</p>
               </div>
 
-              {/* Personal Information Section */}
-              <div className="border-t pt-4">
-                <h5 className="text-lg font-bold text-gray-900 mb-3">
-                  Personal Information
-                </h5>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedApplication.lastName && (
-                    <div>
-                      <span className="font-medium text-gray-700">
-                        Last Name:
-                      </span>
-                      <p className="text-gray-600">
-                        {selectedApplication.lastName}
-                      </p>
-                    </div>
-                  )}
-                  {selectedApplication.givenName && (
-                    <div>
-                      <span className="font-medium text-gray-700">
-                        Given Name:
-                      </span>
-                      <p className="text-gray-600">
-                        {selectedApplication.givenName}
-                      </p>
-                    </div>
-                  )}
-                  {selectedApplication.middleName && (
-                    <div>
-                      <span className="font-medium text-gray-700">
-                        Middle Name:
-                      </span>
-                      <p className="text-gray-600">
-                        {selectedApplication.middleName}
-                      </p>
-                    </div>
-                  )}
-                  {selectedApplication.dateOfBirth && (
-                    <div>
-                      <span className="font-medium text-gray-700">
-                        Date of Birth:
-                      </span>
-                      <p className="text-gray-600">
-                        {formatDate(selectedApplication.dateOfBirth)}
-                      </p>
-                    </div>
-                  )}
-                  {selectedApplication.age && (
-                    <div>
-                      <span className="font-medium text-gray-700">Age:</span>
-                      <p className="text-gray-600">
-                        {selectedApplication.age} years old
-                      </p>
-                    </div>
-                  )}
-                  {selectedApplication.sex && (
-                    <div>
-                      <span className="font-medium text-gray-700">Sex:</span>
-                      <p className="text-gray-600">{selectedApplication.sex}</p>
-                    </div>
-                  )}
-                </div>
-                {selectedApplication.presentAddress && (
-                  <div className="mt-3">
-                    <span className="font-medium text-gray-700">
-                      Present Address:
-                    </span>
-                    <p className="text-gray-600">
-                      {selectedApplication.presentAddress}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Educational Background */}
-              <div className="border-t pt-4">
-                <h5 className="text-lg font-bold text-gray-900 mb-3">
-                  Educational Background
-                </h5>
-                {selectedApplication.schoolLastAttended && (
-                  <div className="mb-3">
-                    <span className="font-medium text-gray-700">
-                      School Last Attended:
-                    </span>
-                    <p className="text-gray-600">
-                      {selectedApplication.schoolLastAttended}
-                    </p>
-                  </div>
-                )}
+              <div className="admin-view-quick">
                 <div>
-                  <span className="font-medium text-gray-700">
-                    Course Applied For:
-                  </span>
-                  <p className="text-gray-600 font-medium">
-                    {selectedApplication.courseApplied}
-                  </p>
+                  <span>Email</span>
+                  <strong>{selectedApplication.email}</strong>
+                </div>
+                <div>
+                  <span>Mobile</span>
+                  <strong>{selectedApplication.contact}</strong>
+                </div>
+                <div>
+                  <span>Submitted</span>
+                  <strong>{formatDate(selectedApplication.submittedAt)}</strong>
                 </div>
               </div>
 
-              {/* Requirements Checklist */}
-              <div className="border-t pt-4">
-                <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h5 className="text-lg font-bold text-gray-900">
-                      Requirements Checklist
-                    </h5>
-                    <p className="text-sm text-gray-500">
-                      {getRequirementSummary(selectedApplication).completed} of{" "}
-                      {getRequirementSummary(selectedApplication).total} marked
-                      complete or passed
-                    </p>
+              <div className="admin-view-actions">
+                <button
+                  type="button"
+                  onClick={() => handlePrintAdmissionForm(selectedApplication)}
+                  className="admin-view-primary"
+                >
+                  Print Admission Form
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openRequirementsEmailModal(selectedApplication)}
+                  className="admin-view-secondary"
+                >
+                  Requirements Email
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomNotificationModal(true)}
+                  className="admin-view-secondary"
+                >
+                  Email Student
+                </button>
+              </div>
+            </aside>
+
+            <main className="admin-view-content">
+              <div className="admin-view-content-header">
+                <div>
+                  <p>Application Review</p>
+                  <h4>{selectedApplication.courseApplied}</h4>
+                </div>
+                <span>ID: {selectedApplication._id}</span>
+              </div>
+
+              <DetailSection title="Student Information">
+                <DetailField label="Last Name" value={selectedApplication.lastName} />
+                <DetailField label="First Name" value={selectedApplication.givenName} />
+                <DetailField label="Middle Name" value={selectedApplication.middleName} />
+                <DetailField
+                  label="Date of Birth"
+                  value={
+                    selectedApplication.dateOfBirth
+                      ? formatDate(selectedApplication.dateOfBirth)
+                      : ""
+                  }
+                />
+                <DetailField
+                  label="Age"
+                  value={
+                    selectedApplication.age
+                      ? `${selectedApplication.age} years old`
+                      : ""
+                  }
+                />
+                <DetailField label="Gender" value={selectedApplication.sex} />
+                <DetailField label="Nationality" value={selectedApplication.nationality} />
+                <DetailField label="Religion" value={selectedApplication.religion} />
+                <DetailField label="Civil Status" value={selectedApplication.civilStatus} />
+                <DetailField
+                  label="Telephone Number"
+                  value={selectedApplication.telephoneNumber}
+                />
+                <DetailField label="Mobile Number" value={selectedApplication.contact} />
+                <DetailField label="Email Address" value={selectedApplication.email} />
+              </DetailSection>
+
+              <DetailSection title="Address">
+                <DetailField
+                  label="Present Address"
+                  value={selectedApplication.presentAddress}
+                  wide
+                />
+                <DetailField label="No." value={selectedApplication.addressHouseNo} />
+                <DetailField label="Street" value={selectedApplication.addressStreet} />
+                <DetailField
+                  label="Brgy. / Village"
+                  value={selectedApplication.addressBarangay}
+                />
+                <DetailField
+                  label="City / Municipality"
+                  value={selectedApplication.addressCityMunicipality}
+                />
+                <DetailField label="Province" value={selectedApplication.addressProvince} />
+              </DetailSection>
+
+              <DetailSection title="Education">
+                <DetailField
+                  label="Previous School"
+                  value={selectedApplication.schoolLastAttended}
+                />
+                <DetailField
+                  label="School Address"
+                  value={selectedApplication.previousSchoolAddress}
+                />
+                <DetailField
+                  label="Honors / Awards"
+                  value={selectedApplication.honorsAwards}
+                />
+                <DetailField
+                  label="Course Applied For"
+                  value={selectedApplication.courseApplied}
+                  wide
+                />
+              </DetailSection>
+
+              {(selectedApplication.fatherLastName ||
+                selectedApplication.fatherFirstName ||
+                selectedApplication.fatherMiddleName ||
+                selectedApplication.fatherMobileNumber ||
+                selectedApplication.fatherEmail ||
+                selectedApplication.fatherOccupation ||
+                selectedApplication.fatherWorkAddress ||
+                selectedApplication.motherLastName ||
+                selectedApplication.motherFirstName ||
+                selectedApplication.motherMiddleName ||
+                selectedApplication.motherMobileNumber ||
+                selectedApplication.motherEmail ||
+                selectedApplication.motherOccupation ||
+                selectedApplication.motherWorkAddress) && (
+                <section className="admin-view-section">
+                  <div className="admin-view-section-title">
+                    <span>Parents' Information</span>
                   </div>
-                  <button
-                    onClick={() => openRequirementsModal(selectedApplication)}
-                    className="self-start rounded-lg bg-[#1B9AAA] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#158A9A]"
-                  >
-                    Update Checklist
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                  {getApplicationRequirements(selectedApplication).map(
-                    (requirement) => (
-                      <div
-                        key={requirement.name}
-                        className="flex items-start justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3"
-                      >
-                        <span className="text-sm text-gray-700">
-                          {requirement.name}
-                        </span>
-                        <span
-                          className={`shrink-0 rounded-full border px-2 py-1 text-xs font-semibold ${
-                            requirementStatusColors[requirement.status] ||
-                            requirementStatusColors.pending
-                          }`}
-                        >
-                          {getRequirementStatusLabel(requirement.status)}
-                        </span>
+                  <div className="admin-view-parent-grid">
+                    {(selectedApplication.fatherLastName ||
+                      selectedApplication.fatherFirstName ||
+                      selectedApplication.fatherMiddleName ||
+                      selectedApplication.fatherMobileNumber ||
+                      selectedApplication.fatherEmail ||
+                      selectedApplication.fatherOccupation ||
+                      selectedApplication.fatherWorkAddress) && (
+                      <div className="admin-view-parent-card">
+                        <h6>Father</h6>
+                        <div className="admin-view-field-grid">
+                          <DetailField
+                            label="Name"
+                            value={joinDetailValues([
+                              selectedApplication.fatherLastName,
+                              selectedApplication.fatherFirstName,
+                              selectedApplication.fatherMiddleName,
+                            ])}
+                            wide
+                          />
+                          <DetailField
+                            label="Mobile Number"
+                            value={selectedApplication.fatherMobileNumber}
+                          />
+                          <DetailField
+                            label="Email Address"
+                            value={selectedApplication.fatherEmail}
+                          />
+                          <DetailField
+                            label="Occupation"
+                            value={selectedApplication.fatherOccupation}
+                          />
+                          <DetailField
+                            label="Work Address"
+                            value={selectedApplication.fatherWorkAddress}
+                            wide
+                          />
+                        </div>
                       </div>
-                    )
-                  )}
-                </div>
-              </div>
+                    )}
 
-              {/* Signatures Section */}
-              <div className="border-t pt-4">
-                <h5 className="text-lg font-bold text-gray-900 mb-3">
-                  Signatures
-                </h5>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <span className="font-medium text-gray-700">
-                      Applicant's Signature:
-                    </span>
+                    {(selectedApplication.motherLastName ||
+                      selectedApplication.motherFirstName ||
+                      selectedApplication.motherMiddleName ||
+                      selectedApplication.motherMobileNumber ||
+                      selectedApplication.motherEmail ||
+                      selectedApplication.motherOccupation ||
+                      selectedApplication.motherWorkAddress) && (
+                      <div className="admin-view-parent-card">
+                        <h6>Mother (Full Maiden Name)</h6>
+                        <div className="admin-view-field-grid">
+                          <DetailField
+                            label="Name"
+                            value={joinDetailValues([
+                              selectedApplication.motherLastName,
+                              selectedApplication.motherFirstName,
+                              selectedApplication.motherMiddleName,
+                            ])}
+                            wide
+                          />
+                          <DetailField
+                            label="Mobile Number"
+                            value={selectedApplication.motherMobileNumber}
+                          />
+                          <DetailField
+                            label="Email Address"
+                            value={selectedApplication.motherEmail}
+                          />
+                          <DetailField
+                            label="Occupation"
+                            value={selectedApplication.motherOccupation}
+                          />
+                          <DetailField
+                            label="Work Address"
+                            value={selectedApplication.motherWorkAddress}
+                            wide
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              <section className="admin-view-section">
+                <div className="admin-view-section-title">
+                  <span>Signatures</span>
+                </div>
+                <div className="admin-view-signature-grid">
+                  <div className="admin-view-signature-card">
+                    <span>Applicant's Signature</span>
                     <img
                       src={selectedApplication.signatureUrl}
                       alt="Applicant Signature"
-                      className="border border-gray-300 rounded mt-2 bg-white p-2"
                     />
                     {selectedApplication.dateSigned && (
-                      <p className="text-sm text-gray-500 mt-1">
-                        Signed: {selectedApplication.dateSigned}
-                      </p>
+                      <p>Signed: {selectedApplication.dateSigned}</p>
                     )}
                   </div>
                   {selectedApplication.examinerSignatureUrl && (
-                    <div>
-                      <span className="font-medium text-gray-700">
-                        Examiner's Signature:
-                      </span>
+                    <div className="admin-view-signature-card">
+                      <span>Examiner's Signature</span>
                       <img
                         src={selectedApplication.examinerSignatureUrl}
                         alt="Examiner Signature"
-                        className="border border-gray-300 rounded mt-2 bg-white p-2"
                       />
                       {selectedApplication.examinerDateSigned && (
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p>
                           Signed:{" "}
                           {formatDate(selectedApplication.examinerDateSigned)}
                         </p>
@@ -1290,347 +1325,213 @@ const AdminDashboard = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </section>
 
-              {/* Examination Permit Section (for maritime courses) */}
               {(selectedApplication.courseApplied ===
                 "Bachelor of Science in Marine Transportation" ||
                 selectedApplication.courseApplied ===
                   "Bachelor of Science in Marine Engineering") && (
-                <div className="border-t pt-4 bg-blue-50 p-4 rounded-lg">
-                  <h5 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                    <svg
-                      className="w-5 h-5 mr-2 text-blue-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    Examination Permit
-                  </h5>
-                  {selectedApplication.examDateTime ? (
-                    <div className="space-y-3">
-                      <div>
-                        <span className="font-medium text-gray-700">
-                          Examination Date/Time:
-                        </span>
-                        <p className="text-gray-600">
-                          {new Date(
-                            selectedApplication.examDateTime
-                          ).toLocaleString("en-US", {
-                            dateStyle: "full",
-                            timeStyle: "short",
-                          })}
-                        </p>
-                      </div>
-                      {selectedApplication.examinerSignatureUrl && (
-                        <div>
-                          <span className="font-medium text-gray-700">
-                            Examiner Approved:
-                          </span>
-                          <p className="text-green-600 font-medium flex items-center gap-1">
-                            <svg
-                              className="w-4 h-4"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
+                <section className="admin-view-section admin-view-permit">
+                  <div className="admin-view-section-title">
+                    <span>Examination Permit</span>
+                  </div>
+                  <div className="admin-view-field-grid">
+                    <DetailField
+                      label="Examination Date / Time"
+                      value={
+                        selectedApplication.examDateTime
+                          ? new Date(
+                              selectedApplication.examDateTime
+                            ).toLocaleString("en-US", {
+                              dateStyle: "full",
+                              timeStyle: "short",
+                            })
+                          : "Not scheduled"
+                      }
+                      wide
+                    />
+                    <DetailField
+                      label="Examiner Approved"
+                      value={
+                        selectedApplication.examinerSignatureUrl
+                          ? "Yes"
+                          : "Pending"
+                      }
+                    />
+                  </div>
+                </section>
+              )}
+            </main>
+          </div>
+        </div>
+      )}
+
+      {/* Requirements Email Modal */}
+      {showRequirementsEmailModal &&
+        selectedApplication &&
+        createPortal(
+          <div
+            className="admin-req-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="requirements-email-title"
+            onClick={() => setShowRequirementsEmailModal(false)}
+          >
+            <div
+              className="admin-req-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="admin-req-header">
+                <div>
+                  <p className="admin-req-kicker">Email Student</p>
+                  <h3 id="requirements-email-title">Send Requirements Email</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowRequirementsEmailModal(false)}
+                  className="admin-req-close"
+                  aria-label="Close requirements email dialog"
+                >
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="admin-req-body">
+                <p className="admin-req-intro">
+                  Notify <strong>{selectedApplication.name}</strong> about
+                  missing or pending requirements.
+                </p>
+
+                <div className="admin-req-section">
+                  <div className="admin-req-section-head">
+                    <label className="admin-req-label">Requirements *</label>
+                    {getRequirementOptionNames().length > 0 && (
+                      <label className="admin-req-select-all">
+                        <input
+                          type="checkbox"
+                          checked={areAllRequirementsSelected()}
+                          onChange={(e) =>
+                            handleToggleAllRequirements(e.target.checked)
+                          }
+                        />
+                        <span>Select all</span>
+                      </label>
+                    )}
+                  </div>
+
+                  {getRequirementOptionNames().length > 0 ? (
+                    <div className="admin-req-list">
+                      {getApplicationRequirements(selectedApplication)
+                        .filter((requirement) =>
+                          hasDetailValue(requirement.name)
+                        )
+                        .map((requirement) => {
+                          const isChecked = selectedRequirements.includes(
+                            requirement.name
+                          );
+
+                          return (
+                            <label
+                              key={requirement.name}
+                              className="admin-req-item"
                             >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) =>
+                                  handleToggleRequirement(
+                                    requirement.name,
+                                    e.target.checked
+                                  )
+                                }
                               />
-                            </svg>
-                            Yes
-                          </p>
-                        </div>
-                      )}
+                              <span className="admin-req-item-text">
+                                {requirement.name}
+                              </span>
+                              <span
+                                className={`admin-req-status admin-req-status-${requirement.status || "pending"}`}
+                              >
+                                {requirement.status || "pending"}
+                              </span>
+                            </label>
+                          );
+                        })}
                     </div>
                   ) : (
-                    <p className="text-gray-500 italic">
-                      Examination details not yet scheduled
+                    <p className="admin-req-empty">
+                      No saved requirement checklist found for this student.
                     </p>
                   )}
                 </div>
-              )}
 
-              {/* Submission Info */}
-              <div className="border-t pt-4">
-                <div className="flex justify-between items-center text-sm text-gray-500">
-                  <span>Application ID: {selectedApplication._id}</span>
-                  <span>
-                    Submitted: {formatDate(selectedApplication.submittedAt)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-center space-x-4 pt-4 border-t">
-                <button
-                  onClick={() =>
-                    openMissingRequirementsModal(selectedApplication)
-                  }
-                  className="bg-[#FFC300] hover:bg-[#E6AC00] text-[#0D1B2A] font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
-                >
-                  Missing Requirements
-                </button>
-                <button
-                  onClick={() => setShowCustomNotificationModal(true)}
-                  className="bg-[#1B9AAA] hover:bg-[#158A9A] text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
-                >
-                  Custom Notification
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Requirements Checklist Modal */}
-      {showRequirementsModal && selectedApplication && (
-        <div className="fixed inset-0 z-[60] h-full w-full overflow-y-auto bg-gray-600 bg-opacity-50">
-          <div className="relative top-10 mx-auto w-11/12 max-w-3xl rounded-md border bg-white p-5 shadow-lg">
-            <div className="mb-4 flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">
-                  Requirements Checklist
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {selectedApplication.name}
-                </p>
-              </div>
-              <button
-                onClick={closeRequirementsModal}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div className="mb-4 rounded-lg border border-[#1B9AAA]/20 bg-[#F5F7FA] p-4">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-[#0D1B2A]">
-                    {getRequirementSummaryFromList(requirementsDraft).completed}{" "}
-                    of {getRequirementSummaryFromList(requirementsDraft).total}{" "}
-                    complete
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {selectedApplication.courseApplied}
-                  </p>
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-white sm:w-48">
-                  <div
-                    className="h-full rounded-full bg-[#1B9AAA]"
-                    style={{
-                      width: `${
-                        getRequirementSummaryFromList(requirementsDraft).total
-                          ? (getRequirementSummaryFromList(requirementsDraft)
-                              .completed /
-                              getRequirementSummaryFromList(requirementsDraft)
-                                .total) *
-                            100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="max-h-[52vh] space-y-3 overflow-y-auto pr-1">
-              {requirementsDraft.length === 0 ? (
-                <p className="rounded-lg border border-dashed border-gray-300 p-4 text-center text-sm text-gray-500">
-                  No requirements found
-                </p>
-              ) : (
-                requirementsDraft.map((requirement) => (
-                  <div
-                    key={requirement.name}
-                    className="grid grid-cols-1 gap-3 rounded-lg border border-gray-200 p-3 sm:grid-cols-[1fr_12rem] sm:items-center"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900">
-                        {requirement.name}
-                      </p>
-                      <span
-                        className={`mt-2 inline-flex rounded-full border px-2 py-1 text-xs font-semibold ${
-                          requirementStatusColors[requirement.status] ||
-                          requirementStatusColors.pending
-                        }`}
-                      >
-                        {getRequirementStatusLabel(requirement.status)}
-                      </span>
-                    </div>
-                    <select
-                      value={requirement.status || "pending"}
-                      onChange={(e) =>
-                        handleRequirementStatusChange(
-                          requirement.name,
-                          e.target.value
-                        )
-                      }
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-all duration-200 hover:border-[#1B9AAA]/50 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#1B9AAA]"
-                    >
-                      {requirementStatusOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="mt-5 flex justify-end space-x-3 border-t pt-4">
-              <button
-                onClick={closeRequirementsModal}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-gray-600 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveRequirements}
-                disabled={savingRequirements}
-                className="rounded-lg bg-[#1B9AAA] px-4 py-2 text-white hover:bg-[#158A9A] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {savingRequirements ? "Saving..." : "Save Requirements"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Missing Requirements Modal */}
-      {showMissingRequirementsModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">
-                Send Missing Requirements Notification
-              </h3>
-              <button
-                onClick={() => setShowMissingRequirementsModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <p className="text-gray-600">
-                Select the missing requirements to notify{" "}
-                <strong>{selectedApplication?.name}</strong> about:
-              </p>
-
-              <label className="flex w-fit items-center space-x-2 rounded-lg border border-[#1B9AAA]/20 bg-[#1B9AAA]/5 px-3 py-2">
-                <input
-                  type="checkbox"
-                  checked={areAllMissingRequirementsSelected()}
-                  onChange={(e) =>
-                    handleToggleAllMissingRequirements(e.target.checked)
-                  }
-                  className="rounded border-gray-300 text-[#1B9AAA] focus:ring-[#1B9AAA]"
-                />
-                <span className="text-sm font-semibold text-[#0D1B2A]">
-                  Select all
-                </span>
-              </label>
-
-              <div className="space-y-2">
-                {getApplicationRequirements(selectedApplication).map(
-                  (requirement) => (
-                    <label
-                      key={requirement.name}
-                      className="flex items-center space-x-2"
-                    >
-                    <input
-                      type="checkbox"
-                      checked={missingRequirements.includes(requirement.name)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setMissingRequirements([
-                            ...missingRequirements,
-                            requirement.name,
-                          ]);
-                        } else {
-                          setMissingRequirements(
-                            missingRequirements.filter(
-                              (req) => req !== requirement.name
-                            )
-                          );
-                        }
-                      }}
-                      className="rounded border-gray-300 text-[#1B9AAA] focus:ring-[#1B9AAA]"
-                    />
-                    <span className="text-gray-700">{requirement.name}</span>
+                <div className="admin-req-section">
+                  <label className="admin-req-label">
+                    Add Requirements Not Listed
                   </label>
-                  )
-                )}
+                  <textarea
+                    value={requirementsEmailText}
+                    onChange={(e) => setRequirementsEmailText(e.target.value)}
+                    placeholder="Optional. One extra requirement per line."
+                    className="admin-req-textarea"
+                    rows={2}
+                  />
+                </div>
+
+                <div className="admin-req-section">
+                  <label className="admin-req-label">
+                    Additional Instructions
+                  </label>
+                  <textarea
+                    value={requirementsEmailMessage}
+                    onChange={(e) =>
+                      setRequirementsEmailMessage(e.target.value)
+                    }
+                    placeholder="Optional note for the student..."
+                    className="admin-req-textarea"
+                    rows={2}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Additional Instructions (Optional)
-                </label>
-                <textarea
-                  value={customMessage}
-                  onChange={(e) => setCustomMessage(e.target.value)}
-                  placeholder="Add any specific instructions or details about the missing requirements..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9AAA] focus:border-transparent"
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="admin-req-footer">
                 <button
-                  onClick={() => setShowMissingRequirementsModal(false)}
-                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  type="button"
+                  onClick={() => setShowRequirementsEmailModal(false)}
+                  className="admin-req-btn-secondary"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={handleSendMissingRequirements}
-                  disabled={missingRequirements.length === 0 || sendingEmail}
-                  className="px-4 py-2 bg-[#1B9AAA] text-white rounded-lg hover:bg-[#158A9A] disabled:opacity-50 disabled:cursor-not-allowed"
+                  type="button"
+                  onClick={handleSendRequirementsEmail}
+                  disabled={
+                    (selectedRequirements.length === 0 &&
+                      splitRequirementsText(requirementsEmailText).length ===
+                        0) ||
+                    sendingEmail
+                  }
+                  className="admin-req-btn-primary"
                 >
-                  {sendingEmail ? "Sending..." : "Send Notification"}
+                  {sendingEmail ? "Sending..." : "Send Email"}
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* Custom Notification Modal */}
       {showCustomNotificationModal && (

@@ -41,8 +41,8 @@ const AdminForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A] px-4">
-      <div className="max-w-md w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-[#1B9AAA]/30 p-8">
+    <div className="admin-auth-page px-4">
+      <div className="admin-auth-card max-w-md w-full bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-[#1B9AAA]/30 p-8">
         <h1 className="text-2xl font-bold text-[#0D1B2A] text-center mb-2">
           Reset Admin Password
         </h1>
@@ -78,7 +78,7 @@ const AdminForgotPassword = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-[#1B9AAA] to-[#158A9A] text-white font-semibold py-3 rounded-lg shadow hover:shadow-lg transition disabled:opacity-50"
+            className="w-full bg-[#111827] text-white font-semibold py-3 rounded-lg shadow hover:bg-[#1f2937] transition disabled:opacity-50"
           >
             {loading ? "Sending..." : "Send Reset Link"}
           </button>

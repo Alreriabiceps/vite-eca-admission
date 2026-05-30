@@ -225,7 +225,7 @@ const BackupManagement = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+      <div className="admin-page">
         <AdminHeader />
         <div className="flex items-center justify-center min-h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1B9AAA]"></div>
@@ -235,7 +235,7 @@ const BackupManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+    <div className="admin-page">
       <AdminHeader />
 
       {/* Notification */}

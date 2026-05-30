@@ -15,11 +15,11 @@ const Layout = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-[#060d1e]">
       {!isAdminPage && <Header />}
       {isAdminLogin && (
-        <div className="bg-[#060d1e] text-white py-4">
+        <div className="border-b border-gray-200 bg-white py-3 text-[#111827]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-center">
               <div className="flex items-center space-x-3">
-                <div className="h-10 w-10 bg-gradient-to-br from-[#1a4fd6] to-[#1640b0] rounded-lg flex items-center justify-center">
+                <div className="h-10 w-10 bg-[#111827] rounded flex items-center justify-center">
                   <svg
                     className="h-5 w-5 text-white"
                     fill="none"
@@ -35,8 +35,10 @@ const Layout = ({ children }) => {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-white">Admin Login</h1>
-                  <p className="text-sm text-[#F5F7FA]">
+                  <h1 className="text-xl font-bold text-[#111827]">
+                    Admin Login
+                  </h1>
+                  <p className="text-sm text-gray-500">
                     Student Admission Management System
                   </p>
                 </div>

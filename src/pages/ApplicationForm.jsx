@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import SignaturePad from "react-signature-canvas";
 
+const RequiredMark = () => (
+  <span className="text-[#E63946] ml-0.5" aria-hidden="true">
+    *
+  </span>
+);
+
 const ApplicationForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -10,13 +16,38 @@ const ApplicationForm = () => {
     givenName: "",
     middleName: "",
     schoolLastAttended: "",
+    previousSchoolAddress: "",
+    honorsAwards: "",
     courseApplied: "",
     presentAddress: "",
+    addressHouseNo: "",
+    addressStreet: "",
+    addressBarangay: "",
+    addressCityMunicipality: "",
+    addressProvince: "",
     email: "",
     contact: "",
+    telephoneNumber: "",
     dateOfBirth: "",
     age: "",
     sex: "",
+    nationality: "",
+    religion: "",
+    civilStatus: "",
+    fatherLastName: "",
+    fatherFirstName: "",
+    fatherMiddleName: "",
+    fatherMobileNumber: "",
+    fatherEmail: "",
+    fatherOccupation: "",
+    fatherWorkAddress: "",
+    motherLastName: "",
+    motherFirstName: "",
+    motherMiddleName: "",
+    motherMobileNumber: "",
+    motherEmail: "",
+    motherOccupation: "",
+    motherWorkAddress: "",
     dateSigned: new Date().toLocaleDateString("en-US", {
       month: "2-digit",
       day: "2-digit",
@@ -141,8 +172,6 @@ const ApplicationForm = () => {
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.givenName.trim())
       newErrors.givenName = "Given name is required";
-    if (!formData.middleName.trim())
-      newErrors.middleName = "Middle name is required";
     if (!formData.schoolLastAttended.trim())
       newErrors.schoolLastAttended = "School last attended is required";
     if (!formData.courseApplied)
@@ -163,6 +192,16 @@ const ApplicationForm = () => {
     if (!formData.privacyConsent)
       newErrors.privacyConsent =
         "You must acknowledge the Data Privacy Act notice to continue.";
+    if (
+      formData.fatherEmail.trim() &&
+      !/\S+@\S+\.\S+/.test(formData.fatherEmail)
+    )
+      newErrors.fatherEmail = "Invalid email format";
+    if (
+      formData.motherEmail.trim() &&
+      !/\S+@\S+\.\S+/.test(formData.motherEmail)
+    )
+      newErrors.motherEmail = "Invalid email format";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -190,13 +229,50 @@ const ApplicationForm = () => {
       formDataToSend.append("givenName", formData.givenName);
       formDataToSend.append("middleName", formData.middleName);
       formDataToSend.append("schoolLastAttended", formData.schoolLastAttended);
+      formDataToSend.append(
+        "previousSchoolAddress",
+        formData.previousSchoolAddress
+      );
+      formDataToSend.append("honorsAwards", formData.honorsAwards);
       formDataToSend.append("courseApplied", formData.courseApplied);
       formDataToSend.append("presentAddress", formData.presentAddress);
+      formDataToSend.append("addressHouseNo", formData.addressHouseNo);
+      formDataToSend.append("addressStreet", formData.addressStreet);
+      formDataToSend.append("addressBarangay", formData.addressBarangay);
+      formDataToSend.append(
+        "addressCityMunicipality",
+        formData.addressCityMunicipality
+      );
+      formDataToSend.append("addressProvince", formData.addressProvince);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("contact", formData.contact);
+      formDataToSend.append("telephoneNumber", formData.telephoneNumber);
       formDataToSend.append("dateOfBirth", formData.dateOfBirth);
       formDataToSend.append("age", formData.age);
       formDataToSend.append("sex", formData.sex);
+      formDataToSend.append("nationality", formData.nationality);
+      formDataToSend.append("religion", formData.religion);
+      formDataToSend.append("civilStatus", formData.civilStatus);
+      formDataToSend.append("fatherLastName", formData.fatherLastName);
+      formDataToSend.append("fatherFirstName", formData.fatherFirstName);
+      formDataToSend.append("fatherMiddleName", formData.fatherMiddleName);
+      formDataToSend.append(
+        "fatherMobileNumber",
+        formData.fatherMobileNumber
+      );
+      formDataToSend.append("fatherEmail", formData.fatherEmail);
+      formDataToSend.append("fatherOccupation", formData.fatherOccupation);
+      formDataToSend.append("fatherWorkAddress", formData.fatherWorkAddress);
+      formDataToSend.append("motherLastName", formData.motherLastName);
+      formDataToSend.append("motherFirstName", formData.motherFirstName);
+      formDataToSend.append("motherMiddleName", formData.motherMiddleName);
+      formDataToSend.append(
+        "motherMobileNumber",
+        formData.motherMobileNumber
+      );
+      formDataToSend.append("motherEmail", formData.motherEmail);
+      formDataToSend.append("motherOccupation", formData.motherOccupation);
+      formDataToSend.append("motherWorkAddress", formData.motherWorkAddress);
       formDataToSend.append("dateSigned", formData.dateSigned);
       formDataToSend.append("photo", photo);
       formDataToSend.append(
@@ -302,6 +378,10 @@ const ApplicationForm = () => {
               To the Applicant: Kindly fill-out this form. Please provide
               accurate information.
             </p>
+            <p className="text-xs text-[#6B7280] text-center mt-2">
+              Fields marked with <span className="text-[#E63946]">*</span> are
+              required. All other fields may be left blank.
+            </p>
           </div>
 
           {errors.submit && (
@@ -310,11 +390,12 @@ const ApplicationForm = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} noValidate className="space-y-6">
             {/* NAME OF APPLICANT */}
             <div className="space-y-2">
               <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                NAME OF APPLICANT *
+                NAME OF APPLICANT
+                <RequiredMark />
               </label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -329,7 +410,7 @@ const ApplicationForm = () => {
                     placeholder="Last Name"
                   />
                   <p className="text-xs text-[#6B7280] mt-1 text-center">
-                    Last Name
+                    Last Name <span className="text-[#E63946]">*</span>
                   </p>
                   {errors.lastName && (
                     <p className="text-xs text-[#E63946] font-medium">
@@ -349,7 +430,7 @@ const ApplicationForm = () => {
                     placeholder="Given Name"
                   />
                   <p className="text-xs text-[#6B7280] mt-1 text-center">
-                    Given Name
+                    Given Name <span className="text-[#E63946]">*</span>
                   </p>
                   {errors.givenName && (
                     <p className="text-xs text-[#E63946] font-medium">
@@ -363,21 +444,12 @@ const ApplicationForm = () => {
                     name="middleName"
                     value={formData.middleName}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
-                      errors.middleName
-                        ? "border-crimson-red"
-                        : "border-gray-300"
-                    }`}
+                    className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
                     placeholder="Middle Name"
                   />
                   <p className="text-xs text-[#6B7280] mt-1 text-center">
-                    Middle Name
+                    Middle Name (optional)
                   </p>
-                  {errors.middleName && (
-                    <p className="text-xs text-[#E63946] font-medium">
-                      {errors.middleName}
-                    </p>
-                  )}
                 </div>
               </div>
             </div>
@@ -385,7 +457,8 @@ const ApplicationForm = () => {
             {/* SCHOOL LAST ATTENDED */}
             <div className="space-y-2">
               <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                SCHOOL LAST ATTENDED *
+                SCHOOL LAST ATTENDED
+                <RequiredMark />
               </label>
               <input
                 type="text"
@@ -406,10 +479,42 @@ const ApplicationForm = () => {
               )}
             </div>
 
+            {/* PREVIOUS SCHOOL DETAILS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
+                  SCHOOL ADDRESS
+                </label>
+                <input
+                  type="text"
+                  name="previousSchoolAddress"
+                  value={formData.previousSchoolAddress}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="Enter previous school address"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
+                  HONORS / AWARDS RECEIVED
+                </label>
+                <input
+                  type="text"
+                  name="honorsAwards"
+                  value={formData.honorsAwards}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="Enter awards, if any"
+                />
+              </div>
+            </div>
+
             {/* COURSE APPLYING FOR */}
             <div className="space-y-2">
               <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                COURSE APPLYING FOR *
+                COURSE APPLYING FOR
+                <RequiredMark />
               </label>
               <select
                 name="courseApplied"
@@ -436,7 +541,8 @@ const ApplicationForm = () => {
             {/* PRESENT ADDRESS */}
             <div className="space-y-2">
               <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                PRESENT ADDRESS *
+                PRESENT ADDRESS
+                <RequiredMark />
               </label>
               <input
                 type="text"
@@ -457,11 +563,81 @@ const ApplicationForm = () => {
               )}
             </div>
 
+            {/* ADDRESS DETAILS */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                  No.
+                </label>
+                <input
+                  type="text"
+                  name="addressHouseNo"
+                  value={formData.addressHouseNo}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="No."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                  Street
+                </label>
+                <input
+                  type="text"
+                  name="addressStreet"
+                  value={formData.addressStreet}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="Street"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                  Brgy. / Village
+                </label>
+                <input
+                  type="text"
+                  name="addressBarangay"
+                  value={formData.addressBarangay}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="Barangay"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                  City / Municipality
+                </label>
+                <input
+                  type="text"
+                  name="addressCityMunicipality"
+                  value={formData.addressCityMunicipality}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="City / Municipality"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                  Province
+                </label>
+                <input
+                  type="text"
+                  name="addressProvince"
+                  value={formData.addressProvince}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="Province"
+                />
+              </div>
+            </div>
+
             {/* EMAIL AND CONTACT NUMBER */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                  EMAIL ADDRESS *
+                  EMAIL ADDRESS
+                  <RequiredMark />
                 </label>
                 <input
                   type="email"
@@ -482,7 +658,8 @@ const ApplicationForm = () => {
 
               <div className="space-y-2">
                 <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                  CONTACT NUMBER *
+                  CONTACT NUMBER
+                  <RequiredMark />
                 </label>
                 <input
                   type="tel"
@@ -500,13 +677,28 @@ const ApplicationForm = () => {
                   </p>
                 )}
               </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
+                  TELEPHONE NUMBER
+                </label>
+                <input
+                  type="tel"
+                  name="telephoneNumber"
+                  value={formData.telephoneNumber}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="Landline number"
+                />
+              </div>
             </div>
 
             {/* DATE OF BIRTH, AGE, SEX */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                  DATE OF BIRTH *
+                  DATE OF BIRTH
+                  <RequiredMark />
                 </label>
                 <input
                   type="date"
@@ -543,7 +735,8 @@ const ApplicationForm = () => {
 
               <div className="space-y-2">
                 <label className="block text-sm font-bold text-[#0D1B2A] uppercase mb-2">
-                  SEX *
+                  SEX
+                  <RequiredMark />
                 </label>
                 <div className="flex gap-6 items-center pt-2">
                   <label className="flex items-center cursor-pointer">
@@ -581,11 +774,307 @@ const ApplicationForm = () => {
               </div>
             </div>
 
+            {/* ADDITIONAL STUDENT INFORMATION */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
+                  NATIONALITY
+                </label>
+                <input
+                  type="text"
+                  name="nationality"
+                  value={formData.nationality}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="e.g., Filipino"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
+                  RELIGION
+                </label>
+                <input
+                  type="text"
+                  name="religion"
+                  value={formData.religion}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-transparent text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                  placeholder="Religion"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-[#0D1B2A] uppercase mb-2">
+                  CIVIL STATUS
+                </label>
+                <div className="flex gap-6 items-center pt-2">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="civilStatus"
+                      value="Single"
+                      checked={formData.civilStatus === "Single"}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 text-[#1B9AAA] focus:ring-[#1B9AAA] cursor-pointer"
+                    />
+                    <span className="ml-2 text-[#0D1B2A] font-medium">
+                      Single
+                    </span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="civilStatus"
+                      value="Married"
+                      checked={formData.civilStatus === "Married"}
+                      onChange={handleInputChange}
+                      className="w-4 h-4 text-[#1B9AAA] focus:ring-[#1B9AAA] cursor-pointer"
+                    />
+                    <span className="ml-2 text-[#0D1B2A] font-medium">
+                      Married
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Parents Information */}
+            <div className="border-t-2 border-[#E5E7EB] pt-6 mt-8">
+              <h3 className="text-lg font-bold text-[#0D1B2A] uppercase mb-1">
+                Parents' Information
+              </h3>
+              <p className="text-xs text-[#6B7280] mb-4 italic">
+                Optional — leave blank if not applicable
+              </p>
+
+              <div className="rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-4">
+                <h4 className="text-sm font-bold text-[#0D1B2A] uppercase mb-4">
+                  Father
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      name="fatherLastName"
+                      value={formData.fatherLastName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Last Name"
+                    />
+                    <p className="text-xs text-[#6B7280] mt-1 text-center">
+                      Last Name
+                    </p>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="fatherFirstName"
+                      value={formData.fatherFirstName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="First Name"
+                    />
+                    <p className="text-xs text-[#6B7280] mt-1 text-center">
+                      First Name
+                    </p>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="fatherMiddleName"
+                      value={formData.fatherMiddleName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Middle Name"
+                    />
+                    <p className="text-xs text-[#6B7280] mt-1 text-center">
+                      Middle Name
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      Mobile No.
+                    </label>
+                    <input
+                      type="tel"
+                      name="fatherMobileNumber"
+                      value={formData.fatherMobileNumber}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Father's mobile number"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      E-mail Address (optional)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="email"
+                      name="fatherEmail"
+                      value={formData.fatherEmail}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
+                        errors.fatherEmail ? "border-crimson-red" : "border-gray-300"
+                      }`}
+                      placeholder="Father's email (optional)"
+                    />
+                    {errors.fatherEmail && (
+                      <p className="text-xs text-[#E63946] font-medium">
+                        {errors.fatherEmail}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      Occupation
+                    </label>
+                    <input
+                      type="text"
+                      name="fatherOccupation"
+                      value={formData.fatherOccupation}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Father's occupation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      Work Address
+                    </label>
+                    <input
+                      type="text"
+                      name="fatherWorkAddress"
+                      value={formData.fatherWorkAddress}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Father's work address"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] p-4">
+                <h4 className="text-sm font-bold text-[#0D1B2A] uppercase mb-4">
+                  Mother (Full Maiden Name)
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <input
+                      type="text"
+                      name="motherLastName"
+                      value={formData.motherLastName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Last Name"
+                    />
+                    <p className="text-xs text-[#6B7280] mt-1 text-center">
+                      Last Name
+                    </p>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="motherFirstName"
+                      value={formData.motherFirstName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="First Name"
+                    />
+                    <p className="text-xs text-[#6B7280] mt-1 text-center">
+                      First Name
+                    </p>
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="motherMiddleName"
+                      value={formData.motherMiddleName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Middle Name"
+                    />
+                    <p className="text-xs text-[#6B7280] mt-1 text-center">
+                      Middle Name
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      Mobile No.
+                    </label>
+                    <input
+                      type="tel"
+                      name="motherMobileNumber"
+                      value={formData.motherMobileNumber}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Mother's mobile number"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      E-mail Address (optional)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="email"
+                      name="motherEmail"
+                      value={formData.motherEmail}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all ${
+                        errors.motherEmail ? "border-crimson-red" : "border-gray-300"
+                      }`}
+                      placeholder="Mother's email (optional)"
+                    />
+                    {errors.motherEmail && (
+                      <p className="text-xs text-[#E63946] font-medium">
+                        {errors.motherEmail}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      Occupation
+                    </label>
+                    <input
+                      type="text"
+                      name="motherOccupation"
+                      value={formData.motherOccupation}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Mother's occupation"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-xs font-bold text-[#0D1B2A] uppercase">
+                      Work Address
+                    </label>
+                    <input
+                      type="text"
+                      name="motherWorkAddress"
+                      value={formData.motherWorkAddress}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-2 border-b-2 border-t-0 border-x-0 bg-white text-deep-navy-blue placeholder-gray-400 focus:outline-none focus:border-warm-gold transition-all border-gray-300"
+                      placeholder="Mother's work address"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Photo Upload */}
             <div className="border-t-2 border-[#E5E7EB] pt-6 mt-8">
               <div className="space-y-2">
                 <label className="block text-sm font-bold text-[#0D1B2A] uppercase">
-                  Profile Photo (2x2) *
+                  Profile Photo (2x2)
+                  <RequiredMark />
                 </label>
                 <div className="relative">
                   <input
@@ -628,7 +1117,8 @@ const ApplicationForm = () => {
               {/* Digital Signature */}
               <div className="space-y-2">
                 <label className="block text-sm font-bold text-[#0D1B2A] text-center uppercase">
-                  Signature over printed name *
+                  Signature over printed name
+                  <RequiredMark />
                 </label>
                 <div className="border-2 border-[#343A40] rounded-md p-4 bg-[#F9FAFB]">
                   <SignaturePad
@@ -823,6 +1313,7 @@ const ApplicationForm = () => {
                   <span className="font-semibold">Data Privacy Act of 2012 (RA 10173)</span> and
                   consent to the collection and processing of my personal information by Exact
                   Colleges of Asia for admission and related academic purposes.
+                  <RequiredMark />
                 </label>
               </div>
               {errors.privacyConsent && (

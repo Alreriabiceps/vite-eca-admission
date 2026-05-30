@@ -123,6 +123,12 @@ Exact Colleges of Asia`,
   },
 ];
 
+const emptyTemplateForm = {
+  label: "",
+  subject: "",
+  message: "",
+};
+
 const getAutoDayDate = () => {
   const currentDate = new Date();
   const day = currentDate.toLocaleDateString("en-US", { weekday: "long" });
@@ -157,6 +163,12 @@ const BatchEmail = () => {
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null);
+  const [customTemplates, setCustomTemplates] = useState([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
+  const [editingTemplateId, setEditingTemplateId] = useState(null);
+  const [showTemplateForm, setShowTemplateForm] = useState(false);
+  const [templateForm, setTemplateForm] = useState(emptyTemplateForm);
 
   const courseOptions = useMemo(() => {
     const selectedGroup = courseGroups.find(
@@ -196,9 +208,26 @@ const BatchEmail = () => {
     }
   }, [filters]);
 
+  const fetchSavedTemplates = useCallback(async () => {
+    try {
+      setLoadingTemplates(true);
+      const response = await axios.get("/api/applications/email/templates");
+      setCustomTemplates(response.data.templates || []);
+    } catch (error) {
+      console.error("Error loading saved email templates:", error);
+      alert("Failed to load saved templates.");
+    } finally {
+      setLoadingTemplates(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchRecipientPreview();
   }, [fetchRecipientPreview]);
+
+  useEffect(() => {
+    fetchSavedTemplates();
+  }, [fetchSavedTemplates]);
 
   const handleSend = async () => {
     if (!subject.trim() || !message.trim()) {
@@ -244,8 +273,111 @@ const BatchEmail = () => {
     setSendResult(null);
   };
 
+  const handleApplyCustomTemplate = (template) => {
+    setSubject(template.subject);
+    setMessage(template.message);
+    setSendResult(null);
+  };
+
+  const updateTemplateForm = (key, value) => {
+    setTemplateForm((currentForm) => ({
+      ...currentForm,
+      [key]: value,
+    }));
+  };
+
+  const resetTemplateForm = () => {
+    setTemplateForm(emptyTemplateForm);
+    setEditingTemplateId(null);
+    setShowTemplateForm(false);
+  };
+
+  const handleStartTemplateForm = () => {
+    setEditingTemplateId(null);
+    setTemplateForm({
+      label: "",
+      subject,
+      message,
+    });
+    setShowTemplateForm(true);
+  };
+
+  const handleEditTemplate = (template) => {
+    setEditingTemplateId(template._id);
+    setTemplateForm({
+      label: template.label,
+      subject: template.subject,
+      message: template.message,
+    });
+    setShowTemplateForm(true);
+  };
+
+  const handleSaveTemplate = async (event) => {
+    event.preventDefault();
+
+    const payload = {
+      label: templateForm.label.trim(),
+      subject: templateForm.subject.trim(),
+      message: templateForm.message.trim(),
+    };
+
+    if (!payload.label || !payload.subject || !payload.message) {
+      alert("Template name, subject, and message are required.");
+      return;
+    }
+
+    try {
+      setSavingTemplate(true);
+      const response = editingTemplateId
+        ? await axios.put(
+            `/api/applications/email/templates/${editingTemplateId}`,
+            payload
+          )
+        : await axios.post("/api/applications/email/templates", payload);
+
+      const savedTemplate = response.data.template;
+      setCustomTemplates((currentTemplates) => {
+        if (editingTemplateId) {
+          return currentTemplates.map((template) =>
+            template._id === savedTemplate._id ? savedTemplate : template
+          );
+        }
+
+        return [savedTemplate, ...currentTemplates];
+      });
+      resetTemplateForm();
+      alert(editingTemplateId ? "Template updated." : "Template saved.");
+    } catch (error) {
+      console.error("Error saving email template:", error);
+      alert(error.response?.data?.message || "Failed to save template.");
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
+  const handleDeleteTemplate = async (template) => {
+    const confirmed = window.confirm(`Delete "${template.label}" template?`);
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(`/api/applications/email/templates/${template._id}`);
+      setCustomTemplates((currentTemplates) =>
+        currentTemplates.filter(
+          (currentTemplate) => currentTemplate._id !== template._id
+        )
+      );
+
+      if (editingTemplateId === template._id) {
+        resetTemplateForm();
+      }
+    } catch (error) {
+      console.error("Error deleting email template:", error);
+      alert(error.response?.data?.message || "Failed to delete template.");
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1a2332] to-[#0D1B2A]">
+    <div className="admin-page">
       <AdminHeader />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -412,22 +544,177 @@ const BatchEmail = () => {
                 />
               </div>
 
-              <div>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#0D1B2A]">
-                  Templates
-                </h3>
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                  {messageTemplates.map((template) => (
-                    <button
-                      key={template.id}
-                      type="button"
-                      onClick={() => handleApplyTemplate(template)}
-                      className="rounded-lg border border-[#1B9AAA]/30 bg-[#F5F7FA] px-3 py-2 text-sm font-semibold text-[#0D1B2A] transition-colors hover:bg-[#1B9AAA] hover:text-white"
-                    >
-                      {template.label}
-                    </button>
-                  ))}
+              <div className="rounded-lg border border-gray-200 bg-[#F5F7FA] p-3">
+                <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-[#0D1B2A]">
+                    Templates
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={handleStartTemplateForm}
+                    className="rounded-lg border border-[#1B9AAA]/40 bg-white px-3 py-2 text-sm font-semibold text-[#0D1B2A] transition-colors hover:bg-[#1B9AAA] hover:text-white"
+                  >
+                    Create Template
+                  </button>
                 </div>
+
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Built-in
+                  </p>
+                  <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                    {messageTemplates.map((template) => (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => handleApplyTemplate(template)}
+                        className="rounded-lg border border-[#1B9AAA]/30 bg-white px-3 py-2 text-sm font-semibold text-[#0D1B2A] transition-colors hover:bg-[#1B9AAA] hover:text-white"
+                      >
+                        {template.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                      Saved
+                    </p>
+                    <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-[#0D1B2A]">
+                      {customTemplates.length}
+                    </span>
+                  </div>
+
+                  {loadingTemplates ? (
+                    <p className="rounded-lg border border-dashed border-gray-300 bg-white p-3 text-center text-sm text-gray-500">
+                      Loading templates...
+                    </p>
+                  ) : customTemplates.length === 0 ? (
+                    <p className="rounded-lg border border-dashed border-gray-300 bg-white p-3 text-center text-sm text-gray-500">
+                      No saved templates yet.
+                    </p>
+                  ) : (
+                    <div className="grid gap-2 md:grid-cols-2">
+                      {customTemplates.map((template) => (
+                        <div
+                          key={template._id}
+                          className="rounded-lg border border-gray-200 bg-white p-3"
+                        >
+                          <p className="truncate text-sm font-semibold text-[#0D1B2A]">
+                            {template.label}
+                          </p>
+                          <p className="mt-1 truncate text-xs text-gray-500">
+                            {template.subject}
+                          </p>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleApplyCustomTemplate(template)}
+                              className="rounded-lg bg-[#1B9AAA] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#158A9A]"
+                            >
+                              Use
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleEditTemplate(template)}
+                              className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-[#0D1B2A] transition-colors hover:border-[#1B9AAA] hover:text-[#1B9AAA]"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteTemplate(template)}
+                              className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {showTemplateForm && (
+                  <form
+                    onSubmit={handleSaveTemplate}
+                    className="mt-4 rounded-lg border border-[#1B9AAA]/30 bg-white p-3"
+                  >
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <h4 className="text-sm font-semibold text-[#0D1B2A]">
+                        {editingTemplateId ? "Edit Template" : "New Template"}
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={resetTemplateForm}
+                        className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-xs font-medium text-[#0D1B2A]">
+                          Template Name
+                        </label>
+                        <input
+                          type="text"
+                          value={templateForm.label}
+                          maxLength={80}
+                          onChange={(event) =>
+                            updateTemplateForm("label", event.target.value)
+                          }
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B9AAA]"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-xs font-medium text-[#0D1B2A]">
+                          Template Subject
+                        </label>
+                        <input
+                          type="text"
+                          value={templateForm.subject}
+                          maxLength={200}
+                          onChange={(event) =>
+                            updateTemplateForm("subject", event.target.value)
+                          }
+                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B9AAA]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-3">
+                      <label className="mb-1 block text-xs font-medium text-[#0D1B2A]">
+                        Template Message
+                      </label>
+                      <textarea
+                        value={templateForm.message}
+                        maxLength={10000}
+                        onChange={(event) =>
+                          updateTemplateForm("message", event.target.value)
+                        }
+                        rows={5}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1B9AAA]"
+                      />
+                    </div>
+
+                    <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:justify-end">
+                      <button
+                        type="submit"
+                        disabled={savingTemplate}
+                        className="rounded-lg bg-[#0D1B2A] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#16283D] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {savingTemplate
+                          ? "Saving..."
+                          : editingTemplateId
+                            ? "Save Changes"
+                            : "Save Template"}
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
 
               <div className="flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
